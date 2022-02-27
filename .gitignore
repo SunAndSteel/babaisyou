@@ -1,0 +1,15 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+
+### Gradle ###
+/.gradle/
+/build/
+
+# IDE related files
+/.idea/
+/.babaisyou.iml
+
+
+
+
