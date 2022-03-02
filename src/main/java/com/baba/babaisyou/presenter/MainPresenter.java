@@ -1,9 +1,10 @@
-package com.baba.babaisyou;
+package com.baba.babaisyou.presenter;
+
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
-public class MainController {
+public class MainPresenter {
     @FXML
     private Label welcomeText;
 
