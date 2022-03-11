@@ -31,7 +31,7 @@ public class Main {
 //            System.out.println("\n");
 //        }
 
-        Rule.checkRules();
+//        Rule.checkRules();
 
         boolean main = true;
         Scanner myScanner = new Scanner(System.in);
@@ -55,17 +55,17 @@ public class Main {
 
         ArrayOfObject[][] grid = Grid.getInstance().grid;
 
-        for (ArrayOfObject[] row : grid) {
-            for (ArrayOfObject arrayOfObject : row) {
-//                for (Object object : arrayOfObject) {
-//                    graphicsContext.drawImage(new Image(object.getMaterial().getImageUrl()), object.getX() * 32, object.getY() * 32);
+//        for (ArrayOfObject[] row : grid) {
+//            for (ArrayOfObject arrayOfObject : row) {
+////                for (Object object : arrayOfObject) {
+////                    graphicsContext.drawImage(new Image(object.getMaterial().getImageUrl()), object.getX() * 32, object.getY() * 32);
+////
+////                }
 //
-//                }
-
-                Object object = arrayOfObject.get(arrayOfObject.size() - 1);
-                System.out.println(object.getX() + "   " + object.getY());
-            }
-        }
+//                Object object = arrayOfObject.get(arrayOfObject.size() - 1);
+//                System.out.println(object.getX() + "   " + object.getY());
+//            }
+//        }
     }
 
 }
