@@ -22,7 +22,7 @@ Wall 14 6
 Wall 3 7
 Wall 14 7
 Wall 3 8
-FlagText 5 8
+TextFlag 5 8
 Flag 9 8
 Baba 12 8
 Wall 14 8
@@ -40,8 +40,8 @@ Wall 11 10
 Wall 12 10
 Wall 13 10
 Wall 14 10
-BabaText 4 12
-WallText 7 12
+TextBaba 4 12
+TextWall 7 12
 Is 4 13
 Is 7 13
 You 4 14

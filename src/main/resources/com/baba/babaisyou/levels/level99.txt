@@ -1,3 +1,5 @@
-5 5
-Wall 1 1
-Wall 2 2
+10 10
+Wall 5 5
+Baba 6 6
+Wall 6 5
+Wall 7 7

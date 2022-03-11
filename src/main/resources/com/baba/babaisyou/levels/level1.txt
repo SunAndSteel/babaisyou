@@ -1,8 +1,8 @@
 18 18
-WallText 4 4
+TextWall 4 4
 Is 5 4
 Stop 6 4
-RockText 11 4
+TextRock 11 4
 Is 12 4
 Push 13 4
 Wall 3 6
@@ -34,9 +34,9 @@ Wall 11 10
 Wall 12 10
 Wall 13 10
 Wall 14 10
-BabaText 4 12
+TextBaba 4 12
 Is 5 12
 You 6 12
-FlagText 11 12
+TextFlag 11 12
 Is 12 12
 Win 13 12

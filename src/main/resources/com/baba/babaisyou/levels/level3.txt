@@ -1,5 +1,5 @@
 18 18
-FlagText 11 2
+TextFlag 11 2
 Is 12 2
 Win 13 2
 Wall 10 3
@@ -28,7 +28,7 @@ Wall 14 7
 Wall 4 8
 Wall 14 8
 Wall 4 9
-WallText 6 9
+TextWall 6 9
 Is 7 9
 Stop 8 9
 Wall 14 9
@@ -54,6 +54,6 @@ Wall 11 15
 Wall 12 15
 Wall 13 15
 Wall 14 15
-BabaText 5 16
+TextBaba 5 16
 Is 6 16
 You 7 16

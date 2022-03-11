@@ -1,59 +1,71 @@
 package com.baba.babaisyou.presenter;
-/*
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
 
-import java.io.IOException;
+import com.baba.babaisyou.model.ArrayOfObject;
+import com.baba.babaisyou.model.Rule;
+import com.baba.babaisyou.model.enums.Direction;
+import com.baba.babaisyou.model.enums.Effects;
+import com.baba.babaisyou.model.enums.Material;
+import com.baba.babaisyou.model.Object;
+import com.baba.babaisyou.view.View;
+import com.baba.babaisyou.view.mapView;
+import javafx.scene.image.Image;
 
-public class Main extends Application {
-    @Override
-    public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("main-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
-        stage.setScene(scene);
-        stage.show();
-    }
+import java.util.ArrayList;
+import java.util.Scanner;
 
+import static javafx.application.Application.launch;
+
+public class Main {
     public static void main(String[] args) {
-        launch();
-    }
-} */
+        Grid gridInstance = Grid.getInstance();
 
-import javafx.application.Application;
-        import javafx.scene.Scene;
-        import javafx.scene.layout.GridPane;
-        import javafx.scene.paint.Color;
-        import javafx.scene.shape.Rectangle;
-        import javafx.stage.Stage;
+        mapView.printMap();
 
-public class Main extends Application {
-    @Override /* from  w  w w .jav a  2 s . com*/
-    public void start(Stage primaryStage) {
-        // Create a GridPane
-        GridPane pane = new GridPane();
+//        System.out.println(Object.instances.get(Material.Floor));
+//
+//        ArrayList<Object> instances = new ArrayList<Object>(Object.instances.get(Material.Floor));
+//
+//        for (Object object : instances) {
+//            object.setMaterial(Material.Wall);
+//            mapView.printMap();
+//            System.out.println("\n");
+//        }
 
-        // Create 64 rectangles and add to pane
-        int count = 0;
-        double s = 25; // side of rectangle
-        for (int i = 0; i < 8; i++) {
-            count++;
-            for (int j = 0; j < 8; j++) {
-                Rectangle r = new Rectangle(s, s, s, s);
-                if (count % 2 == 0)
-                    r.setFill(Color.WHITE);
-                pane.add(r, j, i);
-                count++;
+        Rule.checkRules();
+
+        boolean main = true;
+        Scanner myScanner = new Scanner(System.in);
+
+        while (main) {
+            String input = myScanner.nextLine();
+            switch (input) {
+                case "z" -> gridInstance.movePlayers(Direction.UP);
+                case "s" -> gridInstance.movePlayers(Direction.DOWN);
+                case "q" -> gridInstance.movePlayers(Direction.LEFT);
+                case "d" -> gridInstance.movePlayers(Direction.RIGHT);
+                case "quit" -> main = false;
+            }
+            gridInstance.checkWin();
+            Rule.checkRules();
+            mapView.printMap();
+        }
+        myScanner.close();
+
+//        launch(View.class ,(String) null);
+
+        ArrayOfObject[][] grid = Grid.getInstance().grid;
+
+        for (ArrayOfObject[] row : grid) {
+            for (ArrayOfObject arrayOfObject : row) {
+//                for (Object object : arrayOfObject) {
+//                    graphicsContext.drawImage(new Image(object.getMaterial().getImageUrl()), object.getX() * 32, object.getY() * 32);
+//
+//                }
+
+                Object object = arrayOfObject.get(arrayOfObject.size() - 1);
+                System.out.println(object.getX() + "   " + object.getY());
             }
         }
-
-        // Create a scene and place it in the stage
-        Scene scene = new Scene(pane);
-        primaryStage.setTitle("java2s.com");
-        primaryStage.setScene(scene); // Place in scene in the stage
-        primaryStage.show();
-
     }
+
 }

@@ -24,7 +24,9 @@ tasks.withType(JavaCompile) {
 
 application {
     mainModule = 'com.baba.babaisyou'
-    mainClass = 'com.baba.babaisyou.presenter.Main'
+//    mainClass = 'com.baba.babaisyou.presenter.Main'
+    mainClass = 'com.baba.babaisyou.view.View'
+
 }
 
 javafx {
@@ -34,10 +36,24 @@ javafx {
 
 dependencies {
 
+    implementation 'org.jetbrains:annotations:23.0.0'
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
 
 test {
     useJUnitPlatform()
+}
+
+run {  // A retirer, lorsqu'on arrête d'utiliser les inputs venant de la console ( avec le scanner.nextLine() )
+    standardInput = System.in
+}
+
+//compileJava.options.encoding = 'UTF-8'
+//
+//tasks.withType(JavaCompile) {
+//    options.encoding = 'UTF-8'
+//}
+task myJavadocs(type: Javadoc) {
+    source = sourceSets.main.allJava
 }
