@@ -13,6 +13,7 @@ public class Object {
     private int x;
     private int y;
     private Material material;
+    private static ArrayList<Position> movedPos = new ArrayList<Position>(); // Les endroits où des objets ont était bouger.
 
     public static Map<Material, ArrayList<Object>> instances = createInstancesMap();
 
@@ -28,12 +29,14 @@ public class Object {
         this.x = x; this.y = y;
         this.material = material;
         instances.get(material).add(this);
+        addMovedPos(new Position(x, y));
     }
 
     public Object(String materialName, int x, int y) {
         this.x = x; this.y = y;
         material = Material.valueOf(materialName);
         instances.get(this.material).add(this);
+        addMovedPos(new Position(x, y));
     }
 
     public int getX() { return x; }
@@ -70,6 +73,7 @@ public class Object {
         int dX = direction.dX; int dY = direction.dY;
         int x = this.x + dX; int y = this.y + dY;
         ArrayOfObject[][] grid = Grid.getInstance().grid;
+        Grid gridInstance = Grid.getInstance();
         Map<Effects, ArrayList<Object>> objectsAffectedByRules = Rule.objectsAffectedByRules;
 
 
@@ -93,6 +97,8 @@ public class Object {
             }
         }
 
+        addMovedPos(new Position(x, y));
+        addMovedPos(new Position(this.x, this.y));
         grid[this.y][this.x].remove(this);
         grid[y][x].add(this);
         this.x = x; this.y = y;
@@ -124,8 +130,16 @@ public class Object {
         return true;
     }
 
-//    public Object copyObject() {
-//        return new Object(this.material, this.x, this.y);
-//    }
+    public static void addMovedPos(Position position) { // Pour améliorer, on peut ajouter la position, si elle n'est pas déjà dedans.
+        movedPos.add(position);
+    }
+
+    public static ArrayList<Position> getMovedPos() {
+        return movedPos;
+    }
+
+    public static void resetMovedPos() {
+        movedPos = new ArrayList<Position>();
+    }
 
 }
