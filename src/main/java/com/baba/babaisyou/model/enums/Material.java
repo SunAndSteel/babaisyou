@@ -1,21 +1,21 @@
 package com.baba.babaisyou.model.enums;
 
 public enum Material {
-    Baba("Ba", null, null, "C:\\Users\\jerem\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\views\\Baba.png"),
-    Floor("  ", null, null, "C:\\Users\\jerem\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\views\\Floor.png"),
-    Flag("Fg", null, null, "C:\\Users\\jerem\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\views\\Wall.png"),
-    Wall("Wl", null, null, "C:\\Users\\jerem\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\views\\Wall.png"),
-    Rock("RR", null, null, "C:\\Users\\jerem\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\views\\Wall.png"),
-    Is("Is", null, null, "C:\\Users\\jerem\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\views\\Wall.png"),
-    Push("Ps", Effects.Movable, null, "C:\\Users\\jerem\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\views\\Wall.png"),
-    Kill("Ki", Effects.Killer, null, "C:\\Users\\jerem\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\views\\Wall.png"),
-    Win("Wi", Effects.Winner, null, "C:\\Users\\jerem\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\views\\Wall.png"),
-    Stop("St", Effects.Hittable, null, "C:\\Users\\jerem\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\views\\Wall.png"),
-    You("Yo", Effects.Player, null, "C:\\Users\\jerem\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\views\\Wall.png"),
-    TextWall("TW", null, "Wall", "C:\\Users\\jerem\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\views\\Wall.png"),
-    TextBaba("TB", null, "Baba", "C:\\Users\\jerem\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\views\\Wall.png"),
-    TextFlag("TF", null, "Flag", "C:\\Users\\jerem\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\views\\Wall.png"),
-    TextRock("TR", null, "Rock", "C:\\Users\\jerem\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\views\\Wall.png");
+    Baba("Ba", null, null, "file:src/main/resources/com/baba/babaisyou/views/Baba.png"),
+    Floor("  ", null, null, "file:src/main/resources/com/baba/babaisyou/views/Floor.png"),
+    Flag("Fg", null, null, "file:src/main/resources/com/baba/babaisyou/views/Wall.png"),
+    Wall("Wl", null, null, "file:src/main/resources/com/baba/babaisyou/views/Wall.png"),
+    Rock("RR", null, null, "file:src/main/resources/com/baba/babaisyou/views/Wall.png"),
+    Is("Is", null, null, "file:src/main/resources/com/baba/babaisyou/views/Wall.png"),
+    Push("Ps", Effects.Movable, null, "file:src/main/resources/com/baba/babaisyou/views/Wall.png"),
+    Kill("Ki", Effects.Killer, null, "file:src/main/resources/com/baba/babaisyou/views/Wall.png"),
+    Win("Wi", Effects.Winner, null, "file:src/main/resources/com/baba/babaisyou/views/Wall.png"),
+    Stop("St", Effects.Hittable, null, "file:src/main/resources/com/baba/babaisyou/views/Wall.png"),
+    You("Yo", Effects.Player, null, "file:src/main/resources/com/baba/babaisyou/views/Wall.png"),
+    TextWall("TW", null, "Wall", "file:src/main/resources/com/baba/babaisyou/views/Wall.png"),
+    TextBaba("TB", null, "Baba", "file:src/main/resources/com/baba/babaisyou/views/Wall.png"),
+    TextFlag("TF", null, "Flag", "file:src/main/resources/com/baba/babaisyou/views/Wall.png"),
+    TextRock("TR", null, "Rock", "file:src/main/resources/com/baba/babaisyou/views/Wall.png");
 
     private final String str;
     private final Effects effect;
