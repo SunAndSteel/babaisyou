@@ -1,8 +1,5 @@
 package com.baba.babaisyou.model.enums;
 
-/**
- * Attributs qui peuvent être donnés aux objets
- */
 public enum Effects {
     Movable("Push"),
     Player("You"),

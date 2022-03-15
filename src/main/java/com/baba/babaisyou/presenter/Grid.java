@@ -7,7 +7,7 @@ import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Effects;
 
 /**
- * La classe qui représente la map
+ *
  */
 public class Grid {
     public ArrayOfObject[][] grid;
@@ -39,18 +39,18 @@ public class Grid {
     }
 
     /**
-     * Permet de bouger tous les joueurs (si possible) dans une certaine direction.
+     * Permet de bouger tout les joueurs (si possible) dans une certaine direction.
      * @param direction Direction dans laquelle les joueurs vont bouger.
      */
     public void movePlayers(Direction direction) {
-        for (Object player : Rule.objectsAffectedByRules.get(Effects.Player)) { // Pas la bonne solution s'il y a des players l'un a coté de l'autre
+        for (Object player : Rule.objectsAffectedByRules.get(Effects.Player)) { // Pas la bonne solutions s'il y a des players l'un a coté de l'autre
             player.move(direction);
         }
     }
 
     /**
-     * Vérifie si la variable d'instance win est true, si oui, le dictionaire des instances d'objets est réinitialisés
-     * et le prochain level est chargé.
+     * Vérifie si la variable d'instance win est true, si oui, le dictionaire des instance d'objets est réinitialiser
+     * et le prochain level est charger.
      */
     public void checkWin() {
         if (win) {
@@ -61,7 +61,7 @@ public class Grid {
     }
 
     /**
-     * Permet de changer l'état de la variable d'instance win.
+     * Permet de changer l'etat de la variable d'instance win.
      * @param state Booléen qui sera attribué la variable d'instance win.
      */
     public void setWin(boolean state) {
