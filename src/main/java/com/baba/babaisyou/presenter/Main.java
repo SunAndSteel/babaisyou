@@ -15,6 +15,9 @@ import java.util.Scanner;
 
 import static javafx.application.Application.launch;
 
+/**
+ * Classe contenant la méthode main qui va exécuter le jeu
+ */
 public class Main {
     public static void main(String[] args) {
         Grid gridInstance = Grid.getInstance();
