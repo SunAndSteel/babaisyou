@@ -37,9 +37,7 @@ public class Rule {
                 }
             }
         }
-
         return objectsAffectedByRules;
-
     }
 
     /**

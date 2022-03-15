@@ -9,6 +9,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
@@ -42,7 +43,7 @@ public class View extends Application {
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
 
-        Canvas canvas = new Canvas(Level.getSizeX() * 32, Level.getSizeY() * 32);
+        Canvas canvas = new Canvas(Level.getSizeX() * 24, Level.getSizeY() * 24);
         root.getChildren().add(canvas);
 
         graphicsContext = canvas.getGraphicsContext2D();
@@ -67,6 +68,7 @@ public class View extends Application {
         });
 
 //        startTime = System.nanoTime();
+        graphicsContext.drawImage(new Image("file:src/main/resources/com/baba/babaisyou/views/back.png"), 0, 0);
         new Timer().start();
 
         primaryStage.show();
