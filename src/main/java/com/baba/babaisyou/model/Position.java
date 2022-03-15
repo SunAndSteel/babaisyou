@@ -1,8 +1,5 @@
 package com.baba.babaisyou.model;
 
-/**
- * Classe qui représente la position d'un objet dans la map
- */
 public class Position {
     private final int x, y;
 

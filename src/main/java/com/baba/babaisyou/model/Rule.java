@@ -8,19 +8,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Classe qui permet de gérer les règles du jeu
- */
 public class Rule {
 
     public static ArrayList<ArrayList<Object>> Rules = new ArrayList<ArrayList<Object>>();
 
     public static Map<Effects, ArrayList<Object>> objectsAffectedByRules = createObjectsAffectedByRulesMap();
 
-    /**
-     * Méthode qui permet de créer un Map des objets affectés par les règles
-     * @return un Map des objets affectés par les règles
-     */
     private static Map<Effects, ArrayList<Object>> createObjectsAffectedByRulesMap() {
         Map<Effects, ArrayList<Object>> objectsAffectedByRules = new HashMap<Effects, ArrayList<Object>>();
         for (Effects effect : Effects.values()) {
@@ -42,11 +35,6 @@ public class Rule {
 
     }
 
-    /**
-     * Permet de construire les règles
-     * @param obj1 Un objet de la map
-     * @param obj2 Un objet de la map
-     */
     public static void rule(Object obj1, Object obj2) {
         if (obj2.getMaterial().getEffect() != null && obj1.getMaterial().getNameObjectAffected() != null) {
             for (Object object : Object.instances.get(Material.valueOf(obj1.getMaterial().getNameObjectAffected()))) {
@@ -63,9 +51,7 @@ public class Rule {
     }
 
 
-    /**
-     * Parcours la grille pour chercher les règles
-     */
+
     public static void checkRules() {
         objectsAffectedByRules = createObjectsAffectedByRulesMap();
         ArrayOfObject[][] grid = Grid.getInstance().grid;

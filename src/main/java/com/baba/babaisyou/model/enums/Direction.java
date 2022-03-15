@@ -1,8 +1,8 @@
 package com.baba.babaisyou.model.enums;
 
-/**
- * Directions dans lesquelles un objet sur la map peut se déplacer
- */
+import com.baba.babaisyou.model.Level;
+import com.baba.babaisyou.model.Object;
+
 public enum Direction {
     UP(0, -1),
     DOWN(0, 1),
