@@ -5,7 +5,13 @@ import com.baba.babaisyou.presenter.Grid;
 
 import java.util.ArrayList;
 
+/**
+ * Classe qui représente la map de manière graphique
+ */
 public class mapView {
+    /**
+     * Affiche la map dans un terminal
+     */
     public static void printMap() {
         ArrayList<Object>[][] map = Grid.getInstance().grid;
 

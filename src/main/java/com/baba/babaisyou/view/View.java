@@ -15,6 +15,9 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
+/**
+ * Classe qui gère l'interface graphique du jeu
+ */
 public class View extends Application {
 
     private static long startTime;
@@ -24,6 +27,11 @@ public class View extends Application {
         launch(args);
     }
 
+    /**
+     * JavaFX
+     * @param primaryStage Le stage dans lequel on affiche la scène
+     * @throws Exception Gérer les exceptions si l'exécution se passe mal
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         Grid gridInstance = Grid.getInstance();
@@ -64,10 +72,16 @@ public class View extends Application {
         primaryStage.show();
     }
 
+    /**
+     * @return Le moment du début de l'exécution
+     */
     public static long getStartTime() {
         return startTime;
     }
 
+    /**
+     * @return Le contexte graphique
+     */
     public static GraphicsContext getGraphicsContext() {
         return graphicsContext;
     }

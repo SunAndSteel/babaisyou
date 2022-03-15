@@ -10,6 +10,9 @@ import javafx.scene.image.Image;
 
 import java.util.ArrayList;
 
+/**
+ * Classe qui permet d'animer le programme
+ */
 public class Timer extends AnimationTimer {
     @Override
     public void handle(long now) {

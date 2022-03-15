@@ -9,14 +9,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Classe représentant un objet sur la map
+ */
 public class Object {
     private int x;
     private int y;
     private Material material;
-    private static ArrayList<Position> movedPos = new ArrayList<Position>(); // Les endroits où des objets ont était bouger.
+    private static ArrayList<Position> movedPos = new ArrayList<Position>(); // Les endroits où des objets ont été bouger.
 
     public static Map<Material, ArrayList<Object>> instances = createInstancesMap();
 
+    /**
+     * Créé une instance de la map
+     * @return
+     */
     public static Map<Material, ArrayList<Object>> createInstancesMap() {
         Map<Material, ArrayList<Object>> instances = new HashMap<Material, ArrayList<Object>>();
         for (Material material : Material.values()) {
@@ -25,6 +32,12 @@ public class Object {
         return instances;
     }
 
+    /**
+     * Constructeur d'un objet de la map
+     * @param material La texture
+     * @param x La position x
+     * @param y La position y
+     */
     public Object(Material material, int x, int y) {
         this.x = x; this.y = y;
         this.material = material;
@@ -32,6 +45,12 @@ public class Object {
         addMovedPos(new Position(x, y));
     }
 
+    /**
+     * Constructeur
+     * @param materialName Le nom de la texture
+     * @param x La position x
+     * @param y La position y
+     */
     public Object(String materialName, int x, int y) {
         this.x = x; this.y = y;
         material = Material.valueOf(materialName);
@@ -39,26 +58,47 @@ public class Object {
         addMovedPos(new Position(x, y));
     }
 
+    /**
+     * @return La position x de l'objet
+     */
     public int getX() { return x; }
 
+    /**
+     * @return La position y de l'objet
+     */
     public int getY() { return y; }
 
+    /**
+     * @return La texture de l'objet
+     */
     public Material getMaterial() { return material; }
 
+    /**
+     * @param x Position x de l'objet
+     */
     public void setX(int x) {
         this.x = x;
     }
 
+    /**
+     * @param y Position y de l'objet
+     */
     public void setY(int y) {
         this.y = y;
     }
 
+    /**
+     * @param material Un objet material
+     */
     public void setMaterial(Material material) {
         instances.get(this.material).remove(this);
         instances.get(material).add(this);
         this.material = material;
     }
 
+    /**
+     * @param materialName Le nom du material
+     */
     public void setMaterial(String materialName) {
         Material material = Material.valueOf(materialName);
         instances.get(this.material).remove(this);
@@ -66,6 +106,10 @@ public class Object {
         this.material = material;
     }
 
+    /**
+     * Bouge l'objet si c'est possible
+     * @param direction La direction vers laquelle on veut bouger
+     */
     public void move(Direction direction) {
         if (!this.isMovable(direction))
             return;
@@ -104,7 +148,11 @@ public class Object {
         this.x = x; this.y = y;
     }
 
-
+    /**
+     * Vérifie si on peut bouger l'objet dans une direction
+     * @param direction La direction
+     * @return Vrai si on peut bouger dans la direction, sinon faux
+     */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean isMovable(Direction direction) {
         int dX = direction.dX; int dY = direction.dY;
@@ -130,14 +178,25 @@ public class Object {
         return true;
     }
 
+    /**
+     * Sauvegarde dans une liste l'ancienne et la nouvelle position
+     * @param position La position
+     */
     public static void addMovedPos(Position position) { // Pour améliorer, on peut ajouter la position, si elle n'est pas déjà dedans.
         movedPos.add(position);
     }
 
+    /**
+     *
+     * @return La position vers laquelle le joueur a bougé
+     */
     public static ArrayList<Position> getMovedPos() {
         return movedPos;
     }
 
+    /**
+     * Vide la liste où est sauvegardé l'ancienne et la nouvelle position de l'objet
+     */
     public static void resetMovedPos() {
         movedPos = new ArrayList<Position>();
     }

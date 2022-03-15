@@ -1,5 +1,8 @@
 package com.baba.babaisyou.model.enums;
 
+/**
+ * Textures qui peuvent être attribuées aux objets
+ */
 public enum Material {
     Baba("Ba", null, null, "file:src/main/resources/com/baba/babaisyou/views/Baba.png"),
     Floor("  ", null, null, "file:src/main/resources/com/baba/babaisyou/views/Floor.png"),
