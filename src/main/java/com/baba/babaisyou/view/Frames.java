@@ -18,7 +18,6 @@ public class Frames {
             frames[i] = new WritableImage(pixelReader, col*24 + i*24, row*24, 24, 24);
         }
 
-        System.out.println(Arrays.toString(frames));
         return frames;
     }
 }

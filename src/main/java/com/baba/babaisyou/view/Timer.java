@@ -6,9 +6,10 @@ import com.baba.babaisyou.model.Position;
 import com.baba.babaisyou.model.enums.Material;
 import com.baba.babaisyou.presenter.Grid;
 import javafx.animation.AnimationTimer;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 
 import java.util.ArrayList;
 
@@ -17,50 +18,35 @@ import java.util.ArrayList;
  */
 public class Timer extends AnimationTimer {
 
-    private Image image;
+    private final Image img;
 
-    public Timer() {
-        image = new Image("file:src/main/resources/com/baba/babaisyou/views/Floor.png");
+    public Timer()
+    {
+        img = new Image("file:src/main/resources/com/baba/babaisyou/views/Floor.png");
     }
 
     @Override
     public void handle(long now) {
         ArrayOfObject[][] grid = Grid.getInstance().grid;
         Grid gridInstance = Grid.getInstance();
-        GraphicsContext gc = View.getGraphicsContext();
+        GridPane gridPane = View.getGridPane();
 
         ArrayList<Position> movedPos = Object.getMovedPos();
-//        if (movedPos.size() != 0) {
-//            for (Position pos : movedPos) {
-//                for (Object object : grid[pos.getY()][pos.getX()]) {
-////                    gc.drawImage(new Image(object.getMaterial().getImageUrl()), object.getX() * 32, object.getY() * 32);
-//                    if (object.getMaterial() == Material.Floor) {
-//                        gc.drawImage(new Image("file:src/main/resources/com/baba/babaisyou/views/Floor.png"), object.getX()*24, object.getY()*24);
-//                    } else {
-//                        gc.drawImage(object.getMaterial().getFrames()[0], object.getX() * 24, object.getY() * 24);
-//                    }
-//                }
-//            }
-//        }
 
-        Object.resetMovedPos(); // reset à cet endroit permet d'éviter d'avoir des doublons lors de touches successives trop rapides.
-
-
-        long index = (now - View.getStartTime()) / 200_000_000;
-
-        for (ArrayOfObject[] arrayOfObjects : grid) {
-            for (ArrayOfObject objects : arrayOfObjects) {
-                for (Object object : objects) {
+        if (movedPos.size() != 0) {
+            for (Position pos : movedPos) {
+                StackPane stackPane = new StackPane();
+                for (Object object : grid[pos.getY()][pos.getX()]) {
                     if (object.getMaterial() == Material.Floor) {
-                        gc.drawImage(image, object.getX()*24, object.getY()*24);
+                        stackPane.getChildren().add(new ImageView(img));
                     } else {
-                        WritableImage[] frames = object.getMaterial().getFrames();
-                        WritableImage image = frames[(int) index % frames.length];
-                        gc.drawImage(image, object.getX() * 24, object.getY() * 24);
+                        stackPane.getChildren().add(new ImageView(object.getMaterial().getFrames()[0]));
                     }
-
                 }
+                gridPane.add(stackPane, pos.getX(), pos.getY());
             }
         }
+
+        Object.resetMovedPos(); // reset à cet endroit permet d'éviter d'avoir des doublons lors de touches successives trop rapides.
     }
 }

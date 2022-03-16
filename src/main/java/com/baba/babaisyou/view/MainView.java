@@ -21,17 +21,15 @@ public class MainView extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        primaryStage.setTitle("baba is you");
+        primaryStage.setTitle("BabaIsYou");
 
         primaryStage.getIcons().add(new Image("file:src/main/resources/com/baba/babaisyou/views/Baba.png"));
 
-        Menu.start(primaryStage);
-
         //Fenêtre deux fois moins grande que l'écran
         width = (int) Screen.getPrimary().getBounds().getWidth()/2;
-        height = (int) Screen.getPrimary().getBounds().getWidth()/2;
+        height = (int) Screen.getPrimary().getBounds().getHeight()/2;
 
-
+        Menu.start(primaryStage);
 
         primaryStage.show();
     }
