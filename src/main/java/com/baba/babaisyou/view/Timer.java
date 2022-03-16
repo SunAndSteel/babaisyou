@@ -16,6 +16,13 @@ import java.util.ArrayList;
  * Classe qui permet d'animer le programme
  */
 public class Timer extends AnimationTimer {
+
+    private Image image;
+
+    public Timer() {
+        image = new Image("file:src/main/resources/com/baba/babaisyou/views/Floor.png");
+    }
+
     @Override
     public void handle(long now) {
         ArrayOfObject[][] grid = Grid.getInstance().grid;
@@ -45,7 +52,7 @@ public class Timer extends AnimationTimer {
             for (ArrayOfObject objects : arrayOfObjects) {
                 for (Object object : objects) {
                     if (object.getMaterial() == Material.Floor) {
-                        gc.drawImage(new Image("file:src/main/resources/com/baba/babaisyou/views/Floor.png"), object.getX()*24, object.getY()*24);
+                        gc.drawImage(image, object.getX()*24, object.getY()*24);
                     } else {
                         WritableImage[] frames = object.getMaterial().getFrames();
                         WritableImage image = frames[(int) index % frames.length];
