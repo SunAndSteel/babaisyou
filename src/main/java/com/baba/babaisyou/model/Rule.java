@@ -21,7 +21,7 @@ public class Rule {
      * Méthode qui permet de créer un Map des objets affectés par les règles
      * @return un Map des objets affectés par les règles
      */
-    private static Map<Effects, ArrayList<Object>> createObjectsAffectedByRulesMap() {
+    public static Map<Effects, ArrayList<Object>> createObjectsAffectedByRulesMap() {
         Map<Effects, ArrayList<Object>> objectsAffectedByRules = new HashMap<Effects, ArrayList<Object>>();
         for (Effects effect : Effects.values()) {
             objectsAffectedByRules.put(effect, new ArrayList<Object>());

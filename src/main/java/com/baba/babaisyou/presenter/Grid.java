@@ -37,8 +37,17 @@ public class Grid {
      * @param levelNbr Numero du level à load.
      */
     public void mapLoadLevel(int levelNbr) {
+        Rule.objectsAffectedByRules = Rule.createObjectsAffectedByRulesMap();
+        Object.instances = Object.createInstancesMap();
         grid = Level.loadlevel(levelNbr);
     }
+
+    public void mapLoadLevel(String name) {
+        Rule.objectsAffectedByRules = Rule.createObjectsAffectedByRulesMap();
+        Object.instances = Object.createInstancesMap();
+        grid = Level.loadlevel(name);
+    }
+
 
     /**
      * Permet de bouger tous les joueurs (si possible) dans une certaine direction.
@@ -65,7 +74,6 @@ public class Grid {
      */
     public void checkWin() {
         if (win) {
-            Object.instances = Object.createInstancesMap();
             mapLoadLevel(Level.getCurrentLevelNbr() + 1);
             win = false;
         }
