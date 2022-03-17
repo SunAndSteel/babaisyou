@@ -1,5 +1,6 @@
 package com.baba.babaisyou.view;
 
+import com.baba.babaisyou.model.Level;
 import com.baba.babaisyou.model.Rule;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.presenter.Grid;
@@ -9,7 +10,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-
 
 /**
  * Classe qui gère l'interface graphique du jeu
@@ -27,8 +27,6 @@ public class View {
 
         Grid gridInstance = Grid.getInstance();
         Rule.checkRules();
-        primaryStage.setTitle("BabaIsYou");
-
         root = new GridPane();
         Scene scene = new Scene(root, MainView.width, MainView.height);
         primaryStage.setScene(scene);
@@ -45,6 +43,8 @@ public class View {
                 gridInstance.movePlayers(Direction.LEFT);
             } else if (code == KeyCode.ESCAPE) {
                 primaryStage.close();
+            } else if (code == KeyCode.R) {
+                gridInstance.mapLoadLevel(Level.getCurrentLevelNbr());
             }
             gridInstance.checkWin();
             Rule.checkRules();

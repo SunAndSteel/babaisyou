@@ -7,23 +7,31 @@ import javafx.scene.image.WritableImage;
  * Textures qui peuvent être attribuées aux objets
  */
 public enum Material {
+    //Objets
     Baba("Ba", null, null, Frames.getFrames(1, 0, 1)),
     Floor("  ", null, null, Frames.getFrames(0, 0, 1)),
     Flag("Fg", null, null, Frames.getFrames(2, 0, 1)),
     Wall("Wl", null, null, Frames.getFrames(2, 0, 1)),
     Rock("RR", null, null, Frames.getFrames(2, 0, 1)),
-    Is("Is", null, null, Frames.getFrames(2, 0, 1)),
-    Push("Ps", Effects.Movable, null, Frames.getFrames(2, 0, 1)),
+    Button("Bt", null, null, Frames.getImages("file:src\\main\\resources\\com\\baba\\babaisyou\\views\\coin.png")),
+    Is("Is", null, null, Frames.getImages("file:src\\main\\resources\\com\\baba\\babaisyou\\views\\Test35.png")),
+
+    //Effets
+    Push("Ps", Effects.Movable, null, Frames.getImages("file:src\\main\\resources\\com\\baba\\babaisyou\\views\\push.png")),
     Kill("Ki", Effects.Killer, null, Frames.getFrames(2, 0, 1)),
-    Win("Wi", Effects.Winner, null, Frames.getFrames(2, 0, 1)),
-    Stop("St", Effects.Hittable, null, Frames.getFrames(2, 0, 1)),
-    You("Yo", Effects.Player, null, Frames.getFrames(2, 0, 1)),
+    Win("Wi", Effects.Winner, null, Frames.getImages("file:src\\main\\resources\\com\\baba\\babaisyou\\views\\win.png")),
+    Stop("St", Effects.Hittable, null, Frames.getImages("file:src\\main\\resources\\com\\baba\\babaisyou\\views\\stop.png")),
+    You("Yo", Effects.Player, null, Frames.getImages("file:src\\main\\resources\\com\\baba\\babaisyou\\views\\You.png")),
+    Play("Pr", Effects.Play, null, Frames.getImages("file:src\\main\\resources\\com\\baba\\babaisyou\\views\\play.png")),
+
+    //Textes
     TextWall("TW", null, "Wall", Frames.getFrames(2, 0, 1)),
     TextBaba("TB", null, "Baba", Frames.getFrames(2, 0, 1)),
     TextFlag("TF", null, "Flag", Frames.getFrames(2, 0, 1)),
     TextRock("TR", null, "Rock", Frames.getFrames(2, 0, 1)),
+    TextBtn("BT", null, "Button", Frames.getImages("file:src\\main\\resources\\com\\baba\\babaisyou\\views\\btn.png")),
 
-    //Titre
+    //Titres
     Title1("", null, null, Frames.getFrames(17, 17, 1)),
     Title2("", null, null, Frames.getFrames(17, 18, 1)),
     Title3("", null, null, Frames.getFrames(17, 19, 1)),

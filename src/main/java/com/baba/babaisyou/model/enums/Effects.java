@@ -8,7 +8,8 @@ public enum Effects {
     Player("You"),
     Killer("Kill"),
     Hittable("Stop"),
-    Winner("Win");
+    Winner("Win"),
+    Play("Play");
 
     public final String materialName;
 

@@ -16,18 +16,18 @@ public class Object {
     private int x;
     private int y;
     private Material material;
-    private static ArrayList<Position> movedPos = new ArrayList<Position>(); // Les endroits où des objets ont été bouger.
+    private static ArrayList<Position> movedPos = new ArrayList<>(); // Les endroits où des objets ont été bouger.
 
     public static Map<Material, ArrayList<Object>> instances = createInstancesMap();
 
     /**
      * Créé une instance de la map
-     * @return
+     * @return L'instance de la map
      */
     public static Map<Material, ArrayList<Object>> createInstancesMap() {
-        Map<Material, ArrayList<Object>> instances = new HashMap<Material, ArrayList<Object>>();
+        Map<Material, ArrayList<Object>> instances = new HashMap<>();
         for (Material material : Material.values()) {
-            instances.put(material, new ArrayList<Object>());
+            instances.put(material, new ArrayList<>());
         }
         return instances;
     }
@@ -138,6 +138,8 @@ public class Object {
 
                 Grid.getInstance().setWin(true);
                 return;
+            } else if (objectsAffectedByRules.get(Effects.Play).contains(object)) {
+                Grid.getInstance().mapLoadLevel(Level.getCurrentLevelNbr() + 1);
             }
         }
 
@@ -198,7 +200,7 @@ public class Object {
      * Vide la liste où est sauvegardé l'ancienne et la nouvelle position de l'objet
      */
     public static void resetMovedPos() {
-        movedPos = new ArrayList<Position>();
+        movedPos = new ArrayList<>();
     }
 
 }

@@ -1,0 +1,25 @@
+18 18
+Baba 11 12
+Title1 7 7
+Title2 8 7
+Title3 9 7
+Title4 10 7
+Title5 7 8
+Title6 8 8
+Title7 9 8
+Title8 10 8
+Title9 7 9
+Title10 8 9
+Title11 9 9
+Title12 10 9
+Title13 7 10
+Title14 8 10
+Title15 9 10
+Title16 10 10
+TextBtn 6 12
+Is 7 12
+Play 9 12
+Button 11 13
+TextBaba 0 15
+Is 0 16
+You 0 17

@@ -18,10 +18,8 @@ public class Level {
      * @param levelNbr Le numéro du level à charger
      * @return Une liste en 2 dimensions d'objets représentant la map
      */
+    public static ArrayOfObject[][] loadlevel(int levelNbr) {
 
-
-
-    public  static ArrayOfObject[][] loadlevel(int levelNbr) {
         currentLevelNbr = levelNbr;
         return loadlevel("level" + levelNbr);
     }

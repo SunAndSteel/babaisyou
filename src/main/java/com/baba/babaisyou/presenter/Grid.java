@@ -19,7 +19,7 @@ public class Grid {
     // Constructeur de la class Grid. Permet de charger le premier level. Il est appelé une seule fois car la class
     // est un singleton.
     private Grid() {
-        mapLoadLevel(1);
+        mapLoadLevel(0);
     }
 
     /**
