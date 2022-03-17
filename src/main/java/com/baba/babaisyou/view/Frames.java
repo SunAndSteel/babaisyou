@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 public class Frames {
 
-    private static final Image spriteSheetImage = new Image("file:src/main/resources/com/baba/babaisyou/views/spriteSheet.png");
+    private static final Image spriteSheetImage = new Image("file:src/main/resources/com/baba/babaisyou/views/spritesheet1.png");
 
     public static WritableImage[] getFrames(int row, int col, int nbrFrames) {
         WritableImage[] frames = new WritableImage[nbrFrames];

@@ -26,7 +26,8 @@ public class Level {
         try {
             // Crée le reader pour le level
             BufferedReader br = new BufferedReader(
-                    new FileReader("src/main/resources/com/baba/babaisyou/levels/level" + levelNbr + ".txt"));
+//                    new FileReader("src/main/resources/com/baba/babaisyou/levels/level" + levelNbr + ".txt"));
+                    new FileReader("src/main/resources/com/baba/babaisyou/levels/menu.txt"));
 
             String line;
             if ((line = br.readLine()) != null) {

@@ -28,7 +28,6 @@ public class Timer extends AnimationTimer {
     @Override
     public void handle(long now) {
         ArrayOfObject[][] grid = Grid.getInstance().grid;
-        Grid gridInstance = Grid.getInstance();
         GridPane gridPane = View.getGridPane();
 
         ArrayList<Position> movedPos = Object.getMovedPos();
@@ -37,11 +36,11 @@ public class Timer extends AnimationTimer {
             for (Position pos : movedPos) {
                 StackPane stackPane = new StackPane();
                 for (Object object : grid[pos.getY()][pos.getX()]) {
-                    if (object.getMaterial() == Material.Floor) {
-                        stackPane.getChildren().add(new ImageView(img));
-                    } else {
-                        stackPane.getChildren().add(new ImageView(object.getMaterial().getFrames()[0]));
-                    }
+//                    if (object.getMaterial() == Material.Floor) {
+//                        stackPane.getChildren().add(new Animation(img, object.getMaterial()));
+//                    } else {
+                        stackPane.getChildren().add(new Animation(object.getMaterial().getFrames()[0], object.getMaterial()));
+//                    }
                 }
                 gridPane.add(stackPane, pos.getX(), pos.getY());
             }
