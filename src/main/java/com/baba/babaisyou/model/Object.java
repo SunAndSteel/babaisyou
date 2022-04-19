@@ -4,6 +4,7 @@ import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Effects;
 import com.baba.babaisyou.model.enums.Material;
 import com.baba.babaisyou.presenter.Grid;
+import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,11 +13,12 @@ import java.util.Map;
 /**
  * Classe représentant un objet sur la map
  */
-public class Object {
-    private int x;
-    private int y;
+public class Object implements Comparable<Object> {
+    private int x, y, oldX, oldY;
     private Material material;
-    private static ArrayList<Position> movedPos = new ArrayList<>(); // Les endroits où des objets ont été bouger.
+    private static ArrayList<Position> movedPos = new ArrayList<>(); // Retirer car on peut le faire avec la positions des objects dans movedObjects.
+    private static Map<Object, Direction> movedObjects = new HashMap<>();
+    public ImageView iv;
 
     public static Map<Material, ArrayList<Object>> instances = createInstancesMap();
 
@@ -56,6 +58,7 @@ public class Object {
         material = Material.valueOf(materialName);
         instances.get(this.material).add(this);
         addMovedPos(new Position(x, y));
+//        addMovedObjects(this, Direction.NONE);
     }
 
     /**
@@ -64,28 +67,24 @@ public class Object {
     public int getX() { return x; }
 
     /**
+     * @return La position oldX de l'objet
+     */
+    public int getOldX() { return oldX; }
+
+    /**
      * @return La position y de l'objet
      */
     public int getY() { return y; }
 
     /**
+     * @return La position oldY de l'objet
+     */
+    public int getOldY() { return oldY; }
+
+    /**
      * @return La texture de l'objet
      */
     public Material getMaterial() { return material; }
-
-    /**
-     * @param x Position x de l'objet
-     */
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    /**
-     * @param y Position y de l'objet
-     */
-    public void setY(int y) {
-        this.y = y;
-    }
 
     /**
      * @param material Un objet material
@@ -110,10 +109,11 @@ public class Object {
      * Bouge l'objet si c'est possible
      * @param direction La direction vers laquelle on veut bouger
      */
-    public void move(Direction direction) {
+    public boolean move(Direction direction) {
         if (!this.isMovable(direction))
-            return;
-
+            return false;
+        oldX = this.x;
+        oldY = this.y;
         int dX = direction.dX; int dY = direction.dY;
         int x = this.x + dX; int y = this.y + dY;
         ArrayOfObject[][] grid = Grid.getInstance().grid;
@@ -131,23 +131,27 @@ public class Object {
 
             } else if (objectsAffectedByRules.get(Effects.Killer).contains(object)) {
                 grid[this.y][this.x].remove(this);
-                return;
+                return false;
 
             } else if (objectsAffectedByRules.get(Effects.Winner).contains(object) &&
                     objectsAffectedByRules.get(Effects.Player).contains(this)) {
 
                 Grid.getInstance().setWin(true);
-                return;
+                return false;
             } else if (objectsAffectedByRules.get(Effects.Play).contains(object)) {
-                Grid.getInstance().mapLoadLevel(Level.getCurrentLevelNbr() + 1);
+                Grid.getInstance().mapLoadLevel(Level.getCurrentLevelNbr() + 1); //mauvais idée car si il reste encore un joueur qui n'a pas encore bouger, après le loadlevel, il va être bouger et donc venir dans la mauvaise map
+                return false;
             }
         }
 
+        addMovedObjects(this, direction);
         addMovedPos(new Position(x, y));
         addMovedPos(new Position(this.x, this.y));
+
         grid[this.y][this.x].remove(this);
         grid[y][x].add(this);
         this.x = x; this.y = y;
+        return true;
     }
 
     /**
@@ -181,7 +185,7 @@ public class Object {
     }
 
     /**
-     * Sauvegarde dans une liste l'ancienne et la nouvelle position
+     * Sauvegarde dans une liste la position d'un endroit où un object a bougé
      * @param position La position
      */
     public static void addMovedPos(Position position) { // Pour améliorer, on peut ajouter la position, si elle n'est pas déjà dedans.
@@ -189,7 +193,6 @@ public class Object {
     }
 
     /**
-     *
      * @return La position vers laquelle le joueur a bougé
      */
     public static ArrayList<Position> getMovedPos() {
@@ -197,10 +200,47 @@ public class Object {
     }
 
     /**
-     * Vide la liste où est sauvegardé l'ancienne et la nouvelle position de l'objet
+     * Vide la liste où est sauvegardé les positions des endroits où des objects ont bougé
      */
     public static void resetMovedPos() {
         movedPos = new ArrayList<>();
     }
 
+    /**
+     * Sauvegarde dans une liste un object qui a bougé
+     * @param object L'object à ajouter dans la liste
+     */
+    public static void addMovedObjects(Object object, Direction direction) {
+        movedObjects.put(object, direction);
+    }
+
+    /**
+     *
+     * @return La liste des objects qui ont bougé
+     */
+    public static Map<Object, Direction> getMovedObjects() {
+        return movedObjects;
+    }
+
+    /**
+     * Vide la liste où est sauvegardé les objects qui ont bougé
+     */
+    public static void resetMovedObjects() {
+        movedObjects = new HashMap<>();
+    }
+
+    @Override
+    public int compareTo(Object object) {
+        if (this.y > object.y) {
+            return -1;
+        } else if (this.y == object.y) {
+            if (this.x >= y) {
+                return -1;
+            } else {
+                return 1;
+            }
+        } else {
+            return 1;
+        }
+    }
 }

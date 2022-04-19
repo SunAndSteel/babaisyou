@@ -48,7 +48,8 @@ public class Rule {
     public static void rule(Object obj1, Object obj2) {
         if (obj2.getMaterial().getEffect() != null && obj1.getMaterial().getNameObjectAffected() != null) {
             for (Object object : Object.instances.get(Material.valueOf(obj1.getMaterial().getNameObjectAffected()))) {
-                objectsAffectedByRules.get(obj2.getMaterial().getEffect()).add(object);
+                if (!objectsAffectedByRules.get(obj2.getMaterial().getEffect()).contains(object))
+                    objectsAffectedByRules.get(obj2.getMaterial().getEffect()).add(object);
             }
         } else if (obj2.getMaterial().getNameObjectAffected() != null && obj1.getMaterial().getNameObjectAffected() != null) {
             ArrayList<Object> instances = new ArrayList<Object>(

@@ -14,13 +14,4 @@ public enum Direction {
     Direction(int dX, int dY) {
         this.dX = dX; this.dY = dY;
     }
-
-//    public Direction verifyNewPos(Object object, Direction direction) {
-//        int newX = object.getX() + direction.dX;
-//        int newY = object.getY() + direction.dY;
-//        if (0 <= newX && newX <= Level.sizeX - 1 && 0 <= newY && newY <= Level.sizeY - 1)
-//            return direction;
-//        return Direction.NONE;
-//
-//    }
 }

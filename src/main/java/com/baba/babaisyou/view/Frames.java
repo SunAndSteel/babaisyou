@@ -7,7 +7,7 @@ import javafx.scene.image.WritableImage;
 
 public class Frames {
 
-    private static final Image spriteSheetImage = new Image("file:src/main/resources/com/baba/babaisyou/views/spritesheet1.png");
+    private static final Image spriteSheetImage = new Image("file:src/main/resources/com/baba/babaisyou/views/spritesheet.png");
 
     /**
      * Créer une frame à partir d'une spritesheet

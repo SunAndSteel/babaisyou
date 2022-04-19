@@ -1,7 +1,6 @@
 package com.baba.babaisyou.view;
 
-import com.baba.babaisyou.model.Level;
-import com.baba.babaisyou.model.Rule;
+import com.baba.babaisyou.model.*;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.presenter.Grid;
 import javafx.geometry.Pos;
@@ -11,13 +10,14 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
+
 /**
  * Classe qui gère l'interface graphique du jeu
  */
 public class View {
 
-    private static long startTime;
     private static GridPane root;
+    private static Stage primaryStage;
 
     /**
      * JavaFX
@@ -25,32 +25,31 @@ public class View {
      */
     public static void show(Stage primaryStage) {
 
+        View.primaryStage = primaryStage;
         Grid gridInstance = Grid.getInstance();
+        primaryStage.setTitle("BabaIsYou");
         Rule.checkRules();
+
         root = new GridPane();
         Scene scene = new Scene(root, MainView.width, MainView.height);
         primaryStage.setScene(scene);
 
+        root.setAlignment(Pos.CENTER);
+
         scene.setOnKeyPressed( (KeyEvent event) -> {
             KeyCode code = event.getCode();
-            if (code == KeyCode.Z) {
-                gridInstance.movePlayers(Direction.UP);
-            } else if (code == KeyCode.S) {
-                gridInstance.movePlayers(Direction.DOWN);
-            } else if (code == KeyCode.D) {
-                gridInstance.movePlayers(Direction.RIGHT);
-            } else if (code == KeyCode.Q) {
-                gridInstance.movePlayers(Direction.LEFT);
-            } else if (code == KeyCode.ESCAPE) {
-                primaryStage.close();
-            } else if (code == KeyCode.R) {
-                gridInstance.mapLoadLevel(Level.getCurrentLevelNbr());
+
+            switch (code) {
+                case Z -> gridInstance.movePlayers(Direction.UP);
+                case S -> gridInstance.movePlayers(Direction.DOWN);
+                case Q -> gridInstance.movePlayers(Direction.LEFT);
+                case D -> gridInstance.movePlayers(Direction.RIGHT);
+                case ESCAPE -> primaryStage.close(); // on devrait le mettre dans MainView
+                case R -> gridInstance.mapLoadLevel(Level.getCurrentLevelNbr());
             }
             gridInstance.checkWin();
             Rule.checkRules();
         });
-
-        root.setAlignment(Pos.CENTER);
 
         new Timer().start();
 
@@ -60,11 +59,10 @@ public class View {
     /**
      * @return Le moment du début de l'exécution
      */
-    public static long getStartTime() {
-        return startTime;
-    }
 
-    public static GridPane getGridPane() {
+    public static GridPane getRoot() {
         return root;
     }
+
+    public static Stage getPrimaryStage() { return primaryStage; }
 }

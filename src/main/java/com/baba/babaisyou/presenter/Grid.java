@@ -7,6 +7,7 @@ import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Effects;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * La classe qui représente la map
@@ -55,6 +56,10 @@ public class Grid {
      */
     public void movePlayers(Direction direction) {
         ArrayList<Object> players = Rule.objectsAffectedByRules.get(Effects.Player);
+
+        // la liste de player n'est pas rangé du coup bug
+
+        Collections.sort(players);
 
         if (direction == Direction.DOWN || direction == Direction.RIGHT) {
             for (int i = players.size() - 1; i >=0; i--) {
