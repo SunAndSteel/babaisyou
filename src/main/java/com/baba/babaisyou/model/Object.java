@@ -109,9 +109,9 @@ public class Object implements Comparable<Object> {
      * Bouge l'objet si c'est possible
      * @param direction La direction vers laquelle on veut bouger
      */
-    public boolean move(Direction direction) {
+    public void move(Direction direction) {
         if (!this.isMovable(direction))
-            return false;
+            return;
         oldX = this.x;
         oldY = this.y;
         int dX = direction.dX; int dY = direction.dY;
@@ -131,16 +131,13 @@ public class Object implements Comparable<Object> {
 
             } else if (objectsAffectedByRules.get(Effects.Killer).contains(object)) {
                 grid[this.y][this.x].remove(this);
-                return false;
 
             } else if (objectsAffectedByRules.get(Effects.Winner).contains(object) &&
                     objectsAffectedByRules.get(Effects.Player).contains(this)) {
 
                 Grid.getInstance().setWin(true);
-                return false;
             } else if (objectsAffectedByRules.get(Effects.Play).contains(object)) {
                 Grid.getInstance().mapLoadLevel(Level.getCurrentLevelNbr() + 1); //mauvais idée car si il reste encore un joueur qui n'a pas encore bouger, après le loadlevel, il va être bouger et donc venir dans la mauvaise map
-                return false;
             }
         }
 
@@ -151,7 +148,6 @@ public class Object implements Comparable<Object> {
         grid[this.y][this.x].remove(this);
         grid[y][x].add(this);
         this.x = x; this.y = y;
-        return true;
     }
 
     /**
@@ -232,15 +228,15 @@ public class Object implements Comparable<Object> {
     @Override
     public int compareTo(Object object) {
         if (this.y > object.y) {
-            return -1;
+            return 1;
         } else if (this.y == object.y) {
-            if (this.x >= y) {
-                return -1;
-            } else {
+            if (this.x >= object.x) {
                 return 1;
+            } else {
+                return -1;
             }
         } else {
-            return 1;
+            return -1;
         }
     }
 }
