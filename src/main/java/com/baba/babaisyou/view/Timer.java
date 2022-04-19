@@ -30,6 +30,9 @@ public class Timer extends AnimationTimer {
             for (Object object : grid[pos.getY()][pos.getX()]) {
 
                 ImageView iv = new ImageView(object.getMaterial().getFrames()[0]);
+                iv.setPreserveRatio(true);
+                iv.setFitHeight(Math.min(View.getTileHeight(), View.getTileWight()));
+
                 stackPane.getChildren().add(iv);
                 object.iv = iv;
             }
