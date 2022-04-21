@@ -55,3 +55,7 @@ Baba 15 15
 TextBaba 10 10
 Is 11 10
 You 12 10
+Wall 10 7
+TextWall 11 8
+Is 12 8
+Kill 13 8

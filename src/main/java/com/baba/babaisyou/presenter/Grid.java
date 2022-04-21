@@ -5,9 +5,12 @@ import com.baba.babaisyou.model.Level;
 import com.baba.babaisyou.model.Object;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Effects;
+import com.baba.babaisyou.view.LevelView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * La classe qui représente la map
@@ -16,6 +19,8 @@ public class Grid {
     public ArrayOfObject[][] grid;
     private static Grid instance = null;
     private boolean win = false;
+//    private ArrayList<ArrayOfObject[][]> oldGrids = new ArrayList<>();
+    private ArrayList<Map<Object, Direction>> reverseList = new ArrayList<>();
 
     // Constructeur de la class Grid. Permet de charger le premier level. Il est appelé une seule fois car la class
     // est un singleton.
@@ -39,13 +44,13 @@ public class Grid {
      */
     public void mapLoadLevel(int levelNbr) {
         Rule.objectsAffectedByRules = Rule.createObjectsAffectedByRulesMap();
-        Object.instances = Object.createInstancesMap();
+        Object.resetInstancesMap();
         grid = Level.loadlevel(levelNbr);
     }
 
     public void mapLoadLevel(String name) {
         Rule.objectsAffectedByRules = Rule.createObjectsAffectedByRulesMap();
-        Object.instances = Object.createInstancesMap();
+        Object.resetInstancesMap();
         grid = Level.loadlevel(name);
     }
 
@@ -71,6 +76,8 @@ public class Grid {
                 player.move(direction);
             }
         }
+        reverseList.add(Object.getMovedObjects());
+        Object.resetMovedObjects();
     }
 
     /**
@@ -90,5 +97,38 @@ public class Grid {
      */
     public void setWin(boolean state) {
         win = state;
+    }
+
+    /**
+     * Permet de revenir en arrière d'une étape.
+     */
+    public void reverse() {
+        if (reverseList.size() == 0)
+            return;
+
+        Map<Object, Direction> lastMovedObjects = reverseList.remove(reverseList.size() - 1);
+
+        for (Object o : lastMovedObjects.keySet()) {
+
+            int x = o.getX();
+            int y = o.getY();
+
+            grid[y][x].remove(o);
+
+            Direction direction = lastMovedObjects.get(o);
+
+            int newX = x - direction.dX;
+            int newY = y - direction.dY;
+
+            grid[newY][newX].add(o);
+
+            o.setX(newX);
+            o.setY(newY);
+
+            if (!Object.getInstances().get(o.getMaterial()).contains(o)) {
+                Object.getInstances().get(o.getMaterial()).add(o);
+            }
+        }
+        LevelView.drawAll();
     }
 }

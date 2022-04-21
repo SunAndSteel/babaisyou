@@ -19,7 +19,7 @@ public class Timer extends AnimationTimer {
     @Override
     public void handle(long now) {
         ArrayOfObject[][] grid = Grid.getInstance().grid;
-        GridPane root = View.getRoot();
+        GridPane root = LevelView.getRoot();
 
         ArrayList<Position> movedPos = Object.getMovedPos();
 
@@ -31,10 +31,9 @@ public class Timer extends AnimationTimer {
 
                 ImageView iv = new ImageView(object.getMaterial().getFrames()[0]);
                 iv.setPreserveRatio(true);
-                iv.setFitHeight(Math.min(View.getTileHeight(), View.getTileWight()));
+                iv.setFitHeight(Math.min(LevelView.getTileHeight(), LevelView.getTileWight()));
 
                 stackPane.getChildren().add(iv);
-                object.iv = iv;
             }
                 root.add(stackPane, pos.getX(), pos.getY());
         }

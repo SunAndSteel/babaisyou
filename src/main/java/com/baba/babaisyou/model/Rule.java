@@ -32,7 +32,7 @@ public class Rule {
         // ils sont mouvable sans aucune règle (par exemple : on peut bouger le You sans règle)
         for (Material material : Material.values()) {
             if (material.getEffect() != null || material == Material.Is || material.getNameObjectAffected() != null) {
-                for (Object object : Object.instances.get(material)) {
+                for (Object object : Object.getInstances().get(material)) {
                     objectsAffectedByRules.get(Effects.Movable).add(object);
                 }
             }
@@ -47,13 +47,13 @@ public class Rule {
      */
     public static void rule(Object obj1, Object obj2) {
         if (obj2.getMaterial().getEffect() != null && obj1.getMaterial().getNameObjectAffected() != null) {
-            for (Object object : Object.instances.get(Material.valueOf(obj1.getMaterial().getNameObjectAffected()))) {
+            for (Object object : Object.getInstances().get(Material.valueOf(obj1.getMaterial().getNameObjectAffected()))) {
                 if (!objectsAffectedByRules.get(obj2.getMaterial().getEffect()).contains(object))
                     objectsAffectedByRules.get(obj2.getMaterial().getEffect()).add(object);
             }
         } else if (obj2.getMaterial().getNameObjectAffected() != null && obj1.getMaterial().getNameObjectAffected() != null) {
             ArrayList<Object> instances = new ArrayList<Object>(
-                    Object.instances.get(Material.valueOf(obj1.getMaterial().getNameObjectAffected())));
+                    Object.getInstances().get(Material.valueOf(obj1.getMaterial().getNameObjectAffected())));
 
             for (Object object : instances) {
                 object.setMaterial(Material.valueOf(obj2.getMaterial().getNameObjectAffected()));
@@ -69,7 +69,7 @@ public class Rule {
         objectsAffectedByRules = createObjectsAffectedByRulesMap();
         ArrayOfObject[][] grid = Grid.getInstance().grid;
 
-        for (Object Is : Object.instances.get(Material.Is)) {
+        for (Object Is : Object.getInstances().get(Material.Is)) {
             int x = Is.getX(); int y = Is.getY();
 
             if (1 <= x && x <= Level.getSizeX() - 2) {

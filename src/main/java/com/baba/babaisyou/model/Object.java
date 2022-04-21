@@ -4,7 +4,6 @@ import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Effects;
 import com.baba.babaisyou.model.enums.Material;
 import com.baba.babaisyou.presenter.Grid;
-import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,13 +13,12 @@ import java.util.Map;
  * Classe représentant un objet sur la map
  */
 public class Object implements Comparable<Object> {
-    private int x, y, oldX, oldY;
+    private int x, y;
     private Material material;
     private static ArrayList<Position> movedPos = new ArrayList<>(); // Retirer car on peut le faire avec la positions des objects dans movedObjects.
     private static Map<Object, Direction> movedObjects = new HashMap<>();
-    public ImageView iv;
 
-    public static Map<Material, ArrayList<Object>> instances = createInstancesMap();
+    private static Map<Material, ArrayList<Object>> instances = createInstancesMap();
 
     /**
      * Créé une instance de la map
@@ -35,6 +33,13 @@ public class Object implements Comparable<Object> {
     }
 
     /**
+     * Réinitialise le dictionnaire instances.
+     */
+    public static void resetInstancesMap() {
+        instances = createInstancesMap();
+    }
+
+    /**
      * Constructeur d'un objet de la map
      * @param material La texture
      * @param x La position x
@@ -44,7 +49,6 @@ public class Object implements Comparable<Object> {
         this.x = x; this.y = y;
         this.material = material;
         instances.get(material).add(this);
-        addMovedPos(new Position(x, y));
     }
 
     /**
@@ -57,8 +61,13 @@ public class Object implements Comparable<Object> {
         this.x = x; this.y = y;
         material = Material.valueOf(materialName);
         instances.get(this.material).add(this);
-        addMovedPos(new Position(x, y));
-//        addMovedObjects(this, Direction.NONE);
+    }
+
+    /**
+     * @return Le dictionnaire des instances en fonction de leur matériel
+     */
+    public static Map<Material, ArrayList<Object>> getInstances() {
+        return instances;
     }
 
     /**
@@ -67,9 +76,9 @@ public class Object implements Comparable<Object> {
     public int getX() { return x; }
 
     /**
-     * @return La position oldX de l'objet
+     * @param x La nouvelle position x de l'objet
      */
-    public int getOldX() { return oldX; }
+    public void setX(int x) { this.x = x; }
 
     /**
      * @return La position y de l'objet
@@ -77,9 +86,9 @@ public class Object implements Comparable<Object> {
     public int getY() { return y; }
 
     /**
-     * @return La position oldY de l'objet
+     * @param y La nouvelle position y de l'objet
      */
-    public int getOldY() { return oldY; }
+    public void setY(int y) { this.y = y; }
 
     /**
      * @return La texture de l'objet
@@ -112,8 +121,7 @@ public class Object implements Comparable<Object> {
     public void move(Direction direction) {
         if (!this.isMovable(direction))
             return;
-        oldX = this.x;
-        oldY = this.y;
+
         int dX = direction.dX; int dY = direction.dY;
         int x = this.x + dX; int y = this.y + dY;
         ArrayOfObject[][] grid = Grid.getInstance().grid;
@@ -131,6 +139,10 @@ public class Object implements Comparable<Object> {
 
             } else if (objectsAffectedByRules.get(Effects.Killer).contains(object)) {
                 grid[this.y][this.x].remove(this);
+                instances.get(this.getMaterial()).remove(this);
+                addMovedObjects(this, Direction.NONE);
+                addMovedPos(new Position(this.x, this.y));
+                return;
 
             } else if (objectsAffectedByRules.get(Effects.Winner).contains(object) &&
                     objectsAffectedByRules.get(Effects.Player).contains(this)) {

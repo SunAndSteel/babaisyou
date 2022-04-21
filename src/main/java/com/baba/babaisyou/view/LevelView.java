@@ -17,7 +17,7 @@ import javafx.stage.Stage;
 /**
  * Classe qui gère l'interface graphique du jeu
  */
-public class View {
+public class LevelView {
 
     private static GridPane root;
     private static Stage primaryStage;
@@ -29,7 +29,7 @@ public class View {
      */
     public static void show(Stage primaryStage) {
 
-        View.primaryStage = primaryStage;
+        LevelView.primaryStage = primaryStage;
         Grid gridInstance = Grid.getInstance();
         primaryStage.setTitle("BabaIsYou");
         Rule.checkRules();
@@ -37,6 +37,8 @@ public class View {
         root = new GridPane();
         Scene scene = new Scene(root, MainView.width, MainView.height);
         primaryStage.setScene(scene);
+
+//        scene.setFill(Color.rgb(36, 43, 71));
 
         root.setAlignment(Pos.CENTER);
 
@@ -51,12 +53,11 @@ public class View {
                 case ESCAPE -> primaryStage.close(); // on devrait le mettre dans MainView
                 case R -> gridInstance.mapLoadLevel(Level.getCurrentLevelNbr());
                 case F11 -> primaryStage.setFullScreen(!primaryStage.isFullScreen());
+                case BACK_SPACE -> gridInstance.reverse();
             }
             gridInstance.checkWin();
             Rule.checkRules();
         });
-
-        new Timer().start();
 
         primaryStage.heightProperty().addListener((observable, oldVal, newVal) -> {
             tileHeight = (newVal.intValue() - 50) / Level.getSizeY();
@@ -70,6 +71,8 @@ public class View {
             drawAll();
         });
 
+        drawAll();
+        new Timer().start();
         primaryStage.show();
     }
 
@@ -102,10 +105,9 @@ public class View {
                 for (Object object : objects) {
                     ImageView iv = new ImageView(object.getMaterial().getFrames()[0]);
                     iv.setPreserveRatio(true);
-                    iv.setFitHeight(Math.min(View.getTileHeight(), View.getTileWight()));
+                    iv.setFitHeight(Math.min(LevelView.getTileHeight(), LevelView.getTileWight()));
 
                     stackPane.getChildren().add(iv);
-                    object.iv = iv;
                 }
                 root.add(stackPane, objects.get(0).getX(), objects.get(0).getY());
             }

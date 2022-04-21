@@ -31,24 +31,7 @@ public enum Material {
     TextRock("TR", null, "Rock", Frames.getFrames(2, 0, 1)),
     TextBtn("BT", null, "Button", Frames.getImages("file:src\\main\\resources\\com\\baba\\babaisyou\\views\\btn.png")),
 
-    //Titre
-//    Title1("", null, null, Frames.getFrames(17, 17, 1)),
-//    Title2("", null, null, Frames.getFrames(17, 18, 1)),
-//    Title3("", null, null, Frames.getFrames(17, 19, 1)),
-//    Title4("", null, null, Frames.getFrames(17, 20, 1)),
-//    Title5("", null, null, Frames.getFrames(18, 17, 1)),
-//    Title6("", null, null, Frames.getFrames(18, 18, 1)),
-//    Title7("", null, null, Frames.getFrames(18, 19, 1)),
-//    Title8("", null, null, Frames.getFrames(18, 20, 1)),
-//    Title9("", null, null, Frames.getFrames(19, 17, 1)),
-//    Title10("", null, null, Frames.getFrames(19, 18, 1)),
-//    Title11("", null, null, Frames.getFrames(19, 19, 1)),
-//    Title12("", null, null, Frames.getFrames(19, 20, 1)),
-//    Title13("", null, null, Frames.getFrames(20, 17, 1)),
-//    Title14("", null, null, Frames.getFrames(20, 18, 1)),
-//    Title15("", null, null, Frames.getFrames(20, 19, 1)),
-//    Title16("", null, null, Frames.getFrames(20, 20, 1));
-
+    // Title
     Title1("", null, null, Frames.getFrames(9, 4, 1)),
     Title2("", null, null, Frames.getFrames(9, 5, 1)),
     Title3("", null, null, Frames.getFrames(9, 6, 1)),
