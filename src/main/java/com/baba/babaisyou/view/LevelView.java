@@ -1,17 +1,22 @@
 package com.baba.babaisyou.view;
 
 import com.baba.babaisyou.model.*;
-import com.baba.babaisyou.model.Object;
 import com.baba.babaisyou.model.enums.Direction;
-import com.baba.babaisyou.presenter.Grid;
+import com.baba.babaisyou.model.enums.Material;
+import com.baba.babaisyou.presenter.Game;
+import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 
 /**
@@ -19,61 +24,60 @@ import javafx.stage.Stage;
  */
 public class LevelView {
 
+    private static Stage stage;
     private static GridPane root;
-    private static Stage primaryStage;
-    private static int tileHeight, tileWight;
+    private static int tileSize, tileHeight, tileWidth;
+    private static Level level;
+    private static final ArrayList<TranslateTransition> transitions = new ArrayList<>();
+
 
     /**
      * JavaFX
-     * @param primaryStage Le stage dans lequel on affiche la scène
+     * @param stage Le stage dans lequel on affiche la scène
      */
-    public static void show(Stage primaryStage) {
+    public static void show(Stage stage) {
 
-        LevelView.primaryStage = primaryStage;
-        Grid gridInstance = Grid.getInstance();
-        primaryStage.setTitle("BabaIsYou");
-        Rule.checkRules();
-
+        LevelView.stage = stage;
         root = new GridPane();
         Scene scene = new Scene(root, MainView.width, MainView.height);
-        primaryStage.setScene(scene);
+        stage.setScene(scene);
 
-//        scene.setFill(Color.rgb(36, 43, 71));
+        Game game = Game.getInstance();
+        game.mapLoadLevel(1);
+        level = game.getLevel();
+        stage.setTitle("BabaIsYou");
+        Rule.checkAllRules(level);
+        scene.setFill(Color.rgb(21, 24, 31));
 
         root.setAlignment(Pos.CENTER);
 
         scene.setOnKeyPressed( (KeyEvent event) -> {
-            KeyCode code = event.getCode();
 
-            switch (code) {
-                case Z -> gridInstance.movePlayers(Direction.UP);
-                case S -> gridInstance.movePlayers(Direction.DOWN);
-                case Q -> gridInstance.movePlayers(Direction.LEFT);
-                case D -> gridInstance.movePlayers(Direction.RIGHT);
-                case ESCAPE -> primaryStage.close(); // on devrait le mettre dans MainView
-                case R -> gridInstance.mapLoadLevel(Level.getCurrentLevelNbr());
-                case F11 -> primaryStage.setFullScreen(!primaryStage.isFullScreen());
-                case BACK_SPACE -> gridInstance.reverse();
+            if (transitions.isEmpty()) {
+                KeyCode code = event.getCode();
+
+                switch (code) {
+                    case Z -> game.movePlayers(Direction.UP);
+                    case S -> game.movePlayers(Direction.DOWN);
+                    case Q -> game.movePlayers(Direction.LEFT);
+                    case D -> game.movePlayers(Direction.RIGHT);
+                    case ESCAPE -> stage.close(); // on devrait le mettre dans MainView
+                    case R -> {
+                        game.mapLoadLevel(Level.getCurrentLevelNbr());
+                        level = game.getLevel();
+                        Rule.checkAllRules(level);
+                    }
+                    case F11 -> stage.setFullScreen(!stage.isFullScreen());
+                    case BACK_SPACE -> game.reverse();
+                }
+                game.update();
+                drawMovedObjects(root);
             }
-            gridInstance.checkWin();
-            Rule.checkRules();
         });
 
-        primaryStage.heightProperty().addListener((observable, oldVal, newVal) -> {
-            tileHeight = (newVal.intValue() - 50) / Level.getSizeY();
-            root.getChildren().clear();
-            drawAll();
-        });
-
-        primaryStage.widthProperty().addListener((observable, oldVal, newVal) -> {
-            tileWight = (newVal.intValue() - 50) / Level.getSizeX();
-            root.getChildren().clear();
-            drawAll();
-        });
-
-        drawAll();
-        new Timer().start();
-        primaryStage.show();
+        WidthHeightListener();
+        drawMovedObjects(root);
+        stage.show();
     }
 
     /**
@@ -83,34 +87,83 @@ public class LevelView {
         return root;
     }
 
-    public static Stage getPrimaryStage() { return primaryStage; }
+    public static int getTileSize() { return tileSize; }
 
-    public static int getTileHeight() {
-        return tileHeight;
+    private static void WidthHeightListener() {
+        stage.heightProperty().addListener((observable, oldVal, newVal) -> {
+            tileHeight = (newVal.intValue() - 50) / level.getSizeY();
+            resizeIVs();
+        });
+
+        stage.widthProperty().addListener((observable, oldVal, newVal) -> {
+            tileWidth = (newVal.intValue() - 50) / level.getSizeX();
+            resizeIVs();
+        });
     }
 
-    public static int getTileWight() {
-        return tileWight;
-    }
+    private static void resizeIVs() {
+        tileSize = Math.min(tileWidth, tileHeight);
 
-    public static void drawAll() {
-        ArrayOfObject[][] grid = Grid.getInstance().grid;
-
-        for (ArrayOfObject[] row : grid) {
-
-            for (ArrayOfObject objects : row) {
-
-                StackPane stackPane = new StackPane();
-
-                for (Object object : objects) {
-                    ImageView iv = new ImageView(object.getMaterial().getFrames()[0]);
-                    iv.setPreserveRatio(true);
-                    iv.setFitHeight(Math.min(LevelView.getTileHeight(), LevelView.getTileWight()));
-
-                    stackPane.getChildren().add(iv);
-                }
-                root.add(stackPane, objects.get(0).getX(), objects.get(0).getY());
+        for (ArrayList<GameObject> objects : level) {
+            for (GameObject object : objects) {
+                object.getIv().setFitHeight(tileSize);
             }
         }
+    }
+
+    public static void drawMovedObjects(GridPane gridPane) {
+        Map<GameObject, Direction> movedObjects = GameObject.getMovedObjects();
+
+
+        for (GameObject object : movedObjects.keySet()) {
+
+            ImageView iv = object.getIv();
+
+            Direction direction = movedObjects.get(object);
+
+            if (direction == Direction.NONE) {
+
+                gridPane.getChildren().remove(iv);
+                gridPane.add(iv, object.getX(), object.getY());
+
+                continue;
+            }
+
+            Material material = object.getMaterial();
+
+            if (material.isDirectional()) {
+                iv.setImage(material.getFrames()[direction.index]);
+
+            }
+
+            // Cela permet de mettre l'ImageView à la fin de la liste children, pour éviter des bugs visuels avec TranslateTransition
+            gridPane.getChildren().remove(iv);
+            gridPane.getChildren().add(iv);
+
+            TranslateTransition transition = new TranslateTransition(Duration.millis(75));
+
+            transitions.add(transition);
+
+            transition.setByX(LevelView.getTileSize() * direction.dX);
+            transition.setByY(LevelView.getTileSize() * direction.dY);
+
+            transition.setNode(iv);
+
+            transition.play();
+
+            transition.setOnFinished( evt -> {
+                gridPane.getChildren().remove(iv);
+                iv.setTranslateX(0);
+                iv.setTranslateY(0);
+
+                transitions.remove(transition);
+
+                // Permet de vérifier si l'objet est toujours là (pour le changement de niveau)
+                if (Game.getInstance().getLevel().get(object.getX(), object.getY()).contains(object)) { // A changer
+                    gridPane.add(iv, object.getX(), object.getY());
+                }
+            });
+        }
+        GameObject.resetMovedObjects();
     }
 }

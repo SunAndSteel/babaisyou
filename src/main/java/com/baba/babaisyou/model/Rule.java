@@ -1,11 +1,12 @@
 package com.baba.babaisyou.model;
 
-import com.baba.babaisyou.model.enums.Effects;
+import com.baba.babaisyou.model.enums.Direction;
+import com.baba.babaisyou.model.enums.Effect;
 import com.baba.babaisyou.model.enums.Material;
-import com.baba.babaisyou.presenter.Grid;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.Glow;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -13,31 +14,60 @@ import java.util.Map;
  */
 public class Rule {
 
-    public static ArrayList<ArrayList<Object>> Rules = new ArrayList<ArrayList<Object>>();
+    private static final ArrayList<Rule> rules = new ArrayList<>();
 
-    public static Map<Effects, ArrayList<Object>> objectsAffectedByRules = createObjectsAffectedByRulesMap();
+    private final GameObject obj1, obj2, is;
+    private final Material material1, material2;
+    private final Effect effect;
 
-    /**
-     * Méthode qui permet de créer un Map des objets affectés par les règles
-     * @return un Map des objets affectés par les règles
-     */
-    public static Map<Effects, ArrayList<Object>> createObjectsAffectedByRulesMap() {
-        Map<Effects, ArrayList<Object>> objectsAffectedByRules = new HashMap<Effects, ArrayList<Object>>();
-        for (Effects effect : Effects.values()) {
-            objectsAffectedByRules.put(effect, new ArrayList<Object>());
+    private Rule(GameObject obj1, GameObject is, GameObject obj2) {
+
+        this.obj1 = obj1;
+        this.obj2 = obj2;
+        this.is = is;
+
+        Glow glowEffect = GameObject.getGlowEffect();
+
+        obj1.getIv().setEffect(glowEffect);
+        obj2.getIv().setEffect(glowEffect);
+        is.getIv().setEffect(glowEffect);
+
+        Material materialObj1 = obj1.getMaterial();
+        Material materialObj2 = obj2.getMaterial();
+
+        material1 = Material.valueOf(materialObj1.getNameObject());
+
+        if (materialObj2.hasNameObject()) {
+            material2 = Material.valueOf(materialObj2.getNameObject());
+            effect = null;
+        } else {
+            material2 = null;
+            effect = materialObj2.getEffect();
         }
 
+        obj1.getAssociatedRules().add(this);
+        obj2.getAssociatedRules().add(this);
+        is.getAssociatedRules().add(this);
+        rules.add(this);
 
-        // Ajoute toutes les instances des materiels qui ont un effet dans la liste des instances mouvable car
-        // ils sont mouvable sans aucune règle (par exemple : on peut bouger le You sans règle)
-        for (Material material : Material.values()) {
-            if (material.getEffect() != null || material == Material.Is || material.getNameObjectAffected() != null) {
-                for (Object object : Object.getInstances().get(material)) {
-                    objectsAffectedByRules.get(Effects.Movable).add(object);
-                }
+        // On fait une copie des instances, car la liste est modifiée dans setMaterial,
+        // et donc pour ne pas avoir de problème avec le for each.
+        ArrayList<GameObject> instances = new ArrayList<>(GameObject.getInstances().get(material1));
+
+        if (materialObj2.hasEffect()) {
+
+            for (GameObject object : instances) {
+                object.getTags().add(materialObj2.getEffect());
+            }
+
+        } else {
+
+            Material newMaterial = Material.valueOf(materialObj2.getNameObject());
+
+            for (GameObject object : instances) {
+                object.setMaterial(newMaterial);
             }
         }
-        return objectsAffectedByRules;
     }
 
     /**
@@ -45,52 +75,217 @@ public class Rule {
      * @param obj1 Un objet de la map
      * @param obj2 Un objet de la map
      */
-    public static void rule(Object obj1, Object obj2) {
-        if (obj2.getMaterial().getEffect() != null && obj1.getMaterial().getNameObjectAffected() != null) {
-            for (Object object : Object.getInstances().get(Material.valueOf(obj1.getMaterial().getNameObjectAffected()))) {
-                if (!objectsAffectedByRules.get(obj2.getMaterial().getEffect()).contains(object))
-                    objectsAffectedByRules.get(obj2.getMaterial().getEffect()).add(object);
-            }
-        } else if (obj2.getMaterial().getNameObjectAffected() != null && obj1.getMaterial().getNameObjectAffected() != null) {
-            ArrayList<Object> instances = new ArrayList<Object>(
-                    Object.getInstances().get(Material.valueOf(obj1.getMaterial().getNameObjectAffected())));
+    public static void createRule(GameObject obj1, GameObject is, GameObject obj2) {
 
-            for (Object object : instances) {
-                object.setMaterial(Material.valueOf(obj2.getMaterial().getNameObjectAffected()));
+        for (Rule rule : rules) {
+            if (rule.obj1 == obj1 && rule.obj2 == obj2) {
+                return;
             }
         }
-    }
 
+        new Rule(obj1, is, obj2);
+
+    }
 
     /**
      * Parcours la grille pour chercher les règles
      */
-    public static void checkRules() {
-        objectsAffectedByRules = createObjectsAffectedByRulesMap();
-        ArrayOfObject[][] grid = Grid.getInstance().grid;
+    public static void checkAllRules(Level level) {
 
-        for (Object Is : Object.getInstances().get(Material.Is)) {
-            int x = Is.getX(); int y = Is.getY();
-
-            if (1 <= x && x <= Level.getSizeX() - 2) {
-                for (Object object1 : grid[y][x - 1]) {
-                    for (Object object2 : grid[y][x + 1]) {
-                        rule(object1, object2);
-                    }
-                }
-
-            }
-
-            if (1 <= y && y <= Level.getSizeY() - 2) {
-                for (Object object1 : grid[y - 1][x]) {
-                    for (Object object2 : grid[y + 1][x]) {
-                        rule(object1, object2);
-                    }
-                }
-            }
-
+        for (GameObject is : GameObject.getInstances().get(Material.Is)) {
+            isRule(is, level);
         }
     }
 
+    public static void checkRules(Level level) {
+        Map<GameObject, Direction> movedObjects = GameObject.getMovedObjects();
+
+        for (GameObject object : movedObjects.keySet()) {
+
+            ArrayList<Rule> associatedRules = new ArrayList<>(object.getAssociatedRules());
+
+            for (Rule rule : associatedRules) {
+                if (!rule.stillValid(level)) {
+                    rule.unrule();
+                }
+            }
+
+            int x = object.getX();
+            int y = object.getY();
+
+            // On vérifie si l'objet est bien toujours là (c'est seulement utile lorsque que l'objet s'est fait supprimer).
+            if (!level.get(x, y).contains(object))
+                continue;
+
+            Material material = object.getMaterial();
+            Direction[] directions;
+
+            if (material == Material.Is) {
+                isRule(object, level);
+                continue;
+
+            } else if (material.hasNameObject()) {
+                directions = new Direction[]{Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT};
+
+            } else if (material.hasEffect()) {
+                directions = new Direction[]{Direction.UP, Direction.LEFT};
+
+            } else {
+                continue;
+
+            }
+
+            for (Direction direction : directions) {
+
+                int xDirection = x + direction.dX;
+                int yDirection = y + direction.dY;
+                int xDirection2 = x + direction.dX * 2;
+                int yDirection2 = y + direction.dY * 2;
+
+                if (0 <= xDirection2 && xDirection2 < level.getSizeX() && 0 <= yDirection2 && yDirection2 < level.getSizeY()) {
+
+                    for (GameObject obj1 : level.get(xDirection, yDirection)) {
+
+                        if (obj1.getMaterial() == Material.Is) {
+
+                            for (GameObject obj2 : level.get(xDirection2, yDirection2)) {
+
+                                Material material2 = obj2.getMaterial();
+
+                                if (material2.hasEffect() || material2.hasNameObject()) {
+                                    if (xDirection2 < x || yDirection2 < y) {
+                                        createRule(obj2, obj1, object);
+                                    } else {
+                                        createRule(object, obj1, obj2);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    private static void isRule(GameObject is, Level level) {
+        int x = is.getX();
+        int y = is.getY();
+
+        if (1 <= x && x <= level.getSizeX() - 2) {
+            for (GameObject object1 : level.get(x - 1, y)) {
+
+                if (object1.getMaterial().hasNameObject()) {
+
+                    for (GameObject object2 : level.get(x + 1, y)) {
+
+                        Material material2 = object2.getMaterial();
+
+                        if (material2.hasNameObject() || material2.hasEffect()) {
+                            createRule(object1, is, object2);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (1 <= y && y <= level.getSizeY() - 2) {
+            for (GameObject object1 : level.get(x, y - 1)) {
+
+                if (object1.getMaterial().hasNameObject()) {
+
+                    for (GameObject object2 : level.get(x, y + 1)) {
+
+                        Material material2 = object2.getMaterial();
+
+                        if (material2.hasNameObject() || material2.hasEffect()) {
+                            createRule(object1, is, object2);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean stillValid(Level level) {
+        int x = is.getX();
+        int y = is.getY();
+
+        if (!level.get(x, y).contains(is)) {
+            return false;
+        }
+
+        if (0 <= x - 1 && x + 1 < level.getSizeX()) {
+            if (level.get(x - 1, y).contains(obj1) && level.get(x + 1, y).contains(obj2))
+                return true;
+        }
+
+        if (0 <= y - 1 && y + 1 < level.getSizeY()) {
+            if (level.get(x, y - 1).contains(obj1) && level.get(x, y + 1).contains(obj2))
+                return true;
+        }
+        return false;
+    }
+
+    private void unrule() {
+        obj1.getAssociatedRules().remove(this);
+        obj2.getAssociatedRules().remove(this);
+        is.getAssociatedRules().remove(this);
+        rules.remove(this);
+
+        ColorAdjust brightnessAdjust = GameObject.getBrightnessAdjust();
+
+        if (obj1.getAssociatedRules().isEmpty()) {
+            obj1.getIv().setEffect(brightnessAdjust);
+        }
+
+        if (obj2.getAssociatedRules().isEmpty()) {
+            obj2.getIv().setEffect(brightnessAdjust);
+        }
+
+        if (is.getAssociatedRules().isEmpty()) {
+            is.getIv().setEffect(brightnessAdjust);
+        }
+
+
+        if (obj2.getMaterial().hasEffect()) {
+
+            ArrayList<GameObject> objects = GameObject.getInstances().get(material1);
+
+            Effect effect = obj2.getMaterial().getEffect();
+
+            for (GameObject object : objects) {
+                object.getTags().remove(effect);
+            }
+        }
+    }
+
+    public GameObject getObj1() {
+        return obj1;
+    }
+
+    public GameObject getObj2() {
+        return obj2;
+    }
+
+    public static ArrayList<Rule> getRules() {
+        return rules;
+    }
+
+    public Material getMaterial1() {
+        return material1;
+    }
+
+    public Material getMaterial2() {
+        return material2;
+    }
+
+    public Effect getEffect() {
+        return effect;
+    }
+
+    public boolean hasMaterial2() {
+        return !(material2 == null);
+    }
 
 }

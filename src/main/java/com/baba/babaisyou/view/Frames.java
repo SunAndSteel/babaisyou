@@ -7,7 +7,8 @@ import javafx.scene.image.WritableImage;
 
 public class Frames {
 
-    private static final Image spriteSheetImage = new Image("file:src/main/resources/com/baba/babaisyou/views/spritesheet.png");
+    private static final Image spriteSheetImage = new Image("file:src\\main\\resources\\com\\baba\\babaisyou\\views\\sheet.png");
+    private static final int frameSize = 24;
 
     /**
      * Créer une frame à partir d'une spritesheet
@@ -21,7 +22,7 @@ public class Frames {
         PixelReader pixelReader = spriteSheetImage.getPixelReader();
 
         for (int i = 0; i < nbrFrames; i++) {
-            frames[i] = new WritableImage(pixelReader, col*24 + i*24, row*24, 24, 24);
+            frames[i] = new WritableImage(pixelReader, col*frameSize, row*frameSize + i*frameSize, frameSize, frameSize);
         }
 
         return frames;

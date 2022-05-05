@@ -2,39 +2,32 @@ package com.baba.babaisyou.presenter;
 
 import com.baba.babaisyou.model.*;
 import com.baba.babaisyou.model.Level;
-import com.baba.babaisyou.model.Object;
+import com.baba.babaisyou.model.GameObject;
 import com.baba.babaisyou.model.enums.Direction;
-import com.baba.babaisyou.model.enums.Effects;
+import com.baba.babaisyou.model.enums.Material;
 import com.baba.babaisyou.view.LevelView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 /**
  * La classe qui représente la map
  */
-public class Grid {
-    public ArrayOfObject[][] grid;
-    private static Grid instance = null;
+public class Game {
+    private Level level;
+    private static Game instance = null;
     private boolean win = false;
-//    private ArrayList<ArrayOfObject[][]> oldGrids = new ArrayList<>();
-    private ArrayList<Map<Object, Direction>> reverseList = new ArrayList<>();
-
-    // Constructeur de la class Grid. Permet de charger le premier level. Il est appelé une seule fois car la class
-    // est un singleton.
-    private Grid() {
-        mapLoadLevel(0);
-    }
+    private final Stack<Map<GameObject, Direction>> reverseStack = new Stack<>();
 
     /**
      * Permet de créer une instance de Grid, s'il n'en existe pas, sinon il retourne l'instance déjà créé.
      * @return Retourne la seule instance de la class Grid.
      */
-    public static Grid getInstance() {
+    public static Game getInstance() {
         if (instance == null)
-            instance = new Grid();
+            instance = new Game();
         return instance;
     }
 
@@ -43,41 +36,49 @@ public class Grid {
      * @param levelNbr Numero du level à load.
      */
     public void mapLoadLevel(int levelNbr) {
-        Rule.objectsAffectedByRules = Rule.createObjectsAffectedByRulesMap();
-        Object.resetInstancesMap();
-        grid = Level.loadlevel(levelNbr);
+        GameObject.resetInstancesMap();
+        level = new Level(levelNbr);
+        reverseStack.clear();
+        Rule.getRules().clear();
     }
 
     public void mapLoadLevel(String name) {
-        Rule.objectsAffectedByRules = Rule.createObjectsAffectedByRulesMap();
-        Object.resetInstancesMap();
-        grid = Level.loadlevel(name);
+        GameObject.resetInstancesMap();
+        level = new Level(name);
+        reverseStack.clear();
+        Rule.getRules().clear();
     }
-
 
     /**
      * Permet de bouger tous les joueurs (si possible) dans une certaine direction.
      * @param direction Direction dans laquelle les joueurs vont bouger.
      */
     public void movePlayers(Direction direction) {
-        ArrayList<Object> players = Rule.objectsAffectedByRules.get(Effects.Player);
+        GameObject.resetMovedObjects();
+        ArrayList<GameObject> players = new ArrayList<>();
+
+        Map<Material, ArrayList<GameObject>> instances = GameObject.getInstances();
+
+        for (Rule rule : Rule.getRules()) {
+            if (rule.getObj2().getMaterial() == Material.You) {
+                players.addAll(instances.get(rule.getMaterial1()));
+            }
+        }
 
         // la liste de player n'est pas rangé du coup bug
-
         Collections.sort(players);
 
         if (direction == Direction.DOWN || direction == Direction.RIGHT) {
             for (int i = players.size() - 1; i >=0; i--) {
-                Object player = players.get(i);
+                GameObject player = players.get(i);
                 player.move(direction);
             }
         } else {
-            for (Object player : players) {
+            for (GameObject player : players) {
                 player.move(direction);
             }
         }
-        reverseList.add(Object.getMovedObjects());
-        Object.resetMovedObjects();
+        reverseStack.add(GameObject.getMovedObjects());
     }
 
     /**
@@ -103,32 +104,43 @@ public class Grid {
      * Permet de revenir en arrière d'une étape.
      */
     public void reverse() {
-        if (reverseList.size() == 0)
+        if (reverseStack.size() == 0) {
             return;
+        }
 
-        Map<Object, Direction> lastMovedObjects = reverseList.remove(reverseList.size() - 1);
+        Map<GameObject, Direction> lastMovedObjects = reverseStack.pop();
 
-        for (Object o : lastMovedObjects.keySet()) {
+        for (GameObject o : lastMovedObjects.keySet()) {
 
             int x = o.getX();
             int y = o.getY();
 
-            grid[y][x].remove(o);
+            level.get(x, y).remove(o);
 
             Direction direction = lastMovedObjects.get(o);
 
             int newX = x - direction.dX;
             int newY = y - direction.dY;
 
-            grid[newY][newX].add(o);
+            level.get(newX, newY).add(o);
 
             o.setX(newX);
             o.setY(newY);
 
-            if (!Object.getInstances().get(o.getMaterial()).contains(o)) {
-                Object.getInstances().get(o.getMaterial()).add(o);
+            if (!GameObject.getInstances().get(o.getMaterial()).contains(o)) {
+                GameObject.getInstances().get(o.getMaterial()).add(o);
             }
+
+            GameObject.addMovedObjects(o, direction.reverseDirection());
         }
-        LevelView.drawAll();
+    }
+
+    public void update() {
+        checkWin();
+        Rule.checkRules(level);
+    }
+
+    public Level getLevel() {
+        return level;
     }
 }
