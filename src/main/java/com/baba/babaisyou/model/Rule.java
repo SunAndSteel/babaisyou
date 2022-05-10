@@ -97,6 +97,10 @@ public class Rule {
         }
     }
 
+    /**
+     * Recherche les règles du niveau
+     * @param level Le niveau
+     */
     public static void checkRules(Level level) {
         Map<GameObject, Direction> movedObjects = GameObject.getMovedObjects();
 
@@ -168,6 +172,11 @@ public class Rule {
 
     }
 
+    /**
+     * Détermine si une règle est bien formée
+     * @param is Objet "is"
+     * @param level Le niveau
+     */
     private static void isRule(GameObject is, Level level) {
         int x = is.getX();
         int y = is.getY();
@@ -227,6 +236,9 @@ public class Rule {
         return false;
     }
 
+    /**
+     * Annuler une règle
+     */
     private void unrule() {
         obj1.getAssociatedRules().remove(this);
         obj2.getAssociatedRules().remove(this);
@@ -260,26 +272,44 @@ public class Rule {
         }
     }
 
+    /**
+     * @return Renvoie l'objet affecté par la règle
+     */
     public GameObject getObj1() {
         return obj1;
     }
 
+    /**
+     * @return Renvoie l'effet
+     */
     public GameObject getObj2() {
         return obj2;
     }
 
+    /**
+     * @return Renvoie les règles
+     */
     public static ArrayList<Rule> getRules() {
         return rules;
     }
 
+    /**
+     * @return Renvoie le material affecté par la règle
+     */
     public Material getMaterial1() {
         return material1;
     }
 
+    /**
+     * @return Renvoie le material règle
+     */
     public Material getMaterial2() {
         return material2;
     }
 
+    /**
+     * @return Renvoie l'effet
+     */
     public Effect getEffect() {
         return effect;
     }

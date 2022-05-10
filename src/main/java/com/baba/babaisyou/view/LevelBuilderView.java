@@ -13,7 +13,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -28,6 +27,10 @@ public class LevelBuilderView {
     private static String selectedMat;
     private static String selectedLevel;
 
+    /**
+     * Vue du constructeur de niveau
+     * @param stage Le stage dans lequel afficher la scène
+     */
     public static void show(Stage stage) {
         Game game = Game.getInstance();
         HBox root = new HBox();
@@ -38,15 +41,6 @@ public class LevelBuilderView {
         Button newLevelBtn = new Button("Ajouter un niveau");
         Button editBtn = new Button("Editer le niveau");
         GridPane map = new GridPane();
-
-
-        //Fenêtre ajout de niveau
-        VBox nlPane = new VBox();
-        TextField nlName = new TextField("Nom");
-        TextField nlY = new TextField("Y");
-        TextField nlX = new TextField("X");
-
-        nlPane.getChildren().setAll(nlName, nlY, nlX);
 
         ObservableList<String> materialsNames = FXCollections.observableArrayList(LevelBuilder.getMaterials());
         ListView<String> materials  = new ListView<>(materialsNames);
@@ -66,7 +60,6 @@ public class LevelBuilderView {
 
 
         root.getChildren().add(lists);
-
 
         Scene scene = new Scene(root, MainView.width, MainView.height);
         stage.setScene(scene);
@@ -127,7 +120,6 @@ public class LevelBuilderView {
         level = game.getLevel();
         map.setAlignment(Pos.CENTER);
         root.setBackground(new Background(new BackgroundFill(Color.rgb(21, 24, 31), CornerRadii.EMPTY, Insets.EMPTY)));
-        //scene.setFill(Color.rgb(21, 24, 31));
 
         scene.setOnKeyPressed( (KeyEvent event) -> {
 

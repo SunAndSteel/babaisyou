@@ -32,7 +32,7 @@ public class LevelView {
 
 
     /**
-     * JavaFX
+     * Vue d'un niveau
      * @param stage Le stage dans lequel on affiche la scène
      */
     public static void show(Stage stage) {

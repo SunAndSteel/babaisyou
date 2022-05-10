@@ -17,24 +17,45 @@ public class Level implements Iterable<ArrayList<GameObject>> {
     private ArrayList<GameObject>[][] level;
     private static int currentLevelNbr;
 
+    /**
+     * Constructeur chargeant un niveau existant
+     * @param levelNbr Numéro du niveau
+     */
     public Level(int levelNbr) {
         currentLevelNbr = levelNbr;
         loadLevel("level" + levelNbr);
     }
 
+    /**
+     * Constructeur chargeant un niveau existant
+     * @param levelNbr Numéro du niveau
+     * @param creator Mode édition
+     */
     public Level(int levelNbr, boolean creator) {
         currentLevelNbr = levelNbr;
         loadLevel("level" + levelNbr, creator);
     }
 
+    /**
+     * Constructeur chargeant un niveau existant
+     * @param name Le nom du niveau
+     */
     public Level(String name) {
         loadLevel(name);
     }
 
+    /**
+     * Constructeur chargeant un niveau existant
+     * @param name Nom du niveau
+     * @param creator Mode édition
+     */
     public Level(String name, boolean creator) {
         loadLevel(name, creator);
     }
 
+    /**
+     * Constructeur permettant de construire un niveau vide
+     */
     public Level() {
         createEmptyLevel();
     }
@@ -95,7 +116,11 @@ public class Level implements Iterable<ArrayList<GameObject>> {
         }
     }
 
-
+    /**
+     * Créer une liste en 2 dimensions d'objets représentant la map à partir d'un fichier texte
+     * @param name Le nom du niveau
+     * @param creator Mode édition
+     */
     public void loadLevel(String name, boolean creator) {
 
         String[] size;
@@ -151,7 +176,9 @@ public class Level implements Iterable<ArrayList<GameObject>> {
         }
     }
 
-
+    /**
+     * Créé un niveau vide
+     */
     public void createEmptyLevel() {
         level = new ArrayList[sizeY][sizeX];
         for (int row = 0; row < level.length; row++) {
@@ -167,6 +194,7 @@ public class Level implements Iterable<ArrayList<GameObject>> {
             }
         }
     }
+
     /**
      * @return Le numéro du level actuel
      */
@@ -189,6 +217,7 @@ public class Level implements Iterable<ArrayList<GameObject>> {
     }
 
     /**
+     * Obtenir la position d'un objet a une position spécifique
      * @param x La position x de l'objet
      * @param y La position y de l'objet
      * @return Une arraylist d'objets à la position (x, y)
@@ -197,10 +226,19 @@ public class Level implements Iterable<ArrayList<GameObject>> {
         return level[y][x];
     }
 
+    /**
+     * Obtenir la position de l'objet en position p
+     * @param p La position de l'objet
+     * @return L'objet en position p
+     */
     public ArrayList<GameObject> getObjects(Point p) {
         return level[p.y][p.x];
     }
 
+    /**
+     * Obtenir la position du curseur
+     * @return Renvoie la position du curseur
+     */
     public Point getCursorPosition() {
         for (ArrayList<GameObject>[] i: level) {
             for (ArrayList<GameObject> j: i) {
@@ -214,10 +252,19 @@ public class Level implements Iterable<ArrayList<GameObject>> {
         return new Point();
     }
 
+    /**
+     * Ajoute un objet au level
+     * @param o L'objet a ajouter
+     * @param p La position de l'objet
+     */
     public void addObject(GameObject o, Point p) {
         level[p.y][p.x].add(o);
     }
 
+    /**
+     * Supprime un object du level
+     * @param p la position de l'objet
+     */
     public void removeObject(Point p) {
         int cnt = 0;
         GameObject toRemove;
@@ -235,6 +282,10 @@ public class Level implements Iterable<ArrayList<GameObject>> {
         level[p.y][p.x].remove(cnt);
     }
 
+    /**
+     * Sauvegarde les emplacements des objets dans le bon format
+     * @return une Liste contenant des strings de position d'objet
+     */
     public ArrayList<String> save() {
         int y = 0;
         int x = 0;
@@ -260,6 +311,7 @@ public class Level implements Iterable<ArrayList<GameObject>> {
         return levelArr;
 
     }
+
     /**
      * Permet d'itérer sur des objets de type Level.
      */

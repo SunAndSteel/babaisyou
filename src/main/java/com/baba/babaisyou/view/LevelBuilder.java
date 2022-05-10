@@ -2,9 +2,7 @@ package com.baba.babaisyou.view;
 
 import com.baba.babaisyou.model.GameObject;
 import com.baba.babaisyou.model.Level;
-import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Material;
-import com.baba.babaisyou.presenter.Game;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -13,8 +11,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-
 import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -25,6 +21,10 @@ import java.util.ArrayList;
 public class LevelBuilder {
     private static boolean editing;
 
+    /**
+     * Afficher la scène
+     * @param primaryStage le Stage dans lequel on affiche la scène
+     */
     public static void start(Stage primaryStage) {
         LevelBuilderView.show(primaryStage);
     }
@@ -47,6 +47,9 @@ public class LevelBuilder {
         return materialsNames;
     }
 
+    /**
+     * @return La liste des niveaux
+     */
     public static ArrayList<String> getLevels() {
         ArrayList<String> levelsNames = new ArrayList<>();
         File f = new File("C:\\Users\\Florent\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\levels");
@@ -59,6 +62,14 @@ public class LevelBuilder {
         return levelsNames;
     }
 
+    /**
+     * Fonction appelée quand le bouton éditer est cliqué
+     * @param levels Liste des niveaux
+     * @param newLevelBtn Bouton "ajouter un niveau"
+     * @param editBtn bouton "éditer un niveau"
+     * @param selectedLevel niveau sélectionné
+     * @param level Niveau a sauvegarder
+     */
     public static void EditButtonAction(ListView<String> levels,Button newLevelBtn, Button editBtn, String selectedLevel, Level level) {
         editing = !editing;
         if(editing) {
@@ -90,20 +101,33 @@ public class LevelBuilder {
         }
     }
 
-
-
+    /**
+     * Fonction appelée quand l'utilisateur appuie sur entrée
+     * @param level le niveau sur lequel placer l'objet
+     * @param SelectedMat l'objet a placer
+     * @param p la position où placer l'objet
+     */
     public static void PlaceObjects(Level level, String SelectedMat, Point p) {
         if(editing && level.getObjects(p).size() == 2) {
             level.addObject(new GameObject(SelectedMat,p.x, p.y), p);
         }
     }
 
+    /**
+     * Fonction appelée quand l'utilisateur appuie sur effacer
+     * @param level le niveau où enlever l'objet
+     * @param p la postion de l'objet à enlever
+     */
     public static void removeObject(Level level, Point p) {
         if(editing) {
             level.removeObject(p);
         }
     }
 
+    /**
+     * Fonction appelée quand l'utilisateur clique sur le bouton "ajouter un niveau
+     * @param updatedList La liste des niveaux qu'il faut actualiser
+     */
     public static void NewLevelButtonAction(ObservableList<String> updatedList) {
         VBox nlPane = new VBox();
         TextField nlName = new TextField("Nom");

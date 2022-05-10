@@ -231,7 +231,6 @@ public class GameObject implements Comparable<GameObject> {
     }
 
     /**
-     *
      * @return La liste des objects qui ont bougé
      */
     public static Map<GameObject, Direction> getMovedObjects() {
