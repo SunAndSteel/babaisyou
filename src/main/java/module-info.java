@@ -2,6 +2,7 @@ module com.baba.babaisyou {
     requires javafx.controls;
     requires javafx.fxml;
     requires org.jetbrains.annotations;
+    requires java.desktop;
 
 
     opens com.baba.babaisyou.model to javafx.fxml;

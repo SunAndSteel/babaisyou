@@ -42,12 +42,35 @@ public class Game {
         Rule.getRules().clear();
     }
 
+    public void mapLoadLevel(int levelNbr, boolean creator) {
+        GameObject.resetInstancesMap();
+        level = new Level(levelNbr, creator);
+        reverseStack.clear();
+        Rule.getRules().clear();
+    }
+
     public void mapLoadLevel(String name) {
         GameObject.resetInstancesMap();
         level = new Level(name);
         reverseStack.clear();
         Rule.getRules().clear();
     }
+
+    public void mapLoadLevel(String name, boolean creator) {
+        GameObject.resetInstancesMap();
+        level = new Level(name, true);
+        reverseStack.clear();
+        Rule.getRules().clear();
+
+    }
+
+    public void mapLoadLevel(Level level) {
+        GameObject.resetInstancesMap();
+        reverseStack.clear();
+        Rule.getRules().clear();
+        this.level = level;
+    }
+
 
     /**
      * Permet de bouger tous les joueurs (si possible) dans une certaine direction.
@@ -64,6 +87,8 @@ public class Game {
                 players.addAll(instances.get(rule.getMaterial1()));
             }
         }
+
+        players.addAll(instances.get(Material.Cursor));
 
         // la liste de player n'est pas rangé du coup bug
         Collections.sort(players);

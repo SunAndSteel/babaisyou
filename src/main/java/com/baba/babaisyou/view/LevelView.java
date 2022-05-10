@@ -80,16 +80,13 @@ public class LevelView {
         stage.show();
     }
 
-    /**
-     * @return Le moment du début de l'exécution
-     */
     public static GridPane getRoot() {
         return root;
     }
 
     public static int getTileSize() { return tileSize; }
 
-    private static void WidthHeightListener() {
+    public static void WidthHeightListener() {
         stage.heightProperty().addListener((observable, oldVal, newVal) -> {
             tileHeight = (newVal.intValue() - 50) / level.getSizeY();
             resizeIVs();
@@ -131,7 +128,7 @@ public class LevelView {
 
             Material material = object.getMaterial();
 
-            if (material.isDirectional()) {
+            if (material.isDirectional() && !material.name().equals("Cursor")) {
                 iv.setImage(material.getFrames()[direction.index]);
 
             }

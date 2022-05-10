@@ -15,6 +15,7 @@ public enum Material {
     Rock(null, null, Frames.getFrames(2, 3, 1), false),
     Button(null, null, Frames.getImages("file:src\\main\\resources\\com\\baba\\babaisyou\\views\\coin.png"), false),
     Is(null, null, Frames.getFrames(0, 4, 1), false),
+    Cursor(null, null, Frames.getImages("file:src\\main\\resources\\com\\baba\\babaisyou\\views\\select1.png"), true),
 
     //Effets
     Push(Effect.Movable, null, Frames.getFrames(1, 3, 1), false),

@@ -269,4 +269,5 @@ public class GameObject implements Comparable<GameObject> {
     public static Glow getGlowEffect() {
         return glowEffect;
     }
+
 }
