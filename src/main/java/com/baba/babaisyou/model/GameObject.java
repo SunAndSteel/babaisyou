@@ -270,4 +270,8 @@ public class GameObject implements Comparable<GameObject> {
         return glowEffect;
     }
 
+    public static void removeFromInstance(GameObject o) {
+        instances.get(o.getMaterial()).remove(o);
+    }
+
 }

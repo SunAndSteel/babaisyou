@@ -79,7 +79,7 @@ public class LevelBuilderView {
                 LevelBuilderView.selectedMat = newValue;
             }
         });
-        levels.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+        levels.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 game.mapLoadLevel(newValue, true);
@@ -91,15 +91,13 @@ public class LevelBuilderView {
 
         //Listener boutons
         editBtn.setOnMouseClicked((MouseEvent event) -> {
-            LevelBuilder.EditButtonAction(levels, editBtn);
+            LevelBuilder.EditButtonAction(levels, newLevelBtn, editBtn, selectedLevel, level );
         });
         newLevelBtn.setOnMouseClicked((MouseEvent event) -> {
             popup.show(stage);
             LevelBuilder.NewLevelButtonAction(levelsNames);
             levels.refresh();
         });
-
-
 
         //Les events Enter et Escape ne s'affichent pas à cause des listes donc j'ajoute un eventfilter pour éviter le bug
         materials.addEventFilter( KeyEvent.KEY_PRESSED, keyEvent -> {
@@ -125,11 +123,9 @@ public class LevelBuilderView {
 
         //Afficher un level vide
         root.getChildren().add(map);
-
         game.mapLoadLevel("level0", true);
         level = game.getLevel();
         map.setAlignment(Pos.CENTER);
-
         root.setBackground(new Background(new BackgroundFill(Color.rgb(21, 24, 31), CornerRadii.EMPTY, Insets.EMPTY)));
         //scene.setFill(Color.rgb(21, 24, 31));
 

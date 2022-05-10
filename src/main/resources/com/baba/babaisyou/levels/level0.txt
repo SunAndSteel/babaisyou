@@ -1,1 +1,21 @@
 20 20
+Wall 0 0
+Wall 1 1
+Wall 2 2
+Wall 3 3
+Wall 4 4
+Wall 5 5
+Wall 6 6
+Wall 7 7
+Wall 8 8
+Wall 9 9
+Wall 10 10
+Wall 11 11
+Wall 12 12
+Wall 13 13
+Wall 14 14
+Wall 15 15
+Wall 16 16
+Wall 17 17
+Wall 18 18
+Wall 19 19

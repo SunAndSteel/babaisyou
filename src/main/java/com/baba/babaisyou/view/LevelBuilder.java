@@ -2,7 +2,9 @@ package com.baba.babaisyou.view;
 
 import com.baba.babaisyou.model.GameObject;
 import com.baba.babaisyou.model.Level;
+import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Material;
+import com.baba.babaisyou.presenter.Game;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -57,17 +59,38 @@ public class LevelBuilder {
         return levelsNames;
     }
 
-    public static void EditButtonAction(ListView levels, Button editBtn) {
+    public static void EditButtonAction(ListView<String> levels,Button newLevelBtn, Button editBtn, String selectedLevel, Level level) {
         editing = !editing;
         if(editing) {
             levels.setDisable(true);
+            newLevelBtn.setDisable(true);
             editBtn.setText("Sauvegarder");
+            editBtn.setOnMouseClicked((MouseEvent event) -> {
+                try {
+                    File savedLevel = new File("C:\\Users\\Florent\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\levels\\" + selectedLevel + ".txt");
+                    BufferedWriter nl = new BufferedWriter(new FileWriter(savedLevel));
+
+                    ArrayList<String> tmp = level.save();
+
+                    for (String i: tmp) {
+                        nl.write(i);
+                    }
+
+                    nl.close();
+
+                    System.out.println("Saved.");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         }
         if(!editing) {
             levels.setDisable(false);
             editBtn.setText("Editer le niveau");
         }
     }
+
+
 
     public static void PlaceObjects(Level level, String SelectedMat, Point p) {
         if(editing && level.getObjects(p).size() == 2) {
@@ -99,7 +122,6 @@ public class LevelBuilder {
                 int x = Integer.parseInt(nlX.getText());
                 int y = Integer.parseInt(nlY.getText());
                 String name = nlName.getText();
-
                 File newLevel = new File("C:\\Users\\Florent\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\levels\\" + name + ".txt");
                 BufferedWriter nl = new BufferedWriter(new FileWriter(newLevel));
                 nl.write(x + " " + y);
@@ -112,5 +134,6 @@ public class LevelBuilder {
             }
         });
     }
+
 
 }

@@ -1,5 +1,6 @@
 package com.baba.babaisyou.model;
 
+import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Material;
 import org.jetbrains.annotations.NotNull;
 
@@ -218,9 +219,47 @@ public class Level implements Iterable<ArrayList<GameObject>> {
     }
 
     public void removeObject(Point p) {
-        level[p.y][p.x].remove(getObjects(p).size() - 1);
+        int cnt = 0;
+        GameObject toRemove;
+
+        for(GameObject k: level[p.y][p.x]) {
+            if(level[p.y][p.x].size() == 3 && (!k.getMaterial().name().equals("Cursor") || !k.getMaterial().name().equals("Floor"))) {
+                break;
+            }
+            cnt++;
+        }
+        toRemove = level[p.y][p.x].get(cnt);
+
+        GameObject.addMovedObjects(toRemove, Direction.NONE);
+        GameObject.removeFromInstance(toRemove);
+        level[p.y][p.x].remove(cnt);
     }
 
+    public ArrayList<String> save() {
+        int y = 0;
+        int x = 0;
+        ArrayList<String> levelArr = new ArrayList<>();
+        levelArr.add(getSizeY() + " " +  getSizeX()+ "\n");
+
+        for (ArrayList<GameObject>[] o: level) {
+            for (ArrayList<GameObject> k: o) {
+                for (GameObject i: k) {
+                    if (i.getMaterial().name().equals("Floor") || i.getMaterial().name().equals("Cursor")) {
+
+                    } else {
+                        System.out.println("cond");
+                        levelArr.add(i.getMaterial().name() + " " + y + " " + x + "\n");
+                    }
+                }
+                x++;
+            }
+            y++;
+            x = 0;
+        }
+
+        return levelArr;
+
+    }
     /**
      * Permet d'itérer sur des objets de type Level.
      */
