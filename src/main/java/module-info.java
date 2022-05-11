@@ -4,7 +4,7 @@ module com.baba.babaisyou {
     requires org.jetbrains.annotations;
     requires java.desktop;
 
-
+    
     opens com.baba.babaisyou.model to javafx.fxml;
     exports com.baba.babaisyou.model;
     opens com.baba.babaisyou.presenter to javafx.fxml;

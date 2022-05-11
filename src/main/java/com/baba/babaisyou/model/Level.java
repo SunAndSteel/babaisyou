@@ -46,6 +46,14 @@ public class Level implements Iterable<ArrayList<GameObject>> {
 
     /**
      * Constructeur chargeant un niveau existant
+     * @param name Le nom du niveau
+     */
+    public Level(String name, String filename) {
+        loadLevel(name, filename);
+    }
+
+    /**
+     * Constructeur chargeant un niveau existant
      * @param name Nom du niveau
      * @param creator Mode édition
      */
@@ -71,6 +79,62 @@ public class Level implements Iterable<ArrayList<GameObject>> {
             // Crée le reader pour le level
             BufferedReader br = new BufferedReader(
                     new FileReader("src/main/resources/com/baba/babaisyou/levels/" + name + ".txt"));
+
+            String line;
+            if ((line = br.readLine()) != null) {
+                //Récupérer la taille de la map dans la première ligne
+                size = line.split(" ");
+                sizeX = Integer.parseInt(size[0]);
+                sizeY = Integer.parseInt(size[1]);
+
+                //Créé une liste en 2 dimensions de la taille de la map
+                level = new ArrayList[sizeY][sizeX];
+                for (int row = 0; row < level.length; row++) {
+                    for (int col = 0; col < level[row].length; col++) {
+                        level[row][col] = new ArrayList<>();
+                    }
+                }
+
+                //Ajoute des objets des floors sur toutes la map
+                for (int i = 0; i < level.length; i++) {
+                    for (int j = 0; j < level[0].length; j++) {
+                        level[i][j].add(new GameObject(Material.Floor, j, i));
+                    }
+                }
+
+                //Récupère les objets dans chaque ligne et les ajoutes a la liste en 2 dimensions
+                while ((line = br.readLine()) != null) {
+                    String[] nextObject = line.split(" ");
+                    String objectName = nextObject[0];
+                    int x = Integer.parseInt(nextObject[1]);
+                    int y = Integer.parseInt(nextObject[2]);
+                    level[y][x].add(new GameObject(objectName, x, y));
+                }
+            }
+            br.close();
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found.");
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("File not in the correct format.");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Créer une liste en 2 dimensions d'objets représentant la map à partir d'un fichier texte
+     * @param name Le numéro du level à charger
+     */
+    public void loadLevel(String name, String filepath) {
+
+        String[] size;
+        try {
+            // Crée le reader pour le level
+            BufferedReader br = new BufferedReader(
+                    new FileReader(filepath));
 
             String line;
             if ((line = br.readLine()) != null) {
@@ -180,6 +244,8 @@ public class Level implements Iterable<ArrayList<GameObject>> {
      * Créé un niveau vide
      */
     public void createEmptyLevel() {
+        sizeY = 20;
+        sizeX = 20;
         level = new ArrayList[sizeY][sizeX];
         for (int row = 0; row < level.length; row++) {
             for (int col = 0; col < level[row].length; col++) {
@@ -298,7 +364,6 @@ public class Level implements Iterable<ArrayList<GameObject>> {
                     if (i.getMaterial().name().equals("Floor") || i.getMaterial().name().equals("Cursor")) {
 
                     } else {
-                        System.out.println("cond");
                         levelArr.add(i.getMaterial().name() + " " + y + " " + x + "\n");
                     }
                 }

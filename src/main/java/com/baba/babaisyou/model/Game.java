@@ -1,11 +1,7 @@
-package com.baba.babaisyou.presenter;
+package com.baba.babaisyou.model;
 
-import com.baba.babaisyou.model.*;
-import com.baba.babaisyou.model.Level;
-import com.baba.babaisyou.model.GameObject;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Material;
-import com.baba.babaisyou.view.LevelView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,6 +67,13 @@ public class Game {
         this.level = level;
     }
 
+    public void mapLoadLevel(Level level, boolean test) {
+        GameObject.resetInstancesMap();
+        level = new Level();
+        reverseStack.clear();
+        Rule.getRules().clear();
+    }
+
 
     /**
      * Permet de bouger tous les joueurs (si possible) dans une certaine direction.
@@ -90,7 +93,7 @@ public class Game {
 
         players.addAll(instances.get(Material.Cursor));
 
-        // la liste de player n'est pas rangé du coup bug
+        // la liste de player n'est pas rangée du coup bug
         Collections.sort(players);
 
         if (direction == Direction.DOWN || direction == Direction.RIGHT) {

@@ -2,7 +2,8 @@ package com.baba.babaisyou.view;
 
 import com.baba.babaisyou.model.Level;
 import com.baba.babaisyou.model.enums.Direction;
-import com.baba.babaisyou.presenter.Game;
+import com.baba.babaisyou.model.Game;
+import com.baba.babaisyou.presenter.LevelBuilder;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;

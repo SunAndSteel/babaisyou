@@ -1,5 +1,6 @@
 package com.baba.babaisyou.view;
 
+import com.baba.babaisyou.presenter.Menu;
 import javafx.application.Application;
 import javafx.scene.image.Image;
 import javafx.stage.Screen;

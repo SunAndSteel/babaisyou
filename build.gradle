@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'org.beryx.jlink' version '2.10.4'
     id 'org.openjfx.javafxplugin' version '0.0.10'
 }
 
@@ -18,9 +19,6 @@ ext {
 sourceCompatibility = '17'
 targetCompatibility = '17'
 
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
 
 application {
     mainModule = 'com.baba.babaisyou'
@@ -34,10 +32,12 @@ javafx {
 }
 
 dependencies {
-
     implementation 'org.jetbrains:annotations:23.0.0'
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    testImplementation("org.testfx:testfx-junit5:4.0.16-alpha")
+    testImplementation("org.testfx:testfx-core:4.0.16-alpha")
+    testImplementation("org.hamcrest:hamcrest-core:2.1")
 }
 
 test {
@@ -48,11 +48,12 @@ run {  // A retirer, lorsqu'on arrête d'utiliser les inputs venant de la consol
     standardInput = System.in
 }
 
-//compileJava.options.encoding = 'UTF-8'
-//
-//tasks.withType(JavaCompile) {
-//    options.encoding = 'UTF-8'
-//}
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
 task myJavadocs(type: Javadoc) {
     source = sourceSets.main.allJava
 }

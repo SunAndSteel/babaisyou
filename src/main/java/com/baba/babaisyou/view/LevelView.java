@@ -3,7 +3,7 @@ package com.baba.babaisyou.view;
 import com.baba.babaisyou.model.*;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Material;
-import com.baba.babaisyou.presenter.Game;
+import com.baba.babaisyou.model.Game;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
