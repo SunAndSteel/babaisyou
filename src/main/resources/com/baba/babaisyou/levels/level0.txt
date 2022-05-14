@@ -9,9 +9,13 @@ Wall 6 6
 Wall 7 7
 Wall 8 8
 Wall 9 9
+Baba 2 10
 Wall 10 10
 Wall 11 11
 Wall 12 12
+TextBaba 2 13
+Is 3 13
+You 4 13
 Wall 13 13
 Wall 14 14
 Wall 15 15

@@ -1,8 +1,13 @@
 package com.baba.babaisyou.view;
 
+import com.baba.babaisyou.model.GameObject;
 import com.baba.babaisyou.model.Level;
+import com.baba.babaisyou.model.LevelLoader;
+import com.baba.babaisyou.model.Mouvement;
 import com.baba.babaisyou.model.enums.Direction;
-import com.baba.babaisyou.model.Game;
+import com.baba.babaisyou.model.enums.Effect;
+import com.baba.babaisyou.model.enums.Material;
+import com.baba.babaisyou.presenter.Game;
 import com.baba.babaisyou.presenter.LevelBuilder;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -27,6 +32,7 @@ public class LevelBuilderView {
     private static Level level;
     private static String selectedMat;
     private static String selectedLevel;
+    private static GameObject cursor;
 
     /**
      * Vue du constructeur de niveau
@@ -34,8 +40,11 @@ public class LevelBuilderView {
      */
     public static void show(Stage stage) {
         Game game = Game.getInstance();
-        HBox root = new HBox();
-        VBox lists = new VBox();
+//        HBox root = new HBox();
+
+        BorderPane root = new BorderPane();
+
+//        VBox lists = new VBox();
         HBox btnHolder = new HBox();
         VBox popuplHolder = new VBox();
         Popup popup = new Popup();
@@ -46,21 +55,24 @@ public class LevelBuilderView {
         ObservableList<String> materialsNames = FXCollections.observableArrayList(LevelBuilder.getMaterials());
         ListView<String> materials  = new ListView<>(materialsNames);
 
-        lists.getChildren().add(materials);
+        root.setLeft(materials);
+//        lists.getChildren().add(materials);
 
         ObservableList<String> levelsNames = FXCollections.observableArrayList(LevelBuilder.getLevels());
         ListView<String> levels  = new ListView<>(levelsNames);
 
-
-        lists.getChildren().add(levels);
+        root.setRight(levels);
+//        lists.getChildren().add(levels);
 
 
         btnHolder.getChildren().add(newLevelBtn);
         btnHolder.getChildren().add(editBtn);
-        lists.getChildren().add(btnHolder);
+        root.setBottom(btnHolder);
+        btnHolder.setAlignment(Pos.CENTER);
+//        lists.getChildren().add(btnHolder);
 
 
-        root.getChildren().add(lists);
+//        root.getChildren().add(lists);
 
         Scene scene = new Scene(root, MainView.width, MainView.height);
         stage.setScene(scene);
@@ -76,9 +88,10 @@ public class LevelBuilderView {
         levels.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                game.mapLoadLevel(newValue, true);
+                game.mapLoadLevel(newValue);
                 selectedLevel = newValue;
                 level = game.getLevel();
+                addCursor();
                 LevelView.drawMovedObjects(map);
             }
         });
@@ -116,9 +129,15 @@ public class LevelBuilderView {
         } );
 
         //Afficher un level vide
-        root.getChildren().add(map);
-        game.mapLoadLevel("level0", true);
+//        root.getChildren().add(map);
+        root.setCenter(map);
+        game.mapLoadLevel("level0");
         level = game.getLevel();
+
+        cursor = new GameObject(Material.Cursor, 0, 0);
+        cursor.getTags().add(Effect.Player);
+        addCursor();
+
         map.setAlignment(Pos.CENTER);
         root.setBackground(new Background(new BackgroundFill(Color.rgb(21, 24, 31), CornerRadii.EMPTY, Insets.EMPTY)));
 
@@ -126,29 +145,50 @@ public class LevelBuilderView {
 
                 KeyCode code = event.getCode();
                 switch (code) {
-                    case Z -> game.movePlayers(Direction.UP);
-                    case S -> game.movePlayers(Direction.DOWN);
-                    case Q -> game.movePlayers(Direction.LEFT);
-                    case D -> game.movePlayers(Direction.RIGHT);
+                    case Z -> Mouvement.moveWithoutChecking(cursor, Direction.UP, level);
+                    case S -> Mouvement.moveWithoutChecking(cursor, Direction.DOWN, level);
+                    case Q -> Mouvement.moveWithoutChecking(cursor, Direction.LEFT, level);
+                    case D -> Mouvement.moveWithoutChecking(cursor, Direction.RIGHT, level);
                     case ESCAPE -> stage.close();
                     case R -> {
-                        game.mapLoadLevel(Level.getCurrentLevelNbr(), true);
+                        game.mapLoadLevel(Level.getCurrentLevelNbr());
                         level = game.getLevel();
+                        addCursor();
                     }
                     case ENTER -> {
-                        LevelBuilder.PlaceObjects(level, selectedMat, level.getCursorPosition());
+                        LevelBuilder.PlaceObjects(level, selectedMat, cursor.getX(), cursor.getY());
                     }
                     case F11 -> stage.setFullScreen(!stage.isFullScreen());
                     case BACK_SPACE -> {
-                        System.out.println("Back");
-                        LevelBuilder.removeObject(level, level.getCursorPosition());
-                        LevelView.drawMovedObjects(map);
+                        LevelBuilder.removeObject(level, cursor.getX(), cursor.getY());
                     }
                 }
                 LevelView.drawMovedObjects(map);
         });
         LevelView.drawMovedObjects(map);
         stage.show();
+    }
+
+    private static void addCursor() {
+
+        int x = cursor.getX();
+        int y = cursor.getY();
+
+        if (0 <= x && x < level.getSizeX() && 0 <= y && y < level.getSizeY()) {
+            level.get(cursor.getX(), cursor.getY()).add(cursor);
+
+        } else {
+            level.get(0, 0).add(cursor);
+            cursor.setX(0);
+            cursor.setY(0);
+        }
+        level.getInstances().get(Material.Cursor).add(cursor);
+
+        Mouvement.getMovedObjects().put(cursor, Direction.NONE);
+    }
+
+    public static GameObject getCursor() {
+        return cursor;
     }
 }
 

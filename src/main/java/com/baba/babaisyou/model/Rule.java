@@ -20,7 +20,7 @@ public class Rule {
     private final Material material1, material2;
     private final Effect effect;
 
-    private Rule(GameObject obj1, GameObject is, GameObject obj2) {
+    private Rule(GameObject obj1, GameObject is, GameObject obj2, Level level) {
 
         this.obj1 = obj1;
         this.obj2 = obj2;
@@ -31,6 +31,7 @@ public class Rule {
         obj1.getIv().setEffect(glowEffect);
         obj2.getIv().setEffect(glowEffect);
         is.getIv().setEffect(glowEffect);
+
 
         Material materialObj1 = obj1.getMaterial();
         Material materialObj2 = obj2.getMaterial();
@@ -52,7 +53,7 @@ public class Rule {
 
         // On fait une copie des instances, car la liste est modifiée dans setMaterial,
         // et donc pour ne pas avoir de problème avec le for each.
-        ArrayList<GameObject> instances = new ArrayList<>(GameObject.getInstances().get(material1));
+        ArrayList<GameObject> instances = new ArrayList<>(level.getInstances().get(material1));
 
         if (materialObj2.hasEffect()) {
 
@@ -65,7 +66,7 @@ public class Rule {
             Material newMaterial = Material.valueOf(materialObj2.getNameObject());
 
             for (GameObject object : instances) {
-                object.setMaterial(newMaterial);
+                object.setMaterial(newMaterial, level);
             }
         }
     }
@@ -75,7 +76,7 @@ public class Rule {
      * @param obj1 Un objet de la map
      * @param obj2 Un objet de la map
      */
-    public static void createRule(GameObject obj1, GameObject is, GameObject obj2) {
+    public static void createRule(GameObject obj1, GameObject is, GameObject obj2, Level level) {
 
         for (Rule rule : rules) {
             if (rule.obj1 == obj1 && rule.obj2 == obj2) {
@@ -83,7 +84,7 @@ public class Rule {
             }
         }
 
-        new Rule(obj1, is, obj2);
+        new Rule(obj1, is, obj2, level);
 
     }
 
@@ -92,7 +93,7 @@ public class Rule {
      */
     public static void checkAllRules(Level level) {
 
-        for (GameObject is : GameObject.getInstances().get(Material.Is)) {
+        for (GameObject is : level.getInstances().get(Material.Is)) {
             isRule(is, level);
         }
     }
@@ -102,7 +103,7 @@ public class Rule {
      * @param level Le niveau
      */
     public static void checkRules(Level level) {
-        Map<GameObject, Direction> movedObjects = GameObject.getMovedObjects();
+        Map<GameObject, Direction> movedObjects = Mouvement.getMovedObjects();
 
         for (GameObject object : movedObjects.keySet()) {
 
@@ -110,7 +111,7 @@ public class Rule {
 
             for (Rule rule : associatedRules) {
                 if (!rule.stillValid(level)) {
-                    rule.unrule();
+                    rule.unrule(level);
                 }
             }
 
@@ -158,9 +159,9 @@ public class Rule {
 
                                 if (material2.hasEffect() || material2.hasNameObject()) {
                                     if (xDirection2 < x || yDirection2 < y) {
-                                        createRule(obj2, obj1, object);
+                                        createRule(obj2, obj1, object, level);
                                     } else {
-                                        createRule(object, obj1, obj2);
+                                        createRule(object, obj1, obj2, level);
                                     }
                                 }
                             }
@@ -191,7 +192,7 @@ public class Rule {
                         Material material2 = object2.getMaterial();
 
                         if (material2.hasNameObject() || material2.hasEffect()) {
-                            createRule(object1, is, object2);
+                            createRule(object1, is, object2, level);
                         }
                     }
                 }
@@ -208,7 +209,7 @@ public class Rule {
                         Material material2 = object2.getMaterial();
 
                         if (material2.hasNameObject() || material2.hasEffect()) {
-                            createRule(object1, is, object2);
+                            createRule(object1, is, object2, level);
                         }
                     }
                 }
@@ -236,10 +237,7 @@ public class Rule {
         return false;
     }
 
-    /**
-     * Annuler une règle
-     */
-    private void unrule() {
+    private void unrule(Level level) {
         obj1.getAssociatedRules().remove(this);
         obj2.getAssociatedRules().remove(this);
         is.getAssociatedRules().remove(this);
@@ -262,7 +260,7 @@ public class Rule {
 
         if (obj2.getMaterial().hasEffect()) {
 
-            ArrayList<GameObject> objects = GameObject.getInstances().get(material1);
+            ArrayList<GameObject> objects = level.getInstances().get(material1);
 
             Effect effect = obj2.getMaterial().getEffect();
 

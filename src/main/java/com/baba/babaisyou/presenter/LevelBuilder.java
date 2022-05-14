@@ -2,6 +2,9 @@ package com.baba.babaisyou.presenter;
 
 import com.baba.babaisyou.model.GameObject;
 import com.baba.babaisyou.model.Level;
+import com.baba.babaisyou.model.LevelLoader;
+import com.baba.babaisyou.model.Mouvement;
+import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Material;
 import com.baba.babaisyou.view.LevelBuilderView;
 import javafx.collections.ObservableList;
@@ -18,6 +21,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class LevelBuilder {
     private static boolean editing;
@@ -39,8 +43,7 @@ public class LevelBuilder {
         ArrayList<String> materialsNames = new ArrayList<>();
 
         for(Material mat : materials) {
-            if (mat.name().equals("Cursor") || mat.name().equals("Floor")) {}
-            else {
+            if (mat != Material.Cursor && mat != Material.Floor) {
                 materialsNames.add(mat.name());
             }
 
@@ -53,7 +56,7 @@ public class LevelBuilder {
      */
     public static ArrayList<String> getLevels() {
         ArrayList<String> levelsNames = new ArrayList<>();
-        File f = new File("C:\\Users\\Florent\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\levels");
+        File f = new File("src/main/resources/com/baba/babaisyou/levels");
 
         for (File file : f.listFiles()) {
             String filteredName = file.getName().substring(0, file.getName().length() - 4);
@@ -73,30 +76,22 @@ public class LevelBuilder {
      */
     public static void EditButtonAction(ListView<String> levels,Button newLevelBtn, Button editBtn, String selectedLevel, Level level) {
         editing = !editing;
+
         if(editing) {
             levels.setDisable(true);
             newLevelBtn.setDisable(true);
             editBtn.setText("Sauvegarder");
             editBtn.setOnMouseClicked((MouseEvent event) -> {
                 try {
-                    File savedLevel = new File("C:\\Users\\Florent\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\levels\\" + selectedLevel + ".txt");
-                    BufferedWriter nl = new BufferedWriter(new FileWriter(savedLevel));
-
-                    ArrayList<String> tmp = level.save();
-
-                    for (String i: tmp) {
-                        nl.write(i);
-                    }
-
-                    nl.close();
+                    System.out.println(selectedLevel);
+                    LevelLoader.save(level, selectedLevel);
 
                     System.out.println("Saved.");
-                } catch (Exception e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             });
-        }
-        if(!editing) {
+        } else {
             levels.setDisable(false);
             editBtn.setText("Editer le niveau");
         }
@@ -106,22 +101,40 @@ public class LevelBuilder {
      * Fonction appelée quand l'utilisateur appuie sur entrée
      * @param level le niveau sur lequel placer l'objet
      * @param SelectedMat l'objet a placer
-     * @param p la position où placer l'objet
+     * @param x la position x où placer l'objet
+     * @param y la position y où placer l'objet
      */
-    public static void PlaceObjects(Level level, String SelectedMat, Point p) {
-        if(editing && level.getObjects(p).size() == 2) {
-            level.addObject(new GameObject(SelectedMat,p.x, p.y), p);
+    public static void PlaceObjects(Level level, String SelectedMat, int x, int y) {
+        ArrayList<GameObject> objects = level.get(x, y);
+
+        if(editing && objects.size() == 2) {
+//            level.addObject(new GameObject(SelectedMat,p.x, p.y), p);
+            Material material = Material.valueOf(SelectedMat);
+            objects.add(new GameObject(material, x, y));
+            Mouvement.getMovedObjects().put(LevelBuilderView.getCursor(), Direction.NONE);
         }
     }
 
     /**
      * Fonction appelée quand l'utilisateur appuie sur effacer
      * @param level le niveau où enlever l'objet
-     * @param p la postion de l'objet à enlever
+     * @param x la position x de l'objet à enlever
+     * @param y la position y de l'objet à enlever
      */
-    public static void removeObject(Level level, Point p) {
+    public static void removeObject(Level level, int x, int y) {
         if(editing) {
-            level.removeObject(p);
+            ArrayList<GameObject> objects = level.get(x, y);
+
+            for (GameObject object : objects) {
+
+                Material material = object.getMaterial();
+
+                if (material != Material.Cursor && material != Material.Floor) {
+                    objects.remove(object);
+                    Mouvement.getMovedObjects().put(object, Direction.NONE);
+                    break;
+                }
+            }
         }
     }
 
@@ -147,7 +160,7 @@ public class LevelBuilder {
                 int x = Integer.parseInt(nlX.getText());
                 int y = Integer.parseInt(nlY.getText());
                 String name = nlName.getText();
-                File newLevel = new File("C:\\Users\\Florent\\IdeaProjects\\babaisyou\\src\\main\\resources\\com\\baba\\babaisyou\\levels\\" + name + ".txt");
+                File newLevel = new File("src/main/resources/com/baba/babaisyou/levels/" + name + ".txt");
                 BufferedWriter nl = new BufferedWriter(new FileWriter(newLevel));
                 nl.write(x + " " + y);
                 nl.close();
