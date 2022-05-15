@@ -2,6 +2,7 @@ package com.baba.babaisyou.view;
 
 import com.baba.babaisyou.model.GameObject;
 import com.baba.babaisyou.model.Level;
+import com.baba.babaisyou.model.LevelLoader;
 import com.baba.babaisyou.model.Mouvement;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Effect;
@@ -98,6 +99,7 @@ public class LevelBuilderView {
         BorderPane root = new BorderPane();
         Button backbtn = new Button("Retour");
         HBox btnHolder = new HBox();
+        VBox popuplHolder = new VBox();
         Popup popup = new Popup();
         Button newLevelBtn = new Button("Ajouter un niveau");
         Button editBtn = new Button("Editer le niveau");
@@ -143,7 +145,7 @@ public class LevelBuilderView {
         btnHolder.getChildren().add(editBtn);
         root.setBottom(btnHolder);
         btnHolder.setAlignment(Pos.CENTER);
-//        lists.getChildren().add(btnHolder);
+//      lists.getChildren().add(btnHolder);
 
 
 //        root.getChildren().add(lists);
@@ -185,7 +187,7 @@ public class LevelBuilderView {
             MenuView.show(stage);
         });
 
-        // Les events Enter et Escape ne s'affichent pas à cause des listes donc j'ajoute un eventfilter pour éviter le bug
+        //Les events Enter et Escape ne s'affichent pas à cause des listes donc j'ajoute un eventfilter pour éviter le bug
         materials.addEventFilter( KeyEvent.KEY_PRESSED, keyEvent -> {
             if( keyEvent.getCode() == KeyCode.ESCAPE || keyEvent.getCode() == KeyCode.ENTER) {
                 if( materials.getEditingIndex() == -1 ) {
