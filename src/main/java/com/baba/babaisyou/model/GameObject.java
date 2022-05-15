@@ -18,8 +18,8 @@ public class GameObject implements Comparable<GameObject> {
     private int x, y;
     private Material material;
     private boolean reverse;
-//    private static Map<GameObject, Direction> movedObjects = new LinkedHashMap<>();
-//    private static Map<Material, ArrayList<GameObject>> instances = createInstancesMap();
+//  private static Map<GameObject, Direction> movedObjects = new LinkedHashMap<>();
+//  private static Map<Material, ArrayList<GameObject>> instances = createInstancesMap();
     private final ArrayList<Effect> tags = new ArrayList<>();
     private final ImageView iv;
     private final ArrayList<Rule> associatedRules = new ArrayList<>();

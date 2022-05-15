@@ -1,16 +1,14 @@
 package com.baba.testing;
 
-import com.baba.babaisyou.model.Game;
 import com.baba.babaisyou.model.GameObject;
 import com.baba.babaisyou.model.Level;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Material;
-import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.Scene;
-import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.awt.*;
 import java.util.ArrayList;

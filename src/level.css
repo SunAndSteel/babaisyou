@@ -1,0 +1,14 @@
+@font-face {
+    src: url("VCR_OSD_MONO_1.001.ttf");
+}
+
+Button {
+    -fx-background-color: transparent;
+    -fx-font-size: 20;
+    -fx-font-family: "VCR OSD Mono";
+    -fx-text-fill: white;
+}
+
+.root {
+    -fx-background-color: rgb(21, 24, 31);
+}

@@ -1,7 +1,11 @@
 package com.baba.babaisyou.presenter;
 
-import com.baba.babaisyou.model.*;
 import com.baba.babaisyou.model.Level;
+import com.baba.babaisyou.model.Rule;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 
 /**
  * La classe qui représente la map
@@ -43,7 +47,6 @@ public class Game {
 //        GameObject.resetInstancesMap();
         try {
             level = new Level(name);
-
         } catch (Exception e) { // TODO A Changer
 
         }
