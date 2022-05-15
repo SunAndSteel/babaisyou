@@ -1,0 +1,55 @@
+@font-face {
+    src: url("VCR_OSD_MONO_1.001.ttf");
+}
+
+Text {
+    -fx-font-size: 50;
+    -fx-font-family: "VCR OSD Mono";
+    -fx-fill: white;
+}
+
+Button {
+    -fx-background-color: transparent;
+    -fx-font-size: 20;
+    -fx-font-family: "VCR OSD Mono";
+    -fx-text-fill: white;
+}
+
+Label {
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+}
+
+.root {
+    -fx-background-color: rgb(21, 24, 31);
+}
+
+.scroll-bar {
+    -fx-background-color: rgb(21, 24, 31);
+}
+
+.list-view {
+    -fx-text-fill: white;
+    -fx-font-family: "VCR OSD Mono";
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.list-view:focused {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.list-view .list-cell:even {
+    -fx-background-color: rgb(21, 24, 31);
+    -fx-text-fill: white;
+}
+.list-view .list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: grey;
+    -fx-text-fill: white;
+}
+
+.list-view .list-cell:odd {
+    -fx-background-color: rgb(21, 24, 31);
+    -fx-text-fill: white;
+}

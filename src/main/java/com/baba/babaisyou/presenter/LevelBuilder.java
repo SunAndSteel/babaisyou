@@ -15,13 +15,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import java.awt.*;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class LevelBuilder {
     private static boolean editing;
@@ -37,14 +36,14 @@ public class LevelBuilder {
     /**
      * @return La liste des materiaux
      */
-    public static ArrayList<String> getMaterials() {
+    public static ArrayList<Material> getMaterials() {
         Material[] materials = Material.values();
 
-        ArrayList<String> materialsNames = new ArrayList<>();
+        ArrayList<Material> materialsNames = new ArrayList<>();
 
         for(Material mat : materials) {
             if (mat != Material.Cursor && mat != Material.Floor) {
-                materialsNames.add(mat.name());
+                materialsNames.add(mat);
             }
 
         }
@@ -60,7 +59,9 @@ public class LevelBuilder {
 
         for (File file : f.listFiles()) {
             String filteredName = file.getName().substring(0, file.getName().length() - 4);
-            levelsNames.add(filteredName);
+            if(!file.getName().substring(0, file.getName().length() - 4).equals("currentLevel")) {
+                levelsNames.add(filteredName);
+            }
         }
 
         return levelsNames;
@@ -83,10 +84,13 @@ public class LevelBuilder {
             editBtn.setText("Sauvegarder");
             editBtn.setOnMouseClicked((MouseEvent event) -> {
                 try {
-                    System.out.println(selectedLevel);
                     LevelLoader.save(level, selectedLevel);
 
                     System.out.println("Saved.");
+                    levels.setDisable(false);
+                    newLevelBtn.setDisable(false);
+                    editBtn.setText("Editer le niveau");
+                    editing = false;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -108,7 +112,6 @@ public class LevelBuilder {
         ArrayList<GameObject> objects = level.get(x, y);
 
         if(editing && objects.size() == 2) {
-//            level.addObject(new GameObject(SelectedMat,p.x, p.y), p);
             Material material = Material.valueOf(SelectedMat);
             objects.add(new GameObject(material, x, y));
             Mouvement.getMovedObjects().put(LevelBuilderView.getCursor(), Direction.NONE);

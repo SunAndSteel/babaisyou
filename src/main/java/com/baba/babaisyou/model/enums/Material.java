@@ -13,7 +13,6 @@ public enum Material {
     Flag(null, null, Frames.getFrames(2, 2, 1), false, 2, 2),
     Wall(null, null, Frames.getFrames(2, 1, 1), false, 1, 2),
     Rock(null, null, Frames.getFrames(2, 3, 1), false, 3, 2),
-    Button(null, null, Frames.getImages("file:src\\main\\resources\\com\\baba\\babaisyou\\views\\coin.png"), false, -1, -1),
     Is(null, null, Frames.getFrames(0, 4, 1), false, 4, 0),
     Cursor(null, null, Frames.getImages("file:src\\main\\resources\\com\\baba\\babaisyou\\views\\select1.png"), false, -1, -1),
 
@@ -24,14 +23,12 @@ public enum Material {
     Win(Effect.Winner, null, Frames.getFrames(1, 2, 1), false, 2, 1),
     Stop(Effect.Hittable, null, Frames.getFrames(1, 1, 1), false, 1, 1),
     You(Effect.Player, null, Frames.getFrames(1, 0, 1), false, 0, 1),
-    Play(Effect.Play, null, Frames.getImages("file:src\\main\\resources\\com\\baba\\babaisyou\\views\\play.png"), false, -1, -1),
 
     //Textes
     TextWall(null, "Wall", Frames.getFrames(0, 1, 1), false, 1, 0),
     TextBaba(null, "Baba", Frames.getFrames(0, 0, 1), false, 0, 0),
     TextFlag(null, "Flag", Frames.getFrames(0, 2, 1), false, 2, 0),
-    TextRock(null, "Rock", Frames.getFrames(0, 3, 1), false, 3, 0),
-    TextBtn(null, "Button", Frames.getImages("file:src\\main\\resources\\com\\baba\\babaisyou\\views\\btn.png"), false, -1, -1);
+    TextRock(null, "Rock", Frames.getFrames(0, 3, 1), false, 3, 0);
 
     private final Effect effect;
     private final String nameObject;

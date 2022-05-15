@@ -4,7 +4,6 @@ import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Effect;
 import com.baba.babaisyou.model.enums.Material;
 import com.baba.babaisyou.presenter.Game;
-import com.baba.babaisyou.view.GameObjectView;
 
 import java.util.*;
 

@@ -1,21 +1,32 @@
 package com.baba.babaisyou.view;
 
-import com.baba.babaisyou.model.*;
+import com.baba.babaisyou.model.GameObject;
+import com.baba.babaisyou.model.Level;
+import com.baba.babaisyou.model.Mouvement;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Material;
 import com.baba.babaisyou.presenter.Game;
+import com.baba.babaisyou.presenter.Menu;
 import javafx.animation.TranslateTransition;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.effect.Effect;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.GridPane;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -26,7 +37,7 @@ import java.util.Map;
 public class LevelView {
 
     private static Stage stage;
-    private static GridPane root;
+    private static GridPane map;
     private static int tileSize, tileHeight, tileWidth;
     private static Level level;
     private static final ArrayList<TranslateTransition> transitions = new ArrayList<>();
@@ -36,20 +47,85 @@ public class LevelView {
      * Vue d'un niveau
      * @param stage Le stage dans lequel on affiche la scène
      */
-    public static void show(Stage stage) {
+    public static void show(Stage stage, String levelName) {
 
         LevelView.stage = stage;
-        root = new GridPane();
+        HBox root = new HBox();
+        map = new GridPane();
         Scene scene = new Scene(root, MainView.width, MainView.height);
         stage.setScene(scene);
 
         Game game = Game.getInstance();
-        game.mapLoadLevel(1);
+        game.mapLoadLevel(levelName);
         level = game.getLevel();
         stage.setTitle("BabaIsYou");
         scene.setFill(Color.rgb(21, 24, 31));
+        scene.getStylesheets().add((new File("src/level.css")).toURI().toString());
 
         root.setAlignment(Pos.CENTER);
+        root.getChildren().add(map);
+        map.setAlignment(Pos.CENTER);
+
+
+        //-------------------------------------------
+        Button menuBtn = new Button();
+        boolean menuBtnState = false;
+        Image btnImg = new Image("file:src/main/resources/com/baba/babaisyou/views/menu1.png", 20 ,20 ,true, true);
+        menuBtn.setGraphic(new ImageView(btnImg));
+        menuBtn.setOpacity(0.2);
+
+        VBox menu = new VBox();
+        Button resumeBtn = new Button("Reprendre");
+        Button homeBtn = new Button("Accueil");
+        Button quitBtn = new Button("Quitter");
+        menu.getChildren().addAll(resumeBtn, homeBtn, quitBtn);
+
+        menu.setVisible(menuBtnState);
+
+        menuBtn.setOnMouseClicked((new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                menu.setVisible(!menuBtnState);
+                menuBtn.setVisible(menuBtnState);
+                GaussianBlur gaussianBlur = new GaussianBlur();
+                gaussianBlur.setRadius(10);
+                map.setEffect(gaussianBlur);
+            }
+        }));
+
+        resumeBtn.setOnMouseClicked((new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                menu.setVisible(menuBtnState);
+                menuBtn.setVisible(!menuBtnState);
+                map.setEffect(null);
+
+            }
+        }));
+
+        quitBtn.setOnMouseClicked((new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                stage.close();
+            }
+        }));
+
+        homeBtn.setOnMouseClicked((new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                Menu.start(stage);
+            }
+        }));
+
+        //-------------------------------------------
+
+        root.getChildren().add(menuBtn);
+        menuBtn.setAlignment(Pos.TOP_RIGHT);
+        root.getChildren().add(menu);
+        menu.setAlignment(Pos.CENTER);
+
+        HBox.setMargin(menu, new Insets(0, - 120, 0, 0));
+
 
         scene.setOnKeyPressed( (KeyEvent event) -> {
 
@@ -63,7 +139,7 @@ public class LevelView {
                     case D -> Mouvement.movePlayers(Direction.RIGHT, level);
                     case ESCAPE -> stage.close(); // on devrait le mettre dans MainView
                     case R -> {
-                        game.mapLoadLevel(Level.getCurrentLevelNbr());
+                        game.mapLoadLevel(levelName);
                         level = game.getLevel();
                     }
                     case F11 -> stage.setFullScreen(!stage.isFullScreen());
@@ -72,20 +148,13 @@ public class LevelView {
 
                 game.update();
                 level = game.getLevel();
-                drawMovedObjects(root);
+                drawMovedObjects(map);
             }
         });
 
         WidthHeightListener();
-        drawMovedObjects(root);
+        drawMovedObjects(map);
         stage.show();
-    }
-
-    /**
-     * @return Le moment du début de l'exécution
-     */
-    public static GridPane getRoot() {
-        return root;
     }
 
     public static int getTileSize() { return tileSize; }
@@ -110,7 +179,6 @@ public class LevelView {
 
     private static void resizeIVs() {
         tileSize = Math.min(tileWidth, tileHeight);
-        Map<GameObject, GameObjectView> objectImageView = GameObjectView.getObjectImageView();
 
         for (ArrayList<GameObject> objects : level) {
             for (GameObject object : objects) {
