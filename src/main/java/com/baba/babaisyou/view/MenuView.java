@@ -33,7 +33,7 @@ public class MenuView {
             vb = new VBox(title, resume, play, builder, quitBtn);
             play.setText("Niveaux");
         } else {
-            vb = new VBox(title, play, builder);
+            vb = new VBox(title, play, builder, quitBtn);
         }
 
         vb.setAlignment(Pos.CENTER);
