@@ -7,6 +7,8 @@ import com.baba.babaisyou.model.Mouvement;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Material;
 import javafx.animation.TranslateTransition;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -104,16 +106,19 @@ public class MapView extends GridPane {
 
             transition.play();
 
-            transition.setOnFinished( evt -> {
-                getChildren().remove(iv);
-                iv.setTranslateX(0);
-                iv.setTranslateY(0);
+            transition.setOnFinished(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent evt) {
+                    MapView.this.getChildren().remove(iv);
+                    iv.setTranslateX(0);
+                    iv.setTranslateY(0);
 
-                transitions.remove(transition);
+                    transitions.remove(transition);
 
-                // Permet de vérifier si l'objet est toujours là (pour le changement de niveau)
-                if (level.get(object.getX(), object.getY()).contains(object)) { // A changer
-                    add(iv, object.getX(), object.getY());
+                    // Permet de vérifier si l'objet est toujours là (pour le changement de niveau)
+                    if (level.get(object.getX(), object.getY()).contains(object)) { // A changer
+                        MapView.this.add(iv, object.getX(), object.getY());
+                    }
                 }
             });
         }

@@ -20,8 +20,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.io.File;
+
+import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
 public class Selection {
     static String selectedLevel;
@@ -36,7 +39,12 @@ public class Selection {
 
         ObservableList<String> levelsNames = FXCollections.observableArrayList(LevelBuilder.getLevels());
         ListView<String> levels  = new ListView<>(levelsNames);
-        levels.setCellFactory(stringListView -> new CenteredListViewCell());
+        levels.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
+            @Override
+            public ListCell<String> call(ListView<String> stringListView) {
+                return new CenteredListViewCell();
+            }
+        });
         levels.getSelectionModel().select(0);
 
         root.getChildren().add(levels);
@@ -53,23 +61,32 @@ public class Selection {
 
         root.getChildren().add(back);
 
-        back.setOnMouseClicked((EventHandler<? super MouseEvent>) event -> {
-            MenuView.show(primaryStage);
+        back.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                MenuView.show(primaryStage);
+            }
         });
 
-        levels.addEventFilter( KeyEvent.KEY_PRESSED, keyEvent -> {
-            if( keyEvent.getCode() == KeyCode.ESCAPE || keyEvent.getCode() == KeyCode.ENTER) {
-                if( levels.getEditingIndex() == -1 ) {
-                    final Parent parent = levels.getParent();
-                    parent.fireEvent( keyEvent.copyFor( parent, parent ) );
+        levels.addEventFilter( KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (keyEvent.getCode() == KeyCode.ESCAPE || keyEvent.getCode() == KeyCode.ENTER) {
+                    if (levels.getEditingIndex() == -1) {
+                        final Parent parent = levels.getParent();
+                        parent.fireEvent(keyEvent.copyFor(parent, parent));
+                    }
+                    keyEvent.consume();
                 }
-                keyEvent.consume();
             }
-        } );
+        });
 
-        scene.setOnKeyPressed( (KeyEvent event) -> {
-            if(event.getCode() == KeyCode.ENTER) {
-                LevelView.show(primaryStage, selectedLevel);
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.ENTER) {
+                    LevelView.show(primaryStage, selectedLevel);
+                }
             }
         });
 

@@ -8,6 +8,7 @@ import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Material;
 import com.baba.babaisyou.view.LevelBuilderView;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -82,17 +83,20 @@ public class LevelBuilder {
             levels.setDisable(true);
             newLevelBtn.setDisable(true);
             editBtn.setText("Sauvegarder");
-            editBtn.setOnMouseClicked((MouseEvent event) -> {
-                try {
-                    LevelLoader.save(level, selectedLevel);
+            editBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    try {
+                        LevelLoader.save(level, selectedLevel);
 
-                    System.out.println("Saved.");
-                    levels.setDisable(false);
-                    newLevelBtn.setDisable(false);
-                    editBtn.setText("Editer le niveau");
-                    editing = false;
-                } catch (IOException e) {
-                    e.printStackTrace();
+                        System.out.println("Saved.");
+                        levels.setDisable(false);
+                        newLevelBtn.setDisable(false);
+                        editBtn.setText("Editer le niveau");
+                        editing = false;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         } else {
@@ -158,20 +162,23 @@ public class LevelBuilder {
         stage.setScene(new Scene(nlPane));
         stage.show();
 
-        nlBtn.setOnMouseClicked((MouseEvent event) -> {
-            try {
-                int x = Integer.parseInt(nlX.getText());
-                int y = Integer.parseInt(nlY.getText());
-                String name = nlName.getText();
-                File newLevel = new File("src/main/resources/com/baba/babaisyou/levels/" + name + ".txt");
-                BufferedWriter nl = new BufferedWriter(new FileWriter(newLevel));
-                nl.write(x + " " + y);
-                nl.close();
-                newLevel.createNewFile();
-                updatedList.add(name);
-                stage.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+        nlBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                try {
+                    int x = Integer.parseInt(nlX.getText());
+                    int y = Integer.parseInt(nlY.getText());
+                    String name = nlName.getText();
+                    File newLevel = new File("src/main/resources/com/baba/babaisyou/levels/" + name + ".txt");
+                    BufferedWriter nl = new BufferedWriter(new FileWriter(newLevel));
+                    nl.write(x + " " + y);
+                    nl.close();
+                    newLevel.createNewFile();
+                    updatedList.add(name);
+                    stage.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

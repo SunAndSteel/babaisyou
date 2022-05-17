@@ -6,20 +6,22 @@ import com.baba.babaisyou.model.enums.Material;
 //import com.baba.babaisyou.presenter.Game;
 import com.baba.babaisyou.presenter.Menu;
 import javafx.animation.TranslateTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.effect.Effect;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -127,42 +129,59 @@ public class LevelView {
         HBox.setMargin(menu, new Insets(0, - 120, 0, 0));
 
 
-        scene.setOnKeyPressed( (KeyEvent event) -> {
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
 
-            if (map.getTransitions().isEmpty()) {
-                KeyCode code = event.getCode();
+                if (map.getTransitions().isEmpty()) {
+                    KeyCode code = event.getCode();
 
-                switch (code) {
-                    case Z : Mouvement.movePlayers(Direction.UP, level); break;
-                    case S : Mouvement.movePlayers(Direction.DOWN, level); break;
-                    case Q : Mouvement.movePlayers(Direction.LEFT, level); break;
-                    case D : Mouvement.movePlayers(Direction.RIGHT, level); break;
-                    case ESCAPE : toggleMenu(menu, menuBtn); break;
-                    case R :
+                    switch (code) {
+                        case Z:
+                            Mouvement.movePlayers(Direction.UP, level);
+                            break;
+                        case S:
+                            Mouvement.movePlayers(Direction.DOWN, level);
+                            break;
+                        case Q:
+                            Mouvement.movePlayers(Direction.LEFT, level);
+                            break;
+                        case D:
+                            Mouvement.movePlayers(Direction.RIGHT, level);
+                            break;
+                        case ESCAPE:
+                            toggleMenu(menu, menuBtn);
+                            break;
+                        case R:
+                            try {
+                                map.setLevel(new Level(levelName));
+                            } catch (IOException | FileNotInCorrectFormat e) {
+                                // TODO
+                            }
+                            level = map.getLevel();
+                            break;
+
+                        case F11:
+                            stage.setFullScreen(!stage.isFullScreen());
+                            break;
+                        case BACK_SPACE:
+                            Mouvement.reverse(level);
+                            break;
+                    }
+
+
+                    if (level.isWin()) {
                         try {
-                            map.setLevel(new Level(levelName));
+                            map.setLevel(new Level(Level.getCurrentLevelNbr() + 1));
                         } catch (IOException | FileNotInCorrectFormat e) {
                             // TODO
                         }
                         level = map.getLevel();
-                        break;
-
-                    case F11 : stage.setFullScreen(!stage.isFullScreen()); break;
-                    case BACK_SPACE : Mouvement.reverse(level); break;
-                }
-
-
-                if (level.isWin()) {
-                    try {
-                        map.setLevel(new Level(Level.getCurrentLevelNbr() + 1));
-                    } catch (IOException | FileNotInCorrectFormat e) {
-                        // TODO
                     }
-                    level = map.getLevel();
-                }
 
-                Rule.checkRules(level);
-                map.drawMovedObjects();
+                    Rule.checkRules(level);
+                    map.drawMovedObjects();
+                }
             }
         });
 
@@ -180,14 +199,20 @@ public class LevelView {
 
         tileSize = Math.min(tileWidth, tileHeight);
 
-        stage.heightProperty().addListener((observable, oldVal, newVal) -> {
-            tileHeight = (newVal.intValue() - 50) / level.getSizeY();
-            resizeIVs();
+        stage.heightProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldVal, Number newVal) {
+                tileHeight = (newVal.intValue() - 50) / level.getSizeY();
+                resizeIVs();
+            }
         });
 
-        stage.widthProperty().addListener((observable, oldVal, newVal) -> {
-            tileWidth = (newVal.intValue() - 50) / level.getSizeX();
-            resizeIVs();
+        stage.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldVal, Number newVal) {
+                tileWidth = (newVal.intValue() - 50) / level.getSizeX();
+                resizeIVs();
+            }
         });
     }
 
