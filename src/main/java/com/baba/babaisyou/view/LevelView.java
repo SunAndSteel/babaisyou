@@ -1,11 +1,9 @@
 package com.baba.babaisyou.view;
 
-import com.baba.babaisyou.model.GameObject;
-import com.baba.babaisyou.model.Level;
-import com.baba.babaisyou.model.Mouvement;
+import com.baba.babaisyou.model.*;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Material;
-import com.baba.babaisyou.presenter.Game;
+//import com.baba.babaisyou.presenter.Game;
 import com.baba.babaisyou.presenter.Menu;
 import javafx.animation.TranslateTransition;
 import javafx.event.EventHandler;
@@ -27,6 +25,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -37,10 +36,12 @@ import java.util.Map;
 public class LevelView {
 
     private static Stage stage;
-    private static GridPane map;
+    private static MapView map;
     private static int tileSize, tileHeight, tileWidth;
     private static Level level;
-    private static final ArrayList<TranslateTransition> transitions = new ArrayList<>();
+//    private static boolean menuBtnState;
+
+//    private static final ArrayList<TranslateTransition> transitions = new ArrayList<>();
 
 
     /**
@@ -51,13 +52,20 @@ public class LevelView {
 
         LevelView.stage = stage;
         HBox root = new HBox();
-        map = new GridPane();
         Scene scene = new Scene(root, MainView.width, MainView.height);
         stage.setScene(scene);
 
-        Game game = Game.getInstance();
-        game.mapLoadLevel(levelName);
-        level = game.getLevel();
+        map = new MapView();
+
+        try {
+            map.setLevel(new Level(levelName));
+
+        } catch (FileNotInCorrectFormat | IOException e) {
+            // TODO
+        }
+
+        level = map.getLevel();
+
         stage.setTitle("BabaIsYou");
         scene.setFill(Color.rgb(21, 24, 31));
         scene.getStylesheets().add((new File("src/level.css")).toURI().toString());
@@ -69,7 +77,6 @@ public class LevelView {
 
         //-------------------------------------------
         Button menuBtn = new Button();
-        boolean menuBtnState = false;
         Image btnImg = new Image("file:src/main/resources/com/baba/babaisyou/views/menu1.png", 20 ,20 ,true, true);
         menuBtn.setGraphic(new ImageView(btnImg));
         menuBtn.setOpacity(0.2);
@@ -80,26 +87,19 @@ public class LevelView {
         Button quitBtn = new Button("Quitter");
         menu.getChildren().addAll(resumeBtn, homeBtn, quitBtn);
 
-        menu.setVisible(menuBtnState);
+        menu.setVisible(false);
 
         menuBtn.setOnMouseClicked((new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                menu.setVisible(!menuBtnState);
-                menuBtn.setVisible(menuBtnState);
-                GaussianBlur gaussianBlur = new GaussianBlur();
-                gaussianBlur.setRadius(10);
-                map.setEffect(gaussianBlur);
+                toggleMenu(menu, menuBtn);
             }
         }));
 
         resumeBtn.setOnMouseClicked((new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                menu.setVisible(menuBtnState);
-                menuBtn.setVisible(!menuBtnState);
-                map.setEffect(null);
-
+                toggleMenu(menu, menuBtn);
             }
         }));
 
@@ -129,31 +129,45 @@ public class LevelView {
 
         scene.setOnKeyPressed( (KeyEvent event) -> {
 
-            if (transitions.isEmpty()) {
+            if (map.getTransitions().isEmpty()) {
                 KeyCode code = event.getCode();
 
                 switch (code) {
-                    case Z -> Mouvement.movePlayers(Direction.UP, level);
-                    case S -> Mouvement.movePlayers(Direction.DOWN, level);
-                    case Q -> Mouvement.movePlayers(Direction.LEFT, level);
-                    case D -> Mouvement.movePlayers(Direction.RIGHT, level);
-                    case ESCAPE -> stage.close(); // on devrait le mettre dans MainView
-                    case R -> {
-                        game.mapLoadLevel(levelName);
-                        level = game.getLevel();
-                    }
-                    case F11 -> stage.setFullScreen(!stage.isFullScreen());
-                    case BACK_SPACE -> Mouvement.reverse(level);
+                    case Z : Mouvement.movePlayers(Direction.UP, level); break;
+                    case S : Mouvement.movePlayers(Direction.DOWN, level); break;
+                    case Q : Mouvement.movePlayers(Direction.LEFT, level); break;
+                    case D : Mouvement.movePlayers(Direction.RIGHT, level); break;
+                    case ESCAPE : toggleMenu(menu, menuBtn); break;
+                    case R :
+                        try {
+                            map.setLevel(new Level(levelName));
+                        } catch (IOException | FileNotInCorrectFormat e) {
+                            // TODO
+                        }
+                        level = map.getLevel();
+                        break;
+
+                    case F11 : stage.setFullScreen(!stage.isFullScreen()); break;
+                    case BACK_SPACE : Mouvement.reverse(level); break;
                 }
 
-                game.update();
-                level = game.getLevel();
-                drawMovedObjects(map);
+
+                if (level.isWin()) {
+                    try {
+                        map.setLevel(new Level(Level.getCurrentLevelNbr() + 1));
+                    } catch (IOException | FileNotInCorrectFormat e) {
+                        // TODO
+                    }
+                    level = map.getLevel();
+                }
+
+                Rule.checkRules(level);
+                map.drawMovedObjects();
             }
         });
 
         WidthHeightListener();
-        drawMovedObjects(map);
+        map.drawMovedObjects();
         stage.show();
     }
 
@@ -188,91 +202,21 @@ public class LevelView {
         }
     }
 
-    private static int cnt = 0;
+    private static void toggleMenu(VBox menu, Button menuBtn)  {
 
-    public static void drawMovedObjects(GridPane gridPane) {
-        Map<GameObject, Direction> movedObjects = Mouvement.getMovedObjects();
-//        Map<Material, ArrayList<GameObject>> instances = level.getInstances();
+        boolean state = false;
 
-//        Map<GameObject, GameObjectView> objectImageView = GameObjectView.getObjectImageView();
+        if (menu.isVisible()) {
+            state = true;
+            map.setEffect(null);
 
-        Level level = Game.getInstance().getLevel();
-
-        if (level.isNewLevel()) {
-            level.setIsNewLevel(false);
-            gridPane.getChildren().clear();
+        } else {
+            GaussianBlur gaussianBlur = new GaussianBlur();
+            gaussianBlur.setRadius(10);
+            map.setEffect(gaussianBlur);
         }
 
-        for (GameObject object : movedObjects.keySet()) {
-
-            ImageView iv = object.getIv();
-
-
-//            if (objectImageView.containsKey(object)) {
-//                iv = objectImageView.get(object);
-//
-//            } else {
-//                iv = new GameObjectView(object);
-//            }
-
-            Direction direction = movedObjects.get(object);
-
-            if (direction == Direction.NONE) {
-
-                gridPane.getChildren().remove(iv);
-
-                // Permet de vérifier si l'objet est toujours là (pour le changement de niveau)
-                if (Game.getInstance().getLevel().get(object.getX(), object.getY()).contains(object)) {
-                    gridPane.add(iv, object.getX(), object.getY());
-                }
-
-                continue;
-            }
-
-            Material material = object.getMaterial();
-
-            if (material.isDirectional()) {
-
-                Image image;
-
-                if (object.getReverse()) {
-                     image = material.getFrames()[direction.reverseDirection().index];
-                     object.setReverse(false);
-                } else {
-                    image = material.getFrames()[direction.index];
-                }
-                iv.setImage(image);
-
-            }
-            // Cela permet de mettre l'ImageView à la fin de la liste children, pour éviter des bugs visuels avec TranslateTransition
-            gridPane.getChildren().remove(iv);
-            gridPane.getChildren().add(iv);
-
-            TranslateTransition transition = new TranslateTransition(Duration.millis(75));
-
-            transitions.add(transition);
-
-            transition.setByX(LevelView.getTileSize() * direction.dX);
-            transition.setByY(LevelView.getTileSize() * direction.dY);
-
-            transition.setNode(iv);
-
-            transition.play();
-
-            transition.setOnFinished( evt -> {
-                gridPane.getChildren().remove(iv);
-                iv.setTranslateX(0);
-                iv.setTranslateY(0);
-
-                transitions.remove(transition);
-
-                // Permet de vérifier si l'objet est toujours là (pour le changement de niveau)
-                if (Game.getInstance().getLevel().get(object.getX(), object.getY()).contains(object)) { // A changer
-                    gridPane.add(iv, object.getX(), object.getY());
-                }
-            });
-        }
-//        GameObject.resetMovedObjects();
-        Mouvement.getMovedObjects().clear();
+        menu.setVisible(!state);
+        menuBtn.setVisible(state);
     }
 }

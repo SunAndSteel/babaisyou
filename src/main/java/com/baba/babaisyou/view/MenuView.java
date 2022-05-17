@@ -47,11 +47,11 @@ public class MenuView {
                 Menu.playButtonAction(primaryStage);
             } else if (Objects.equals(play.getText(), "Commencer")) {
                 Menu.playButtonActionStart(primaryStage);
-                try {
-                    currentLevel.createNewFile();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+//                try {
+//                    currentLevel.createNewFile();
+//                } catch (IOException e) {
+//                    throw new RuntimeException(e);
+//                }
             }
         });
         builder.setOnMouseClicked((MouseEvent event) -> {

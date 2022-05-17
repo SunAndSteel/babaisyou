@@ -3,7 +3,7 @@ package com.baba.babaisyou.model;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Effect;
 import com.baba.babaisyou.model.enums.Material;
-import com.baba.babaisyou.presenter.Game;
+//import com.baba.babaisyou.presenter.Game;
 
 import java.util.*;
 
@@ -22,7 +22,7 @@ public class Mouvement {
         int dX = direction.dX; int dY = direction.dY;
         int x = object.getX(); int y = object.getY();
         int newX = x + dX; int newY = y + dY;
-        Game game = Game.getInstance();
+//        Game game = Game.getInstance();
         Map<Material, ArrayList<GameObject>> instances = level.getInstances();
 
 
@@ -45,9 +45,7 @@ public class Mouvement {
             } else if (tags.contains(Effect.Winner) &&
                     object.getTags().contains(Effect.Player)) {
 
-                game.setWin(true);
-            } else if (tags.contains(Effect.Play)) {
-                game.mapLoadLevel(Level.getCurrentLevelNbr() + 1);
+                level.setWin(true);
             }
         }
 
@@ -101,7 +99,7 @@ public class Mouvement {
 
         Map<Material, ArrayList<GameObject>> instances = level.getInstances();
 
-        for (Rule rule : Rule.getRules()) {
+        for (Rule rule : level.getRules()) {
             if (rule.getObj2().getMaterial() == Material.You) {
                 players.addAll(instances.get(rule.getMaterial1()));
             }
@@ -196,3 +194,4 @@ public class Mouvement {
         object.setY(newY);
     }
 }
+

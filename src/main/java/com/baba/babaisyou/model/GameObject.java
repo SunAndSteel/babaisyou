@@ -64,22 +64,9 @@ public class GameObject implements Comparable<GameObject> {
             iv.setEffect(brightnessAdjust);
         }
 
-//        if (material.hasEffect() || material.hasNameObject() || material == Material.Is) {
-//            tags.add(Effect.Movable);
-//        }
-
-//        addMovedObjects(this, Direction.NONE);
-
         // Permet d'initialiser l'affichage de l'objet, grâce à la fonction drawMovedObjects.
         Mouvement.getMovedObjects().put(this, Direction.NONE);
     }
-
-//    /**
-//     * @return Le dictionnaire des instances en fonction de leur matériel
-//     */
-//    public static Map<Material, ArrayList<GameObject>> getInstances() {
-//        return instances;
-//    }
 
     /**
      * @return La position x de l'objet
@@ -138,7 +125,7 @@ public class GameObject implements Comparable<GameObject> {
         this.material = material;
         iv.setImage(material.getFrames()[0]);
 
-        for (Rule rule : Rule.getRules()) {
+        for (Rule rule : level.getRules()) {
             if (rule.getMaterial1() == material) {
 
                 if (rule.hasMaterial2()) {
@@ -152,109 +139,6 @@ public class GameObject implements Comparable<GameObject> {
 //        addMovedObjects(this, Direction.NONE);
 
     }
-
-//    /**
-//     * Bouge l'objet si c'est possible
-//     * @param direction La direction vers laquelle on veut bouger
-//     */
-//    public void move(Direction direction) {
-//        if (!this.isMovable(direction))
-//            return;
-//
-//        int dX = direction.dX; int dY = direction.dY;
-//        int newX = x + dX; int newY = y + dY;
-//        Game game = Game.getInstance();
-//        Level level = game.getLevel();
-//
-//
-//        // Itérer dans ce sens permet de bouger par exemple : s'il y a plusieurs objets movable
-//        // aux mêmes endroits, alors on bouge d'abord l'objet qui est derrière l'autre dans la liste (et donc qui est affiché devant l'autre lors du print)
-//        for (int i = (level.get(newX, newY).size() - 1); i >= 0; i--) {
-//            GameObject object = level.get(newX, newY).get(i);
-//
-//            ArrayList<Effect> tags = object.getTags();
-//
-//            if (tags.contains(Effect.Movable)) {
-//                object.move(direction);
-//
-//            } else if (tags.contains(Effect.Killer)) {
-//                level.get(x, y).remove(this);
-//                instances.get(this.getMaterial()).remove(this);
-//                addMovedObjects(this, Direction.NONE);
-//                return;
-//
-//            } else if (tags.contains(Effect.Winner) &&
-//                    this.getTags().contains(Effect.Player)) {
-//
-//                game.setWin(true);
-//            } else if (tags.contains(Effect.Play)) {
-//                game.mapLoadLevel(Level.getCurrentLevelNbr() + 1); //mauvais idée car si il reste encore un joueur qui n'a pas encore bouger, après le loadlevel, il va être bouger et donc venir dans la mauvaise map
-//            }
-//        }
-//
-//        addMovedObjects(this, direction);
-//
-//        level.get(x, y).remove(this);
-//        level.get(newX, newY).add(this);
-//        x = newX; y = newY;
-//    }
-
-//    /**
-//     * Vérifie si on peut bouger l'objet dans une direction
-//     * @param direction La direction
-//     * @return Vrai si on peut bouger dans la direction, sinon faux
-//     */
-//    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-//    private boolean isMovable(Direction direction) {
-//        int dX = direction.dX; int dY = direction.dY;
-//        int newX = x + dX; int newY = y + dY;
-//        Level grid = Game.getInstance().getLevel();
-//
-//        if ((0 > newX || newX > grid.getSizeX() - 1) || (0 > newY || newY > grid.getSizeY() - 1))
-//            return false;
-//
-//        for (GameObject object : grid.get(newX, newY)) {
-//
-//            ArrayList<Effect> tags = object.getTags();
-//
-//            if (tags.contains(Effect.Player)) {
-//                return false;
-//
-//            } else if (tags.contains(Effect.Movable)) {
-//                if (!object.isMovable(direction))
-//                    return false;
-//
-//            } else if (tags.contains(Effect.Hittable)) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
-
-//    /**
-//     * Sauvegarde dans une liste un object qui a bougé
-//     * @param object L'object à ajouter dans la liste
-//     */
-//    public static void addMovedObjects(GameObject object, Direction direction) {
-//        movedObjects.put(object, direction);
-//    }
-//
-//    /**
-//     *
-//     * @return La liste des objects qui ont bougé
-//     */
-//    public static Map<GameObject, Direction> getMovedObjects() {
-//        return movedObjects;
-//    }
-//
-//    /**
-//     * Vide la liste où est sauvegardé les objects qui ont bougé
-//     */
-//    public static void resetMovedObjects() {
-//
-//        // C'est important de ne pas clear à la place.
-//        movedObjects = new LinkedHashMap<>();
-//    }
 
     @Override
     public int compareTo(GameObject object) {

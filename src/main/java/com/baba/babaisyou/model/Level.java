@@ -10,12 +10,15 @@ import java.util.*;
 
 public class Level implements Iterable<ArrayList<GameObject>> {
 
+    private final ArrayList<Rule> rules = new ArrayList<>();
+
     private int sizeX, sizeY;
     private ArrayList<GameObject>[][] levelGrid;
     private final Map<Material, ArrayList<GameObject>> instances = createInstancesMap();
     private final Stack<Map<GameObject, Direction>> reverseStack = new Stack<>();
     private final String fileName;
     private boolean isNewLevel = true;
+    private boolean win;
 
     private static int currentLevelNbr;
 
@@ -24,11 +27,13 @@ public class Level implements Iterable<ArrayList<GameObject>> {
         currentLevelNbr = levelNbr;
         LevelLoader.loadLevel("level" + levelNbr, this);
         fileName = "level" + levelNbr;
+        Rule.checkAllRules(this);
     }
 
     public Level(String name) throws IOException, FileNotInCorrectFormat {
         LevelLoader.loadLevel(name, this);
         fileName = name;
+        Rule.checkAllRules(this);
     }
 
     public  Level(int sizeX, int sizeY) {
@@ -36,6 +41,14 @@ public class Level implements Iterable<ArrayList<GameObject>> {
         this.sizeY = sizeY;
         fileName = null;
         LevelLoader.createEmptyGrid(sizeX, sizeY, this);
+    }
+
+    public void setWin(boolean win) {
+        this.win = win;
+    }
+
+    public boolean isWin() {
+        return win;
     }
 
     public void setLevelGrid(ArrayList<GameObject>[][] levelGrid) {
@@ -97,6 +110,10 @@ public class Level implements Iterable<ArrayList<GameObject>> {
         this.sizeY = sizeY;
     }
 
+    public ArrayList<Rule> getRules() {
+        return rules;
+    }
+
     /**
      * @param x La position x de l'objet
      * @param y La position y de l'objet
@@ -104,10 +121,6 @@ public class Level implements Iterable<ArrayList<GameObject>> {
      */
     public ArrayList<GameObject> get(int x, int y) {
         return levelGrid[y][x];
-    }
-
-    public ArrayList<GameObject> get(Point point) {
-        return  levelGrid[point.y][point.x];
     }
 
     /**

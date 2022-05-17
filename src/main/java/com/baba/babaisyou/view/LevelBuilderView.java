@@ -1,13 +1,10 @@
 package com.baba.babaisyou.view;
 
-import com.baba.babaisyou.model.GameObject;
-import com.baba.babaisyou.model.Level;
-import com.baba.babaisyou.model.LevelLoader;
-import com.baba.babaisyou.model.Mouvement;
+import com.baba.babaisyou.model.*;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Effect;
 import com.baba.babaisyou.model.enums.Material;
-import com.baba.babaisyou.presenter.Game;
+//import com.baba.babaisyou.presenter.Game;
 import com.baba.babaisyou.presenter.LevelBuilder;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -34,6 +31,7 @@ import javafx.util.Callback;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Map;
 
 public class LevelBuilderView {
 
@@ -93,7 +91,7 @@ public class LevelBuilderView {
      * @param stage Le stage dans lequel afficher la scène
      */
     public static void show(Stage stage) {
-        Game game = Game.getInstance();
+//        Game game = Game.getInstance();
 //        HBox root = new HBox();
 
         BorderPane root = new BorderPane();
@@ -103,7 +101,14 @@ public class LevelBuilderView {
         Popup popup = new Popup();
         Button newLevelBtn = new Button("Ajouter un niveau");
         Button editBtn = new Button("Editer le niveau");
-        GridPane map = new GridPane();
+
+        final MapView map = new MapView();
+        try {
+            map.setLevel(new Level("level0"));
+
+        } catch (IOException | FileNotInCorrectFormat e) {
+            // TODO
+        }
 
         ObservableList<Material> materialsNames = FXCollections.observableArrayList(LevelBuilder.getMaterials());
         ListView<Material> materials  = new ListView<>(materialsNames);
@@ -165,11 +170,15 @@ public class LevelBuilderView {
         levels.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                game.mapLoadLevel(newValue);
+                try {
+                    map.setLevel(new Level(newValue));
+                } catch (IOException | FileNotInCorrectFormat e) {
+                    // TODO
+                }
                 selectedLevel = newValue;
-                level = game.getLevel();
+                level = map.getLevel();
                 addCursor();
-                LevelView.drawMovedObjects(map);
+                map.drawMovedObjects();
             }
         });
 
@@ -211,9 +220,13 @@ public class LevelBuilderView {
 
         // Afficher un level vide
         // root.getChildren().add(map);
+        try {
+            map.setLevel(new Level("level0"));
+        } catch (IOException | FileNotInCorrectFormat e) {
+            // TODO
+        }
+        level = map.getLevel();
         root.setCenter(map);
-        game.mapLoadLevel("level0");
-        level = game.getLevel();
 
         cursor = new GameObject(Material.Cursor, 0, 0);
         cursor.getTags().add(Effect.Player);
@@ -232,9 +245,13 @@ public class LevelBuilderView {
                     case D -> Mouvement.moveWithoutChecking(cursor, Direction.RIGHT, level);
                     case ESCAPE -> stage.close();
                     case R -> {
-                        game.mapLoadLevel(Level.getCurrentLevelNbr());
-                        level = game.getLevel();
-                        addCursor();
+                        try {
+                            map.setLevel(new Level(Level.getCurrentLevelNbr()));
+                        } catch (IOException | FileNotInCorrectFormat e) {
+                            // TODO
+                        }
+                        level = map.getLevel();
+                       addCursor();
                     }
                     case ENTER -> {
                         LevelBuilder.PlaceObjects(level, selectedMat, cursor.getX(), cursor.getY());
@@ -244,9 +261,9 @@ public class LevelBuilderView {
                         LevelBuilder.removeObject(level, cursor.getX(), cursor.getY());
                     }
                 }
-                LevelView.drawMovedObjects(map);
+                map.drawMovedObjects();
         });
-        LevelView.drawMovedObjects(map);
+        map.drawMovedObjects();
         stage.show();
     }
 

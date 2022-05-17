@@ -14,8 +14,6 @@ import java.util.Map;
  */
 public class Rule {
 
-    private static final ArrayList<Rule> rules = new ArrayList<>();
-
     private final GameObject obj1, obj2, is;
     private final Material material1, material2;
     private final Effect effect;
@@ -49,7 +47,7 @@ public class Rule {
         obj1.getAssociatedRules().add(this);
         obj2.getAssociatedRules().add(this);
         is.getAssociatedRules().add(this);
-        rules.add(this);
+        level.getRules().add(this);
 
         // On fait une copie des instances, car la liste est modifiée dans setMaterial,
         // et donc pour ne pas avoir de problème avec le for each.
@@ -78,7 +76,15 @@ public class Rule {
      */
     public static void createRule(GameObject obj1, GameObject is, GameObject obj2, Level level) {
 
-        for (Rule rule : rules) {
+        Material mat1 = obj1.getMaterial();
+        Material mat2 = obj2.getMaterial();
+
+        if (!mat1.hasNameObject() || (!mat2.hasNameObject() && !mat2.hasEffect())) {
+            return;
+        }
+
+
+        for (Rule rule : level.getRules()) {
             if (rule.obj1 == obj1 && rule.obj2 == obj2) {
                 return;
             }
@@ -241,7 +247,7 @@ public class Rule {
         obj1.getAssociatedRules().remove(this);
         obj2.getAssociatedRules().remove(this);
         is.getAssociatedRules().remove(this);
-        rules.remove(this);
+        level.getRules().remove(this);
 
         ColorAdjust brightnessAdjust = GameObject.getBrightnessAdjust();
 
@@ -282,13 +288,6 @@ public class Rule {
      */
     public GameObject getObj2() {
         return obj2;
-    }
-
-    /**
-     * @return Renvoie les règles
-     */
-    public static ArrayList<Rule> getRules() {
-        return rules;
     }
 
     /**
