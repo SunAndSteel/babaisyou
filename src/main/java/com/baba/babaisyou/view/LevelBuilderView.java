@@ -10,6 +10,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -47,22 +49,25 @@ public class LevelBuilderView {
             hbox.getChildren().addAll(label, pane, button);
             HBox.setHgrow(pane, Priority.ALWAYS);
             hbox.setAlignment(Pos.CENTER);
-            button.setOnAction(event -> {
-                getListView().getItems().remove(getItem());
+            button.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    LevelCell.this.getListView().getItems().remove(LevelCell.this.getItem());
 
-                File file = new File("src/main/resources/com/baba/babaisyou/levels/" + this.getText() + ".txt");
-                System.out.println("src/main/resources/com/baba/babaisyou/levels/" + this.getText() + ".txt");
-                RandomAccessFile raf= null;
-                try {
-                    raf = new RandomAccessFile(file,"rw");
-                    raf.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                if(file.delete()) {
-                    System.out.println("Deleted");
-                } else {
-                    System.out.println("Not deleted");
+                    File file = new File("src/main/resources/com/baba/babaisyou/levels/" + LevelCell.this.getText() + ".txt");
+                    System.out.println("src/main/resources/com/baba/babaisyou/levels/" + LevelCell.this.getText() + ".txt");
+                    RandomAccessFile raf = null;
+                    try {
+                        raf = new RandomAccessFile(file, "rw");
+                        raf.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (file.delete()) {
+                        System.out.println("Deleted");
+                    } else {
+                        System.out.println("Not deleted");
+                    }
                 }
             });
         }
@@ -112,17 +117,22 @@ public class LevelBuilderView {
 
         ObservableList<Material> materialsNames = FXCollections.observableArrayList(LevelBuilder.getMaterials());
         ListView<Material> materials  = new ListView<>(materialsNames);
-        materials.setCellFactory(l -> new ListCell<>() {
+        materials.setCellFactory(new Callback<ListView<Material>, ListCell<Material>>() {
             @Override
-            public void updateItem(Material mat, boolean empty) {
-                super.updateItem(mat, empty);
-                if (empty) {
-                    setText("");
-                    setGraphic(null);
-                } else {
-                    setText(mat.name());
-                    setGraphic(new ImageView(mat.getFrames()[0]));
-                }
+            public ListCell<Material> call(ListView<Material> l) {
+                return new ListCell<>() {
+                    @Override
+                    public void updateItem(Material mat, boolean empty) {
+                        super.updateItem(mat, empty);
+                        if (empty) {
+                            setText("");
+                            setGraphic(null);
+                        } else {
+                            setText(mat.name());
+                            setGraphic(new ImageView(mat.getFrames()[0]));
+                        }
+                    }
+                };
             }
         });
         materials.getSelectionModel().select(0);
@@ -183,40 +193,55 @@ public class LevelBuilderView {
         });
 
         //Listener boutons
-        editBtn.setOnMouseClicked((MouseEvent event) -> {
-            LevelBuilder.EditButtonAction(levels, newLevelBtn, editBtn, selectedLevel, level );
+        editBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                LevelBuilder.EditButtonAction(levels, newLevelBtn, editBtn, selectedLevel, level);
+            }
         });
-        newLevelBtn.setOnMouseClicked((MouseEvent event) -> {
-            popup.show(stage);
-            LevelBuilder.NewLevelButtonAction(levelsNames);
-            levels.refresh();
+        newLevelBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                popup.show(stage);
+                LevelBuilder.NewLevelButtonAction(levelsNames);
+                levels.refresh();
+            }
         });
 
-        backbtn.setOnMouseClicked((MouseEvent event) -> {
-            MenuView.show(stage);
+        backbtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                MenuView.show(stage);
+            }
         });
 
         //Les events Enter et Escape ne s'affichent pas à cause des listes donc j'ajoute un eventfilter pour éviter le bug
-        materials.addEventFilter( KeyEvent.KEY_PRESSED, keyEvent -> {
-            if( keyEvent.getCode() == KeyCode.ESCAPE || keyEvent.getCode() == KeyCode.ENTER) {
-                if( materials.getEditingIndex() == -1 ) {
-                    // Not editing.
-                    final Parent parent = materials.getParent();
-                    parent.fireEvent( keyEvent.copyFor( parent, parent ) );
+        materials.addEventFilter( KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (keyEvent.getCode() == KeyCode.ESCAPE || keyEvent.getCode() == KeyCode.ENTER) {
+                    if (materials.getEditingIndex() == -1) {
+                        // Not editing.
+                        final Parent parent = materials.getParent();
+                        parent.fireEvent(keyEvent.copyFor(parent, parent));
+                    }
+                    keyEvent.consume();
                 }
-                keyEvent.consume();
             }
-        } );
-        levels.addEventFilter( KeyEvent.KEY_PRESSED, keyEvent -> {
-            if( keyEvent.getCode() == KeyCode.ESCAPE || keyEvent.getCode() == KeyCode.ENTER) {
-                if( levels.getEditingIndex() == -1 ) {
-                    // Not editing.
-                    final Parent parent = levels.getParent();
-                    parent.fireEvent( keyEvent.copyFor( parent, parent ) );
+        });
+        levels.addEventFilter( KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (keyEvent.getCode() == KeyCode.ESCAPE || keyEvent.getCode() == KeyCode.ENTER) {
+                    if (levels.getEditingIndex() == -1) {
+                        // Not editing.
+                        final Parent parent = levels.getParent();
+                        parent.fireEvent(keyEvent.copyFor(parent, parent));
+                    }
+                    keyEvent.consume();
                 }
-                keyEvent.consume();
             }
-        } );
+        });
 
         // Afficher un level vide
         // root.getChildren().add(map);
@@ -235,33 +260,35 @@ public class LevelBuilderView {
         map.setAlignment(Pos.CENTER);
         root.setBackground(new Background(new BackgroundFill(Color.rgb(21, 24, 31), CornerRadii.EMPTY, Insets.EMPTY)));
 
-        scene.setOnKeyPressed( (KeyEvent event) -> {
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
 
                 KeyCode code = event.getCode();
                 switch (code) {
-                    case Z -> Mouvement.moveWithoutChecking(cursor, Direction.UP, level);
-                    case S -> Mouvement.moveWithoutChecking(cursor, Direction.DOWN, level);
-                    case Q -> Mouvement.moveWithoutChecking(cursor, Direction.LEFT, level);
-                    case D -> Mouvement.moveWithoutChecking(cursor, Direction.RIGHT, level);
-                    case ESCAPE -> stage.close();
-                    case R -> {
+                    case Z : Mouvement.moveWithoutChecking(cursor, Direction.UP, level); break;
+                    case S : Mouvement.moveWithoutChecking(cursor, Direction.DOWN, level); break;
+                    case Q : Mouvement.moveWithoutChecking(cursor, Direction.LEFT, level); break;
+                    case D : Mouvement.moveWithoutChecking(cursor, Direction.RIGHT, level); break;
+                    case ESCAPE : stage.close();
+                    case R :
                         try {
                             map.setLevel(new Level(Level.getCurrentLevelNbr()));
                         } catch (IOException | FileNotInCorrectFormat e) {
                             // TODO
                         }
                         level = map.getLevel();
-                       addCursor();
-                    }
-                    case ENTER -> {
+                        addCursor();
+                        break;
+                    case ENTER :
                         LevelBuilder.PlaceObjects(level, selectedMat, cursor.getX(), cursor.getY());
-                    }
-                    case F11 -> stage.setFullScreen(!stage.isFullScreen());
-                    case BACK_SPACE -> {
-                        LevelBuilder.removeObject(level, cursor.getX(), cursor.getY());
-                    }
-                }
+                        break;
+
+                    case F11 : stage.setFullScreen(!stage.isFullScreen()); break;
+                    case BACK_SPACE : LevelBuilder.removeObject(level, cursor.getX(), cursor.getY()); break;                    }
+
                 map.drawMovedObjects();
+            }
         });
         map.drawMovedObjects();
         stage.show();
