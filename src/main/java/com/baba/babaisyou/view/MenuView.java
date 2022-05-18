@@ -49,7 +49,7 @@ public class MenuView {
             if(Objects.equals(play.getText(), "Niveaux")) {
                 Menu.playButtonAction(primaryStage);
             } else if (Objects.equals(play.getText(), "Commencer")) {
-                Menu.playButtonActionStart(primaryStage);
+                Menu.playButtonActionStart(primaryStage, scene);
 //                try {
 //                    currentLevel.createNewFile();
 //                } catch (IOException e) {

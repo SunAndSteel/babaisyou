@@ -1,11 +1,14 @@
 package com.baba.babaisyou.view;
 
-import com.baba.babaisyou.model.*;
+import com.baba.babaisyou.model.FileNotInCorrectFormat;
+import com.baba.babaisyou.model.GameObject;
+import com.baba.babaisyou.model.Level;
+import com.baba.babaisyou.model.Mouvement;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Effect;
 import com.baba.babaisyou.model.enums.Material;
-//import com.baba.babaisyou.presenter.Game;
 import com.baba.babaisyou.presenter.LevelBuilder;
+import com.baba.babaisyou.presenter.LevelCell;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -33,58 +36,8 @@ import javafx.util.Callback;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Map;
 
 public class LevelBuilderView {
-
-    static class LevelCell extends ListCell<String> {
-        HBox hbox = new HBox();
-        Label label = new Label("");
-        Pane pane = new Pane();
-        Button button = new Button("X");
-
-        public LevelCell() {
-            super();
-
-            hbox.getChildren().addAll(label, pane, button);
-            HBox.setHgrow(pane, Priority.ALWAYS);
-            hbox.setAlignment(Pos.CENTER);
-            button.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    LevelCell.this.getListView().getItems().remove(LevelCell.this.getItem());
-
-                    File file = new File("src/main/resources/com/baba/babaisyou/levels/" + LevelCell.this.getText() + ".txt");
-                    System.out.println("src/main/resources/com/baba/babaisyou/levels/" + LevelCell.this.getText() + ".txt");
-                    RandomAccessFile raf = null;
-                    try {
-                        raf = new RandomAccessFile(file, "rw");
-                        raf.close();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    if (file.delete()) {
-                        System.out.println("Deleted");
-                    } else {
-                        System.out.println("Not deleted");
-                    }
-                }
-            });
-        }
-
-        @Override
-        protected void updateItem(String item, boolean empty) {
-            super.updateItem(item, empty);
-            setText(null);
-            setGraphic(null);
-
-            if (item != null && !empty) {
-                label.setText(item);
-                setGraphic(hbox);
-            }
-        }
-    }
-
 
     private static Level level;
     private static String selectedMat;
@@ -136,6 +89,7 @@ public class LevelBuilderView {
             }
         });
         materials.getSelectionModel().select(0);
+        selectedMat = materialsNames.get(0).name();
 
         root.setLeft(materials);
 //        lists.getChildren().add(materials);
@@ -150,6 +104,8 @@ public class LevelBuilderView {
             }
         });
         levels.getSelectionModel().select(0);
+        selectedMat = levelsNames.get(0);
+
 
 
         root.setRight(levels);

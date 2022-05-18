@@ -50,12 +50,11 @@ public class LevelView {
      * Vue d'un niveau
      * @param stage Le stage dans lequel on affiche la scène
      */
-    public static void show(Stage stage, String levelName) {
+    public static void show(Stage stage, Scene scene, String levelName) {
 
         LevelView.stage = stage;
         HBox root = new HBox();
-        Scene scene = new Scene(root, MainView.width, MainView.height);
-        stage.setScene(scene);
+        scene.setRoot(root);
 
         map = new MapView();
 

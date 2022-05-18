@@ -14,7 +14,7 @@ public enum Material {
     Wall(null, null, Frames.getFrames(2, 1, 1), false, 1, 2),
     Rock(null, null, Frames.getFrames(2, 3, 1), false, 3, 2),
     Is(null, null, Frames.getFrames(0, 4, 1), false, 4, 0),
-    Cursor(null, null, Frames.getImages("file:src\\main\\resources\\com\\baba\\babaisyou\\views\\select1.png"), false, -1, -1),
+    Cursor(null, null, Frames.getImages("file:src/main/resources/com/baba/babaisyou/views/select1.png"), false, -1, -1),
 
 
     //Effets
