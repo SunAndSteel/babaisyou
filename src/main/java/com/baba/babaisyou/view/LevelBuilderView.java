@@ -1,14 +1,10 @@
 package com.baba.babaisyou.view;
 
-import com.baba.babaisyou.model.FileNotInCorrectFormat;
-import com.baba.babaisyou.model.GameObject;
-import com.baba.babaisyou.model.Level;
-import com.baba.babaisyou.model.Mouvement;
+import com.baba.babaisyou.model.*;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Effect;
 import com.baba.babaisyou.model.enums.Material;
 import com.baba.babaisyou.presenter.LevelBuilder;
-import com.baba.babaisyou.presenter.LevelCell;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -89,7 +85,6 @@ public class LevelBuilderView {
             }
         });
         materials.getSelectionModel().select(0);
-        selectedMat = materialsNames.get(0).name();
 
         root.setLeft(materials);
 //        lists.getChildren().add(materials);
