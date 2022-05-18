@@ -1,4 +1,4 @@
-package com.baba.babaisyou.presenter;
+package com.baba.babaisyou.view;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -37,10 +37,7 @@ public class LevelCell extends ListCell<String> {
                     raf = new RandomAccessFile(file, "rw");
                     raf.close();
                     if (file.delete()) {
-                        System.out.println("Deleted");
                         LevelCell.this.getListView().getItems().remove(getItem());
-                    } else {
-                        System.out.println("Not deleted");
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);

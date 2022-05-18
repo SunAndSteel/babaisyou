@@ -9,13 +9,14 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -23,6 +24,7 @@ import javafx.util.Callback;
 
 import java.io.File;
 
+import static com.baba.babaisyou.view.MainView.scene;
 import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
 public class Selection {
@@ -47,7 +49,8 @@ public class Selection {
         levels.getSelectionModel().select(0);
 
         root.getChildren().add(levels);
-        Scene scene = new Scene(root, MainView.width, MainView.height);
+        scene = MainView.getScene();
+        scene.setRoot(root);
         scene.getStylesheets().add((new File("src/selection.css")).toURI().toString());
         root.setAlignment(Pos.CENTER);
 

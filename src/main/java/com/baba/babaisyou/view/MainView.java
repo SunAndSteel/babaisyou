@@ -33,15 +33,21 @@ public class MainView extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         root = new StackPane();
-        Button resumeBtn = new Button("Reprendre");
-        Button playBtn = new Button("Commencer");
-        Button builderBtn = new Button("Constructeur de niveau");
+        Button resume = new Button("Reprendre");
+        Button play = new Button("Commencer");
+        Button builder = new Button("Constructeur de niveau");
+        Button levelsBtn = new Button("Niveaux");
         Button quitBtn = new Button("Quitter");
         Label title = new Label("Baba is you");
 
+        File currentLevel = new File("src/main/resources/com/baba/babaisyou/levels/currentLevel.txt");
+
         VBox vb;
-        vb = new VBox(title, resumeBtn, playBtn, builderBtn, quitBtn);
-        playBtn.setText("Niveaux");
+        if (currentLevel.exists()) {
+            vb = new VBox(title, resume, play, levelsBtn, builder, quitBtn);
+        } else {
+            vb = new VBox(title, play, levelsBtn, builder, quitBtn);
+        }
 
         vb.setAlignment(Pos.CENTER);
 
@@ -53,20 +59,30 @@ public class MainView extends Application {
 
         scene = new Scene(root, MainView.width, MainView.height);
         scene.getStylesheets().add((new File("src/menu.css")).toURI().toString());
+
         primaryStage.setScene(scene);
 
-        //Handlers des buttons
-        playBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        resume.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                Main.playBtnAction(primaryStage, playBtn);
+                LevelView.show(primaryStage, "currentLevel");
             }
         });
-        builderBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        play.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                Main.builderBtnAction(primaryStage);
+                LevelView.show(primaryStage, "level1");
             }
+        });
+        builder.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                LevelBuilderView.show(primaryStage);
+            }
+        });
+        levelsBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) { Selection.show(primaryStage); }
         });
         quitBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -86,8 +102,9 @@ public class MainView extends Application {
     }
 
     public static void show() {
-        scene.setRoot(root);
 
+        scene.setRoot(root);
+        scene.getStylesheets().add((new File("src/menu.css")).toURI().toString());
     }
 
     public static Scene getScene() {

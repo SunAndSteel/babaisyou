@@ -277,13 +277,6 @@ public class Rule {
     }
 
     /**
-     * @return Renvoie l'objet affecté par la règle
-     */
-    public GameObject getObj1() {
-        return obj1;
-    }
-
-    /**
      * @return Renvoie l'effet
      */
     public GameObject getObj2() {

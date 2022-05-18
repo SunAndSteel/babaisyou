@@ -1,22 +1,28 @@
 package com.baba.testing;
 
-import com.baba.babaisyou.model.GameObject;
-import com.baba.babaisyou.model.Level;
+import com.baba.babaisyou.model.*;
+import com.baba.babaisyou.model.enums.Effect;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Material;
+import com.baba.babaisyou.view.MapView;
 import javafx.application.Platform;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
-import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 
 public class Babatests {
+
+    private static String path = "src/test/resources/";
 
     @BeforeAll
     public static void setUpJavaFXRuntime() throws InterruptedException {
@@ -26,101 +32,127 @@ public class Babatests {
     }
 
     @AfterAll
-    public static void tearDownJavaFXRuntime() throws InterruptedException {
+    public static void tearDownJavaFXRuntime() {
         Platform.exit();
     }
 
     @Test
     public void moveTest() {
-        //Initialiser un niveau vide avec juste un curseur déplaçable
-        Game game = Game.getInstance();
-        game.mapLoadLevel(new Level(), true);
-        Level level = game.getLevel();
+        // On lance le niveau "ruleTest"
+        Level level = new Level("ruleTest", path);
 
-        GameObject player = new GameObject(Material.Cursor, 0, 0);
-        level.addObject(player, new Point(0, 0));
+        // Dans le niveau, il y a Baba en x = 0 et y = 0
+        // et une règle Baba Is You
+
 
         //Tester si on ne peut pas effectuer de déplacement interdit
-        game.movePlayers(Direction.UP); // Essaie de bouger le joueur en dehors de la map en position x : 0, y :-1
-        Assertions.assertSame(level.getObjects(new Point(0, 0)).get(1), player); //On s'attend à ce que l'objet ne bouge pas puisque le déplacement est interdit
+        // Essaie de bouger le joueur en dehors de la map en position x : 0, y :-1
+        Mouvement.movePlayers(Direction.UP, level);
+
+        //On s'attend à ce que l'objet ne bouge pas puisque le déplacement est interdit
+        Assertions.assertSame(level.get(0, 0).get(1).getMaterial(), Material.Baba);
 
         //Tester si le déplacement est bien effectué
-        game.movePlayers(Direction.DOWN); // On déplace le joueur de x : 0, y : 0 vers x : 0, y : 1
-        Assertions.assertSame(level.getObjects(new Point(0, 1)).get(1), player); // On s'attend à ce que le joueur soit en position x : 0, y : 1
+        // On déplace le joueur de x : 0, y : 0 vers x : 0, y : 1
+        Mouvement.movePlayers(Direction.DOWN, level);
 
+        // On s'attend à ce que le joueur soit en position x : 0, y : 1
+        Assertions.assertSame(level.get(0, 1).get(1).getMaterial(), Material.Baba);
     }
 
     @Test
     public void updatedRulesTest() {
-        //Initialiser un niveau vide avec la règle "baba is you" qui permet à l'objet "baba" de se déplacer
-        Game game = Game.getInstance();
-        game.mapLoadLevel(new Level());
-        Level level = game.getLevel();
 
-        GameObject player = new GameObject(Material.Baba, 5, 0);
+        // On lance le niveau "ruleTest"
+        Level level = new Level("ruleTest", path);
 
-        level.addObject(player, new Point(5, 0));
-        level.addObject(new GameObject(Material.TextBaba, 0, 0), new Point(0, 0));
-        level.addObject(new GameObject(Material.Is, 1, 0), new Point(1, 0));
-        level.addObject(new GameObject(Material.You, 2, 0), new Point(2, 0));
+        // Dans le niveau, il y a Baba en x = 0 et y = 0
+        // TextBaba en x = 0 et y = 1
+        // Is en x = 1 et y = 1
+        // You en x = 2 et y = 1
 
+        // On bouge l'objet "Baba" vers le bas.
+        Mouvement.movePlayers(Direction.DOWN, level);
 
-        game.movePlayers(Direction.RIGHT); // On bouge l'objet "Baba" à droite
-        Assertions.assertSame(level.get(6, 0).get(1), player.getMaterial()); // On s'attend à ce qu'il bouge vers x : 6, y : 0
+        // On s'attend à ce qu'il bouge vers x : 0, y : 1
+        Assertions.assertSame(level.get(0, 1).get(1).getMaterial(), Material.Baba);
 
-        level.removeObject(new Point(1, 0)); // Enlève l'objet "is", rendant la règle obsolete
+        // Vu que baba s'est déplacer vers textBaba, alors textBaba s'est aussi déplacer vers le bas.
+        Assertions.assertSame(level.get(0, 2).get(1).getMaterial(), Material.TextBaba);
 
-        game.movePlayers(Direction.RIGHT); // On bouge l'objet "Baba" à droite
-        Assertions.assertNotSame(level.getObjects(new Point(6, 0)).get(0), player); // On s'attend à ce qu'il ne bouge pas vers x : 7, y : 0
+        Rule.checkRules(level);
+
+        // On bouge l'objet "Baba" vers le bas
+        Mouvement.movePlayers(Direction.DOWN, level);
+
+        // Vu que textBaba ne forme plus une règle avec les autres objets, Baba n'est pas censé bouger et rester en x = 0 et y = 1
+        Assertions.assertSame(level.get(0, 1).get(1).getMaterial(), Material.Baba);
 
     }
 
     @Test
-    public void winTest() {
-        Game game = Game.getInstance();
-        game.mapLoadLevel(new Level());
-        Level level = game.getLevel();
+    public void winLooseTest() {
 
-        //tester les conditions de victoire et de défaite
-        GameObject player = new GameObject(Material.Baba, 5, 0);
+        // On lance le niveau "winTest"
+        Level level = new Level("winTest", path);
 
-        level.addObject(player, new Point(5, 0));
-        level.addObject(new GameObject(Material.TextBaba, 0, 0), new Point(0, 0));
-        level.addObject(new GameObject(Material.Is, 1, 0), new Point(1, 0));
-        level.addObject(new GameObject(Material.You, 2, 0), new Point(2, 0));
+        // Dans ce niveau, il y a Baba en x = 0 et y = 0
+        // Flag en x = 0 et y = 1
+        // et il y a une règle Baba Is You
+        // et Flag Is Win
 
-        level.addObject(new GameObject(Material.TextFlag, 1, 0), new Point(0, 1));
-        level.addObject(new GameObject(Material.Is, 1, 1), new Point(1, 1));
-        level.addObject(new GameObject(Material.Win,2, 1), new Point(2, 1));
+        // On bouge le player vers le drapeau.
+        Mouvement.movePlayers(Direction.DOWN, level);
 
-        level.addObject(new GameObject(Material.Flag, 6, 0), new Point(0, 1));
+        Assertions.assertTrue(level.isWin());
 
-        game.update();
-        game.movePlayers(Direction.RIGHT); // On bouge le joueur vers la position du drapeau, on s'attend à ce que le niveau change
-        game.checkWin();
+        Mouvement.getMovedObjects().clear();
 
-        Assertions.assertFalse(level == game.getLevel());
+        // On lance le niveau "ruleTest"
+        level = new Level("ruleTest", path);
 
+        // Dans le niveau, il y a Baba en x = 0 et y = 0
+        // TextBaba en x = 0 et y = 1
+        // Is en x = 1 et y = 1
+        // You en x = 2 et y = 1
 
+        // On bouge l'objet "Baba" vers le bas.
+        Mouvement.movePlayers(Direction.DOWN, level);
+
+        Rule.checkRules(level);
+
+        // La règle Baba Is You n'est plus formé, donc on s'attend à ce que c'est loose.
+        Assertions.assertTrue(level.checkLoose());
     }
 
     @Test
     public void mapFormatTest() {
-        Game game = Game.getInstance();
 
-        //On charge un mauvais niveau dans le jeu
-        game.mapLoadLevel(new Level("incorrectMap", "src/test/java/incorrectMap.txt"));
-        Level levelTest1 = game.getLevel(); //Génère une erreur
+        // On charge un bon niveau
+        MapView mapView = new MapView();
+        mapView.setLevel("level1");
+        Level level = mapView.getLevel();
 
-        //On charge un bon niveau dans le jeu, on s'attend à avoir "level1.txt" dans level
-        game.mapLoadLevel(new Level("level1"));
-        Level levelTest2 = game.getLevel();
+        // On s'attend à ce que levelGrid est non null
+        Assertions.assertNotNull(level.getLevelGrid());
 
-        ArrayList<String> test2 = levelTest2.save();
+        // On s'attend à ce qu'un objet Baba est en x = 5 et y = 8.
+        boolean isInGrid = false;
 
-        //on s'attend à avoir test1 vide et test2 chargé avec level1.txt
-        //Assertions.assertEquals(null, levelTest1 );
-        Assertions.assertTrue(test2.size() > 0);
+        for (GameObject object : level.get(5, 8)) {
+            if (object.getMaterial() == Material.Baba) {
+                isInGrid = true;
+                break;
+            }
+        }
+        Assertions.assertTrue(isInGrid);
+
+
+        // On essaye de charger un mauvais niveau
+        mapView.setLevel("incorrectMap", "src/test/resources/");
+
+        // On s'attend à ce que le niveau n'est pas changer
+        Assertions.assertSame(level, mapView.getLevel());
     }
 
 }

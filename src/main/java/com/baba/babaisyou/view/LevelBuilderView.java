@@ -7,8 +7,6 @@ import com.baba.babaisyou.model.Mouvement;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Effect;
 import com.baba.babaisyou.model.enums.Material;
-import com.baba.babaisyou.presenter.LevelBuilder;
-import com.baba.babaisyou.presenter.LevelCell;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -36,7 +34,7 @@ import java.io.File;
 public class LevelBuilderView {
 
     private static Level level;
-    private static String selectedMat;
+    private static Material selectedMat;
     private static String selectedLevel;
     private static GameObject cursor;
     private static Scene scene;
@@ -48,15 +46,12 @@ public class LevelBuilderView {
      * @param stage Le stage dans lequel afficher la scène
      */
     public static void show(Stage stage) {
-//        Game game = Game.getInstance();
-//        HBox root = new HBox();
 
         LevelBuilderView.stage = stage;
 
         BorderPane root = new BorderPane();
         Button backBtn = new Button("Retour");
         HBox btnHolder = new HBox();
-//        VBox popupHolder = new VBox();
         Popup popup = new Popup();
         Button newLevelBtn = new Button("Ajouter un niveau");
         Button editBtn = new Button("Editer le niveau");
@@ -81,10 +76,6 @@ public class LevelBuilderView {
                 };
             }
         });
-        materials.getSelectionModel().select(0);
-
-        root.setLeft(materials);
-//        lists.getChildren().add(materials);
 
         ObservableList<String> levelNames = FXCollections.observableArrayList(LevelLoader.getLevelNames());
         ListView<String> levels  = new ListView<>(levelNames);
@@ -94,18 +85,16 @@ public class LevelBuilderView {
                 return new LevelCell();
             }
         });
-        levels.getSelectionModel().select(0);
-        selectedMat = levelNames.get(0);
 
 
-
+        root.setLeft(materials);
         root.setRight(levels);
-//        lists.getChildren().add(levels);
+        root.setBottom(btnHolder);
 
         btnHolder.getChildren().add(backBtn);
         btnHolder.getChildren().add(newLevelBtn);
         btnHolder.getChildren().add(editBtn);
-        root.setBottom(btnHolder);
+
         btnHolder.setAlignment(Pos.CENTER);
 
         scene = MainView.getScene();
@@ -113,58 +102,22 @@ public class LevelBuilderView {
         scene.getStylesheets().add((new File("src/levelBuilder.css")).toURI().toString());
 
 
-        //Listener des listes
-        materials.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Material>() {
-            @Override
-            public void changed(ObservableValue<? extends Material> observable, Material oldValue, Material newValue) {
-                LevelBuilderView.selectedMat = newValue.name();
-            }
-        });
-        levels.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-
-                if (map.setLevel(newValue)) {
-                    selectedLevel = newValue;
-                    level = map.getLevel();
-                    addCursor();
-                    map.drawMovedObjects();
-                }
-            }
-        });
-
-        buttonListeners(editBtn, newLevelBtn, backBtn, levels, levelNames, popup);
 
 
-        //Les events Enter et Escape ne s'affichent pas à cause des listes donc j'ajoute un eventfilter pour éviter le bug
-        materials.addEventFilter( KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                if (keyEvent.getCode() == KeyCode.ESCAPE || keyEvent.getCode() == KeyCode.ENTER) {
-                    if (materials.getEditingIndex() == -1) {
-                        // Not editing.
-                        final Parent parent = materials.getParent();
-                        parent.fireEvent(keyEvent.copyFor(parent, parent));
-                    }
-                    keyEvent.consume();
-                }
-            }
-        });
-        levels.addEventFilter( KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                if (keyEvent.getCode() == KeyCode.ESCAPE || keyEvent.getCode() == KeyCode.ENTER) {
-                    if (levels.getEditingIndex() == -1) {
-                        // Not editing.
-                        final Parent parent = levels.getParent();
-                        parent.fireEvent(keyEvent.copyFor(parent, parent));
-                    }
-                    keyEvent.consume();
-                }
-            }
-        });
+        // Permet que si le niveau choisi est mauvais, alors ça choisi un autre niveau tant qu'il en troue un de correct.
+        // Il en trouvera toujours un car il y a les niveaux de base du jeu qui sont corrects.
+        boolean isCorrect;
+        int index = 0;
 
-        map.setLevel("level0");
+        do {
+            levels.getSelectionModel().select(index);
+            selectedLevel = levels.getSelectionModel().getSelectedItem();
+            isCorrect = map.setLevel(selectedLevel);
+            index++;
+
+        } while (!isCorrect && index < levelNames.size());
+
+        map.setLevel(selectedLevel);
         level = map.getLevel();
         root.setCenter(map);
 
@@ -175,11 +128,15 @@ public class LevelBuilderView {
         map.setAlignment(Pos.CENTER);
         root.setBackground(new Background(new BackgroundFill(Color.rgb(21, 24, 31), CornerRadii.EMPTY, Insets.EMPTY)));
 
+        listListeners(materials, levels);
+        buttonListeners(editBtn, newLevelBtn, backBtn, levels, levelNames, popup);
+
         loadControls();
 
         map.WidthHeightListener(stage);
         map.resizeIVs();
         map.drawMovedObjects();
+
         stage.show();
     }
 
@@ -228,11 +185,12 @@ public class LevelBuilderView {
                         case D:
                             Mouvement.moveWithoutChecking(cursor, Direction.RIGHT, level);
                             break;
+
                         case ESCAPE:
                             stage.close();
                             break;
-                        case R:
 
+                        case R:
                             if (map.setLevel(selectedLevel)) {
                                 level = map.getLevel();
                                 addCursor();
@@ -286,10 +244,62 @@ public class LevelBuilderView {
                 MainView.show();
             }
         });
+    }
 
+    private static void listListeners(ListView<Material> materials, ListView<String> levels) {
 
+        materials.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Material>() {
+            @Override
+            public void changed(ObservableValue<? extends Material> observable, Material oldValue, Material newValue) {
+                selectedMat = newValue;
+            }
+        });
+        levels.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 
+                if (map.setLevel(newValue)) {
+                    selectedLevel = newValue;
+                    level = map.getLevel();
+                    addCursor();
+                    map.drawMovedObjects();
+                    map.calculateTileSize(stage);
+                    map.resizeIVs();
+                } else {
 
+                    levels.getSelectionModel().select(oldValue);
+
+                }
+            }
+        });
+
+        //Les events Enter et Escape ne s'affichent pas à cause des listes donc j'ajoute un eventfilter pour éviter le bug
+        materials.addEventFilter( KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (keyEvent.getCode() == KeyCode.ESCAPE || keyEvent.getCode() == KeyCode.ENTER) {
+                    if (materials.getEditingIndex() == -1) {
+                        // Not editing.
+                        final Parent parent = materials.getParent();
+                        parent.fireEvent(keyEvent.copyFor(parent, parent));
+                    }
+                    keyEvent.consume();
+                }
+            }
+        });
+        levels.addEventFilter( KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (keyEvent.getCode() == KeyCode.ESCAPE || keyEvent.getCode() == KeyCode.ENTER) {
+                    if (levels.getEditingIndex() == -1) {
+                        // Not editing.
+                        final Parent parent = levels.getParent();
+                        parent.fireEvent(keyEvent.copyFor(parent, parent));
+                    }
+                    keyEvent.consume();
+                }
+            }
+        });
     }
 }
 

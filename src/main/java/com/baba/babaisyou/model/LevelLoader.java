@@ -13,14 +13,13 @@ public class LevelLoader {
 
     /**
      * Créer une liste en 2 dimensions d'objets représentant la map à partir d'un fichier texte
-     * @param name Le numéro du level à charger
+     * @param filePath Le numéro du level à charger
      */
-    public static void loadLevel(String name, Level level) throws IOException, FileNotInCorrectFormat {
+    public static void loadLevel(String filePath, Level level) throws IOException, FileNotInCorrectFormat {
 
         String[] size;
         // Crée le reader pour le level
-        BufferedReader br = new BufferedReader(
-                new FileReader("src/main/resources/com/baba/babaisyou/levels/" + name + ".txt"));
+        BufferedReader br = new BufferedReader(new FileReader(filePath));
 
         String line = br.readLine();
 
@@ -154,8 +153,11 @@ public class LevelLoader {
 
         int index = levelNameList.indexOf(levelName);
 
-        return levelNameList.get(index % levelNameList.size());
+        return levelNameList.get((index + 1) % levelNameList.size());
 
     }
 
+    public static ArrayList<String> getLevelNameList() {
+        return levelNameList;
+    }
 }

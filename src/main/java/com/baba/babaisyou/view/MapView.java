@@ -1,6 +1,5 @@
 package com.baba.babaisyou.view;
 
-import com.baba.babaisyou.model.FileNotInCorrectFormat;
 import com.baba.babaisyou.model.GameObject;
 import com.baba.babaisyou.model.Level;
 import com.baba.babaisyou.model.Mouvement;
@@ -17,7 +16,6 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -28,14 +26,28 @@ public class MapView extends GridPane {
     private static int tileSize, tileHeight, tileWidth;
 
     public boolean setLevel(String levelName) {
-        try {
-            level = new Level(levelName);
+
+        Level newLevel = new Level(levelName);
+
+        if (newLevel.getLevelGrid() != null) {
             getChildren().clear();
+            level = newLevel;
             return true;
-        } catch (FileNotInCorrectFormat | IOException e) { // On ne fait rien car le niveau va juste rester le même qu'avant.
-            return false;
+        }
+
+        return false;
+    }
+
+    public void setLevel(String levelName, String path) {
+
+        Level newLevel = new Level(levelName, path);
+
+        if (newLevel.getLevelGrid() != null) {
+            getChildren().clear();
+            level = newLevel;
         }
     }
+
 
     public Level getLevel() {
         return level;
@@ -58,7 +70,6 @@ public class MapView extends GridPane {
                 if (level.get(object.getX(), object.getY()).contains(object)) {
                     add(iv, object.getX(), object.getY());
                 }
-
                 continue;
             }
 
@@ -119,8 +130,7 @@ public class MapView extends GridPane {
 
     public void WidthHeightListener(Stage stage) {
 
-        tileHeight = ((int) stage.getHeight() - 50) / level.getSizeY();
-        tileWidth = ((int) stage.getWidth()- 50) / level.getSizeX();
+        calculateTileSize(stage);
 
         tileSize = Math.min(tileWidth, tileHeight);
 
@@ -149,5 +159,10 @@ public class MapView extends GridPane {
                 object.getIv().setFitHeight(tileSize);
             }
         }
+    }
+
+    public void calculateTileSize(Stage stage) {
+        tileHeight = ((int) stage.getHeight() - 50) / level.getSizeY();
+        tileWidth = ((int) stage.getWidth()- 50) / level.getSizeX();
     }
 }

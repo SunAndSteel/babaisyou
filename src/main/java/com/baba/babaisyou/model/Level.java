@@ -15,30 +15,37 @@ public class Level implements Iterable<ArrayList<GameObject>> {
     private ArrayList<GameObject>[][] levelGrid;
     private final Map<Material, ArrayList<GameObject>> instances = createInstancesMap();
     private final Stack<Map<GameObject, Direction>> reverseStack = new Stack<>();
-    private final String fileName;
     private boolean isNewLevel = true;
     private boolean win;
+    private boolean loose;
 
-    private static int currentLevelNbr;
+    public Level(String name) {
 
+        try {
+            LevelLoader.loadLevel("src/main/resources/com/baba/babaisyou/levels/" + name + ".txt", this);
+            Rule.checkAllRules(this);
+        } catch (IOException | FileNotInCorrectFormat e) {
+            levelGrid = null;
+        }
 
-    public Level(int levelNbr) throws IOException, FileNotInCorrectFormat {
-        currentLevelNbr = levelNbr;
-        LevelLoader.loadLevel("level" + levelNbr, this);
-        fileName = "level" + levelNbr;
-        Rule.checkAllRules(this);
     }
 
-    public Level(String name) throws IOException, FileNotInCorrectFormat {
-        LevelLoader.loadLevel(name, this);
-        fileName = name;
-        Rule.checkAllRules(this);
+    public Level(String name, String path) {
+
+        try {
+            LevelLoader.loadLevel(path + name + ".txt", this);
+            Rule.checkAllRules(this);
+        } catch (IOException | FileNotInCorrectFormat e) {
+            levelGrid = null;
+        }
+
     }
+
+
 
     public Level(int sizeX, int sizeY) {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
-        fileName = null;
         LevelLoader.createEmptyGrid(sizeX, sizeY, this);
     }
 
@@ -48,6 +55,10 @@ public class Level implements Iterable<ArrayList<GameObject>> {
 
     public boolean isWin() {
         return win;
+    }
+
+    public boolean isLoose() {
+        return loose;
     }
 
     public void setLevelGrid(ArrayList<GameObject>[][] levelGrid) {
@@ -78,13 +89,6 @@ public class Level implements Iterable<ArrayList<GameObject>> {
             instances.put(material, new ArrayList<>());
         }
         return instances;
-    }
-
-    /**
-     * @return Le numéro du level actuel
-     */
-    public static int getCurrentLevelNbr() {
-        return currentLevelNbr;
     }
 
     /**
@@ -167,11 +171,17 @@ public class Level implements Iterable<ArrayList<GameObject>> {
         return new LevelIterator(this);
     }
 
-    public boolean isNewLevel() {
-        return isNewLevel;
-    }
+    public boolean checkLoose() {
 
-    public void setIsNewLevel(boolean newLevel) {
-        isNewLevel = newLevel;
+        loose = true;
+
+        for (Rule rule : rules) {
+            if (rule.getObj2().getMaterial() == Material.You && !instances.get(rule.getMaterial1()).isEmpty()) {
+                loose = false;
+                break;
+            }
+        }
+
+        return loose;
     }
 }

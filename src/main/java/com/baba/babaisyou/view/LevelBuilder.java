@@ -1,4 +1,4 @@
-package com.baba.babaisyou.presenter;
+package com.baba.babaisyou.view;
 
 import com.baba.babaisyou.model.GameObject;
 import com.baba.babaisyou.model.Level;
@@ -72,7 +72,6 @@ public class LevelBuilder {
                     try {
                         LevelLoader.save(level, selectedLevel);
 
-                        System.out.println("Saved.");
                         levels.setDisable(false);
                         newLevelBtn.setDisable(false);
                         editBtn.setText("Editer le niveau");
@@ -91,15 +90,14 @@ public class LevelBuilder {
     /**
      * Fonction appelée quand l'utilisateur appuie sur entrée
      * @param level le niveau sur lequel placer l'objet
-     * @param SelectedMat l'objet a placer
+     * @param material le material de l'objet a placer
      * @param x la position x où placer l'objet
      * @param y la position y où placer l'objet
      */
-    public static void PlaceObjects(Level level, String SelectedMat, int x, int y) {
+    public static void PlaceObjects(Level level, Material material, int x, int y) {
         ArrayList<GameObject> objects = level.get(x, y);
 
         if(editing && objects.size() == 2) {
-            Material material = Material.valueOf(SelectedMat);
             objects.add(new GameObject(material, x, y));
             Mouvement.getMovedObjects().put(LevelBuilderView.getCursor(), Direction.NONE);
         }

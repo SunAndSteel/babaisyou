@@ -5,22 +5,27 @@ import com.baba.babaisyou.model.LevelLoader;
 import com.baba.babaisyou.model.Mouvement;
 import com.baba.babaisyou.model.Rule;
 import com.baba.babaisyou.model.enums.Direction;
+import com.baba.babaisyou.model.enums.Material;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.io.File;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Objects;
 
 
 /**
@@ -30,15 +35,9 @@ public class LevelView {
 
     private static Stage stage;
     private static MapView map;
-    private static int tileSize, tileHeight, tileWidth;
     private static Level level;
     private static Scene scene;
     private static String levelName;
-
-//    private static boolean menuBtnState;
-
-//    private static final ArrayList<TranslateTransition> transitions = new ArrayList<>();
-
 
     /**
      * Vue d'un niveau
@@ -49,23 +48,25 @@ public class LevelView {
         LevelView.levelName = levelName;
         LevelView.stage = stage;
 
-        HBox root = new HBox();
+        if (Objects.equals(levelName, "currentLevel")) {
+            getCurrentLevelName();
+        }
+
+        BorderPane root = new BorderPane();
+        StackPane center = new StackPane();
 
         scene = MainView.getScene();
-
+        scene.getStylesheets().add((new File("src/level.css")).toURI().toString());
         scene.setRoot(root);
 
         map = new MapView();
+        map.setAlignment(Pos.CENTER);
+
+        center.getChildren().add(map);
+        root.setCenter(center);
 
         map.setLevel(levelName);
         level = map.getLevel();
-
-        scene.getStylesheets().add((new File("src/level.css")).toURI().toString());
-
-        root.setAlignment(Pos.CENTER);
-        root.getChildren().add(map);
-        map.setAlignment(Pos.CENTER);
-
 
         Button menuBtn = new Button();
         Image btnImg = new Image("file:src/main/resources/com/baba/babaisyou/views/menuBtn.png", 20 ,20 ,true, true);
@@ -74,8 +75,8 @@ public class LevelView {
 
         VBox menu = new VBox();
         Button resumeBtn = new Button("Reprendre");
-        Button homeBtn = new Button("Accueil");
-        Button quitBtn = new Button("Quitter");
+        Button homeBtn = new Button("Sauvegarder et revenir à l'accueil");
+        Button quitBtn = new Button("Sauvegarder et quitter");
         menu.getChildren().addAll(resumeBtn, homeBtn, quitBtn);
 
         menu.setVisible(false);
@@ -97,6 +98,7 @@ public class LevelView {
         quitBtn.setOnMouseClicked((new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                saveCurrentLevel();
                 stage.close();
             }
         }));
@@ -104,23 +106,31 @@ public class LevelView {
         homeBtn.setOnMouseClicked((new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                saveCurrentLevel();
                 MainView.show();
             }
         }));
 
-        root.getChildren().add(menuBtn);
+//        root.getChildren().add(menuBtn);
         menuBtn.setAlignment(Pos.TOP_RIGHT);
-        root.getChildren().add(menu);
-        menu.setAlignment(Pos.CENTER);
+        root.setRight(menuBtn);
 
-        HBox.setMargin(menu, new Insets(0, - 120, 0, 0));
+        // Permet d'ajouter un espace vide dans le BorderPane à gauche, pour garder le centre bien au milieu.
+        Region spacer = new Region();
+        spacer.minWidthProperty().bind(menuBtn.widthProperty());
+        root.setLeft(spacer);
+
+
+        menu.setAlignment(Pos.CENTER);
+        center.getChildren().add(menu);
+
+//        HBox.setMargin(menu, new Insets(0, - 120, 0, 0));
 
         loadControls(menu, menuBtn);
 
         map.WidthHeightListener(stage);
         map.resizeIVs();
         map.drawMovedObjects();
-        stage.show();
     }
 
 
@@ -134,9 +144,15 @@ public class LevelView {
             map.setEffect(null);
 
         } else {
+
             GaussianBlur gaussianBlur = new GaussianBlur();
             gaussianBlur.setRadius(10);
-            map.setEffect(gaussianBlur);
+
+            ColorAdjust colorAdjust = new ColorAdjust(0, 0, -0.6, 0);
+
+            Blend effect = new Blend(BlendMode.DARKEN, colorAdjust, gaussianBlur);
+
+            map.setEffect(effect);
         }
 
         menu.setVisible(!state);
@@ -187,14 +203,50 @@ public class LevelView {
                         if (map.setLevel(nextLevelName)) {
                             level = map.getLevel();
                             levelName = nextLevelName;
+                            map.calculateTileSize(stage);
+                            map.resizeIVs();
+                        } else {
+                            LevelLoader.getLevelNameList().remove(nextLevelName);
                         }
                     }
 
                     Rule.checkRules(level);
+
+                    if (level.checkLoose()) {
+                        map.setLevel(levelName);
+                        level = map.getLevel();
+                    }
                     map.drawMovedObjects();
                 }
             }
         });
 
+    }
+
+    private static void saveCurrentLevel() {
+
+        try {
+            LevelLoader.save(level, "currentLevel");
+
+            File file = new File("src/main/resources/com/baba/babaisyou/currentLevelName.txt");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+
+            bw.write(levelName);
+            bw.close();
+
+        } catch (IOException e) {
+
+        }
+    }
+
+    private static void getCurrentLevelName() {
+
+        try {
+            File file = new File("src/main/resources/com/baba/babaisyou/currentLevelName.txt");
+            BufferedReader br = new BufferedReader(new FileReader(file));
+
+            levelName = br.readLine();
+            br.close();
+        } catch (IOException e) {}
     }
 }

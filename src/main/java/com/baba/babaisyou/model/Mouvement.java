@@ -93,7 +93,6 @@ public class Mouvement {
      * @param direction Direction dans laquelle les joueurs vont bouger.
      */
     public static void movePlayers(Direction direction, Level level) {
-//        Mouvement.getMovedObjects().clear();
         ArrayList<GameObject> players = new ArrayList<>();
 
         Map<Material, ArrayList<GameObject>> instances = level.getInstances();
@@ -121,6 +120,7 @@ public class Mouvement {
 
         Map<GameObject, Direction> movedObjectsCopy = new HashMap<>(movedObjects);
         level.getReverseStack().add(movedObjectsCopy);
+
     }
 
     public static void reverse(Level level) {
