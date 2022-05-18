@@ -7,11 +7,14 @@ import com.baba.babaisyou.model.Mouvement;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Material;
 import javafx.animation.TranslateTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -22,15 +25,16 @@ public class MapView extends GridPane {
 
     private final ArrayList<TranslateTransition> transitions = new ArrayList<>();
     private Level level;
+    private static int tileSize, tileHeight, tileWidth;
 
-//    public MapView(Level level) {
-//        super();
-//        this.level = level;
-//    }
-
-    public void setLevel(Level level) {
-        this.level = level;
-        getChildren().clear();
+    public boolean setLevel(String levelName) {
+        try {
+            level = new Level(levelName);
+            getChildren().clear();
+            return true;
+        } catch (FileNotInCorrectFormat | IOException e) { // On ne fait rien car le niveau va juste rester le même qu'avant.
+            return false;
+        }
     }
 
     public Level getLevel() {
@@ -39,28 +43,10 @@ public class MapView extends GridPane {
 
     public void drawMovedObjects() {
         Map<GameObject, Direction> movedObjects = Mouvement.getMovedObjects();
-//        Map<Material, ArrayList<GameObject>> instances = level.getInstances();
-
-//        Map<GameObject, GameObjectView> objectImageView = GameObjectView.getObjectImageView();
-
-//        Level level = Game.getInstance().getLevel();
-
-//        if (level.isNewLevel()) {
-//            level.setIsNewLevel(false);
-//            getChildren().clear();
-//        }
 
         for (GameObject object : movedObjects.keySet()) {
 
             ImageView iv = object.getIv();
-
-
-//            if (objectImageView.containsKey(object)) {
-//                iv = objectImageView.get(object);
-//
-//            } else {
-//                iv = new GameObjectView(object);
-//            }
 
             Direction direction = movedObjects.get(object);
 
@@ -99,8 +85,8 @@ public class MapView extends GridPane {
 
             transitions.add(transition);
 
-            transition.setByX(LevelView.getTileSize() * direction.dX);
-            transition.setByY(LevelView.getTileSize() * direction.dY);
+            transition.setByX(MapView.getTileSize() * direction.dX);
+            transition.setByY(MapView.getTileSize() * direction.dY);
 
             transition.setNode(iv);
 
@@ -122,7 +108,6 @@ public class MapView extends GridPane {
                 }
             });
         }
-//        GameObject.resetMovedObjects();
         Mouvement.getMovedObjects().clear();
     }
 
@@ -130,29 +115,39 @@ public class MapView extends GridPane {
         return transitions;
     }
 
-//    public static MapView mapLoadLevel(String name) {
-//
-//        Level level;
-//
-//        try {
-//            level = new Level(name);
-//        } catch (FileNotInCorrectFormat | IOException e) {
-//            return null;
-//        }
-//
-//        return new MapView(level);
-//    }
-//
-//    public static MapView mapLoadLevel(int levelNbr) {
-//
-//        Level level;
-//
-//        try {
-//            level = new Level(levelNbr);
-//        } catch (FileNotInCorrectFormat | IOException e) {
-//            return null;
-//        }
-//
-//        return new MapView(level);
-//    }
+    public static int getTileSize() { return tileSize; }
+
+    public void WidthHeightListener(Stage stage) {
+
+        tileHeight = ((int) stage.getHeight() - 50) / level.getSizeY();
+        tileWidth = ((int) stage.getWidth()- 50) / level.getSizeX();
+
+        tileSize = Math.min(tileWidth, tileHeight);
+
+        stage.heightProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldVal, Number newVal) {
+                tileHeight = (newVal.intValue() - 50) / level.getSizeY();
+                resizeIVs();
+            }
+        });
+
+        stage.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldVal, Number newVal) {
+                tileWidth = (newVal.intValue() - 50) / level.getSizeX();
+                resizeIVs();
+            }
+        });
+    }
+
+    public void resizeIVs() {
+        tileSize = Math.min(tileWidth, tileHeight);
+
+        for (ArrayList<GameObject> objects : level) {
+            for (GameObject object : objects) {
+                object.getIv().setFitHeight(tileSize);
+            }
+        }
+    }
 }

@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class LevelBuilder {
     private static boolean editing;
@@ -49,23 +50,6 @@ public class LevelBuilder {
 
         }
         return materialsNames;
-    }
-
-    /**
-     * @return La liste des niveaux
-     */
-    public static ArrayList<String> getLevels() {
-        ArrayList<String> levelsNames = new ArrayList<>();
-        File f = new File("src/main/resources/com/baba/babaisyou/levels");
-
-        for (File file : f.listFiles()) {
-            String filteredName = file.getName().substring(0, file.getName().length() - 4);
-            if(!file.getName().substring(0, file.getName().length() - 4).equals("currentLevel")) {
-                levelsNames.add(filteredName);
-            }
-        }
-
-        return levelsNames;
     }
 
     /**

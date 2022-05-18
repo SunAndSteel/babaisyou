@@ -36,7 +36,7 @@ public class Level implements Iterable<ArrayList<GameObject>> {
         Rule.checkAllRules(this);
     }
 
-    public  Level(int sizeX, int sizeY) {
+    public Level(int sizeX, int sizeY) {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         fileName = null;

@@ -1,6 +1,8 @@
 package com.baba.babaisyou.view;
 
+import com.baba.babaisyou.model.LevelLoader;
 import com.baba.babaisyou.presenter.LevelBuilder;
+import com.baba.babaisyou.presenter.Main;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -37,7 +39,7 @@ public class Selection {
         root.getChildren().add(tx);
 
 
-        ObservableList<String> levelsNames = FXCollections.observableArrayList(LevelBuilder.getLevels());
+        ObservableList<String> levelsNames = FXCollections.observableArrayList(LevelLoader.getLevelNames());
         ListView<String> levels  = new ListView<>(levelsNames);
         levels.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
@@ -64,7 +66,7 @@ public class Selection {
         back.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                MenuView.show(primaryStage);
+                MainView.show();
             }
         });
 

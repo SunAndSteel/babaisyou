@@ -5,8 +5,11 @@ import com.baba.babaisyou.model.enums.Material;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 public class LevelLoader {
+
+    private static final ArrayList<String> levelNameList = getLevelNames();
 
     /**
      * Créer une liste en 2 dimensions d'objets représentant la map à partir d'un fichier texte
@@ -128,4 +131,31 @@ public class LevelLoader {
         }
         bw.close();
     }
+
+
+    /**
+     * @return La liste des niveaux
+     */
+    public static ArrayList<String> getLevelNames() {
+        ArrayList<String> levelsNames = new ArrayList<>();
+        File f = new File("src/main/resources/com/baba/babaisyou/levels");
+
+        for (File file : Objects.requireNonNull(f.listFiles())) {
+            String filteredName = file.getName().substring(0, file.getName().length() - 4);
+            if(!file.getName().substring(0, file.getName().length() - 4).equals("currentLevel")) {
+                levelsNames.add(filteredName);
+            }
+        }
+
+        return levelsNames;
+    }
+
+    public static String nextLevelName(String levelName) {
+
+        int index = levelNameList.indexOf(levelName);
+
+        return levelNameList.get(index % levelNameList.size());
+
+    }
+
 }

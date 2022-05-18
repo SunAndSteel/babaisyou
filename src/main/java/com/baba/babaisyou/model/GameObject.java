@@ -4,6 +4,7 @@ import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Effect;
 import com.baba.babaisyou.model.enums.Material;
 import com.baba.babaisyou.view.LevelView;
+import com.baba.babaisyou.view.MapView;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.ImageView;
@@ -18,32 +19,11 @@ public class GameObject implements Comparable<GameObject> {
     private int x, y;
     private Material material;
     private boolean reverse;
-//  private static Map<GameObject, Direction> movedObjects = new LinkedHashMap<>();
-//  private static Map<Material, ArrayList<GameObject>> instances = createInstancesMap();
     private final ArrayList<Effect> tags = new ArrayList<>();
     private final ImageView iv;
     private final ArrayList<Rule> associatedRules = new ArrayList<>();
     private static final ColorAdjust brightnessAdjust = new ColorAdjust(0, 0, -0.6, 0);
     private static final Glow glowEffect = new Glow(0.2);
-
-//    /**
-//     * Créé une instance de la map
-//     * @return L'instance de la map
-//     */
-//    public static Map<Material, ArrayList<GameObject>> createInstancesMap() {
-//        Map<Material, ArrayList<GameObject>> instances = new HashMap<>();
-//        for (Material material : Material.values()) {
-//            instances.put(material, new ArrayList<>());
-//        }
-//        return instances;
-//    }
-//
-//    /**
-//     * Réinitialise le dictionnaire instances.
-//     */
-//    public static void resetInstancesMap() {
-//        instances = createInstancesMap();
-//    }
 
     /**
      * Constructeur d'un objet de la map
@@ -54,10 +34,10 @@ public class GameObject implements Comparable<GameObject> {
     public GameObject(Material material, int x, int y) {
         this.x = x; this.y = y;
         this.material = material;
-//        instances.get(material).add(this);
+
         iv = new ImageView(material.getFrames()[0]);
         iv.setPreserveRatio(true);
-        iv.setFitHeight(LevelView.getTileSize());
+        iv.setFitHeight(MapView.getTileSize());
 
         if (material.hasEffect() || material.hasNameObject() || material == Material.Is) {
             tags.add(Effect.Movable);
@@ -135,9 +115,6 @@ public class GameObject implements Comparable<GameObject> {
                 }
             }
         }
-
-//        addMovedObjects(this, Direction.NONE);
-
     }
 
     @Override

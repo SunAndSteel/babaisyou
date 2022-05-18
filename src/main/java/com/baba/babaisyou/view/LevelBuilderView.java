@@ -6,6 +6,7 @@ import com.baba.babaisyou.model.enums.Effect;
 import com.baba.babaisyou.model.enums.Material;
 //import com.baba.babaisyou.presenter.Game;
 import com.baba.babaisyou.presenter.LevelBuilder;
+import com.baba.babaisyou.presenter.Main;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -33,7 +34,6 @@ import javafx.util.Callback;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Map;
 
 public class LevelBuilderView {
 
@@ -90,6 +90,9 @@ public class LevelBuilderView {
     private static String selectedMat;
     private static String selectedLevel;
     private static GameObject cursor;
+    private static Scene scene;
+    private static Stage stage;
+    private static final MapView map = new MapView();
 
     /**
      * Vue du constructeur de niveau
@@ -99,21 +102,15 @@ public class LevelBuilderView {
 //        Game game = Game.getInstance();
 //        HBox root = new HBox();
 
+        LevelBuilderView.stage = stage;
+
         BorderPane root = new BorderPane();
-        Button backbtn = new Button("Retour");
+        Button backBtn = new Button("Retour");
         HBox btnHolder = new HBox();
-        VBox popuplHolder = new VBox();
+//        VBox popupHolder = new VBox();
         Popup popup = new Popup();
         Button newLevelBtn = new Button("Ajouter un niveau");
         Button editBtn = new Button("Editer le niveau");
-
-        final MapView map = new MapView();
-        try {
-            map.setLevel(new Level("level0"));
-
-        } catch (IOException | FileNotInCorrectFormat e) {
-            // TODO
-        }
 
         ObservableList<Material> materialsNames = FXCollections.observableArrayList(LevelBuilder.getMaterials());
         ListView<Material> materials  = new ListView<>(materialsNames);
@@ -138,11 +135,9 @@ public class LevelBuilderView {
         materials.getSelectionModel().select(0);
 
         root.setLeft(materials);
-//        lists.getChildren().add(materials);
 
-
-        ObservableList<String> levelsNames = FXCollections.observableArrayList(LevelBuilder.getLevels());
-        ListView<String> levels  = new ListView<>(levelsNames);
+        ObservableList<String> levelNames = FXCollections.observableArrayList(LevelLoader.getLevelNames());
+        ListView<String> levels  = new ListView<>(levelNames);
         levels.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
             public ListCell<String> call(ListView<String> param) {
@@ -155,18 +150,14 @@ public class LevelBuilderView {
         root.setRight(levels);
 //        lists.getChildren().add(levels);
 
-        btnHolder.getChildren().add(backbtn);
+        btnHolder.getChildren().add(backBtn);
         btnHolder.getChildren().add(newLevelBtn);
         btnHolder.getChildren().add(editBtn);
         root.setBottom(btnHolder);
         btnHolder.setAlignment(Pos.CENTER);
-//      lists.getChildren().add(btnHolder);
 
-
-//        root.getChildren().add(lists);
-
-        Scene scene = new Scene(root, MainView.width, MainView.height);
-        stage.setScene(scene);
+        scene = MainView.getScene();
+        scene.setRoot(root);
         scene.getStylesheets().add((new File("src/levelBuilder.css")).toURI().toString());
 
 
@@ -180,40 +171,18 @@ public class LevelBuilderView {
         levels.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                try {
-                    map.setLevel(new Level(newValue));
-                } catch (IOException | FileNotInCorrectFormat e) {
-                    // TODO
+
+                if (map.setLevel(newValue)) {
+                    selectedLevel = newValue;
+                    level = map.getLevel();
+                    addCursor();
+                    map.drawMovedObjects();
                 }
-                selectedLevel = newValue;
-                level = map.getLevel();
-                addCursor();
-                map.drawMovedObjects();
             }
         });
 
-        //Listener boutons
-        editBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                LevelBuilder.EditButtonAction(levels, newLevelBtn, editBtn, selectedLevel, level);
-            }
-        });
-        newLevelBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                popup.show(stage);
-                LevelBuilder.NewLevelButtonAction(levelsNames);
-                levels.refresh();
-            }
-        });
+        buttonListeners(editBtn, newLevelBtn, backBtn, levels, levelNames, popup);
 
-        backbtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                MenuView.show(stage);
-            }
-        });
 
         //Les events Enter et Escape ne s'affichent pas à cause des listes donc j'ajoute un eventfilter pour éviter le bug
         materials.addEventFilter( KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
@@ -243,13 +212,7 @@ public class LevelBuilderView {
             }
         });
 
-        // Afficher un level vide
-        // root.getChildren().add(map);
-        try {
-            map.setLevel(new Level("level0"));
-        } catch (IOException | FileNotInCorrectFormat e) {
-            // TODO
-        }
+        map.setLevel("level0");
         level = map.getLevel();
         root.setCenter(map);
 
@@ -260,36 +223,10 @@ public class LevelBuilderView {
         map.setAlignment(Pos.CENTER);
         root.setBackground(new Background(new BackgroundFill(Color.rgb(21, 24, 31), CornerRadii.EMPTY, Insets.EMPTY)));
 
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
+        loadControls();
 
-                KeyCode code = event.getCode();
-                switch (code) {
-                    case Z : Mouvement.moveWithoutChecking(cursor, Direction.UP, level); break;
-                    case S : Mouvement.moveWithoutChecking(cursor, Direction.DOWN, level); break;
-                    case Q : Mouvement.moveWithoutChecking(cursor, Direction.LEFT, level); break;
-                    case D : Mouvement.moveWithoutChecking(cursor, Direction.RIGHT, level); break;
-                    case ESCAPE : stage.close();
-                    case R :
-                        try {
-                            map.setLevel(new Level(Level.getCurrentLevelNbr()));
-                        } catch (IOException | FileNotInCorrectFormat e) {
-                            // TODO
-                        }
-                        level = map.getLevel();
-                        addCursor();
-                        break;
-                    case ENTER :
-                        LevelBuilder.PlaceObjects(level, selectedMat, cursor.getX(), cursor.getY());
-                        break;
-
-                    case F11 : stage.setFullScreen(!stage.isFullScreen()); break;
-                    case BACK_SPACE : LevelBuilder.removeObject(level, cursor.getX(), cursor.getY()); break;                    }
-
-                map.drawMovedObjects();
-            }
-        });
+        map.WidthHeightListener(stage);
+        map.resizeIVs();
         map.drawMovedObjects();
         stage.show();
     }
@@ -314,6 +251,93 @@ public class LevelBuilderView {
 
     public static GameObject getCursor() {
         return cursor;
+    }
+
+    private static void loadControls() {
+
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+            @Override
+            public void handle(KeyEvent event) {
+
+                if (map.getTransitions().isEmpty()) {
+                    KeyCode code = event.getCode();
+
+                    switch (code) {
+                        case Z:
+                            Mouvement.moveWithoutChecking(cursor, Direction.UP, level);
+                            break;
+                        case S:
+                            Mouvement.moveWithoutChecking(cursor, Direction.DOWN, level);
+                            break;
+                        case Q:
+                            Mouvement.moveWithoutChecking(cursor, Direction.LEFT, level);
+                            break;
+                        case D:
+                            Mouvement.moveWithoutChecking(cursor, Direction.RIGHT, level);
+                            break;
+                        case ESCAPE:
+                            stage.close();
+                            break;
+                        case R:
+
+                            if (map.setLevel(selectedLevel)) {
+                                level = map.getLevel();
+                                addCursor();
+                            }
+                            break;
+
+                        case ENTER:
+                            LevelBuilder.PlaceObjects(level, selectedMat, cursor.getX(), cursor.getY());
+                            break;
+
+                        case F11:
+                            stage.setFullScreen(!stage.isFullScreen());
+                            break;
+
+                        case BACK_SPACE:
+                            LevelBuilder.removeObject(level, cursor.getX(), cursor.getY());
+                            break;
+                    }
+
+                    map.drawMovedObjects();
+                }
+            }
+        });
+    }
+
+    private static void buttonListeners(Button editBtn,
+                                        Button newLevelBtn,
+                                        Button backBtn,
+                                        ListView<String> levels,
+                                        ObservableList<String> levelNames,
+                                        Popup popup) {
+
+        editBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                LevelBuilder.EditButtonAction(levels, newLevelBtn, editBtn, selectedLevel, level);
+            }
+        });
+        newLevelBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                popup.show(stage);
+                LevelBuilder.NewLevelButtonAction(levelNames);
+                levels.refresh();
+            }
+        });
+
+        backBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                MainView.show();
+            }
+        });
+
+
+
+
     }
 }
 
