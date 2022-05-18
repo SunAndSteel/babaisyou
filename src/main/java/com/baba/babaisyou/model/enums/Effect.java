@@ -9,5 +9,5 @@ public enum Effect {
     Killer,
     Hittable,
     Winner,
-    Play;
+    Sink;
 }

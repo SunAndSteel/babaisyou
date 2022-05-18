@@ -184,4 +184,10 @@ public class Level implements Iterable<ArrayList<GameObject>> {
 
         return loose;
     }
+
+    public void removeObject(int x, int y, GameObject object) {
+        get(x, y).remove(object);
+        instances.get(object.getMaterial()).remove(object);
+        Mouvement.getMovedObjects().put(object, Direction.NONE);
+    }
 }

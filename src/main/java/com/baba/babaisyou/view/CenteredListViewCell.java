@@ -1,4 +1,4 @@
-package com.baba.babaisyou.presenter;
+package com.baba.babaisyou.view;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;

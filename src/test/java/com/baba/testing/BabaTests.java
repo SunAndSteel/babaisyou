@@ -1,7 +1,6 @@
 package com.baba.testing;
 
 import com.baba.babaisyou.model.*;
-import com.baba.babaisyou.model.enums.Effect;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Material;
 import com.baba.babaisyou.view.MapView;
@@ -10,17 +9,12 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 
-public class Babatests {
+public class BabaTests {
 
     private static String path = "src/test/resources/";
 

@@ -35,11 +35,16 @@ public class Mouvement {
             if (tags.contains(Effect.Movable)) {
                 move(object2, direction, level);
 
-            } else if (tags.contains(Effect.Killer)) {
-                level.get(x, y).remove(object);
-                instances.get(object.getMaterial()).remove(object);
-                movedObjects.put(object, Direction.NONE);
+            } else if (tags.contains(Effect.Killer) || tags.contains(Effect.Sink)) {
+                level.removeObject(x, y, object);
+
+                if (tags.contains(Effect.Sink)) {
+                    level.removeObject(newX, newY, object2);
+                }
+
+
                 return;
+
 
             } else if (tags.contains(Effect.Winner) &&
                     object.getTags().contains(Effect.Player)) {

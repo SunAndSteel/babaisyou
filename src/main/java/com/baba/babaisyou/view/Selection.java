@@ -1,7 +1,6 @@
 package com.baba.babaisyou.view;
 
 import com.baba.babaisyou.model.LevelLoader;
-import com.baba.babaisyou.presenter.CenteredListViewCell;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -10,7 +9,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
@@ -32,10 +30,14 @@ public class Selection {
     public static void show(Stage primaryStage) {
 
         VBox root = new VBox(30);
+        HBox buttonHolder = new HBox();
 
-        Text tx = new Text("Niveaux");
-        Button back = new Button("Retour");
-        root.getChildren().add(tx);
+        Text text = new Text("Niveaux");
+        Button backBtn = new Button("Retour");
+        Button playBtn = new Button("Commencer");
+
+        buttonHolder.getChildren().addAll(backBtn, playBtn);
+        buttonHolder.setAlignment(Pos.CENTER);
 
 
         ObservableList<String> levelsNames = FXCollections.observableArrayList(LevelLoader.getLevelNames());
@@ -46,9 +48,7 @@ public class Selection {
                 return new CenteredListViewCell();
             }
         });
-        levels.getSelectionModel().select(0);
 
-        root.getChildren().add(levels);
         scene = MainView.getScene();
         scene.setRoot(root);
         scene.getStylesheets().add((new File("src/selection.css")).toURI().toString());
@@ -61,12 +61,20 @@ public class Selection {
             }
         });
 
-        root.getChildren().add(back);
+        root.getChildren().addAll(text, levels, buttonHolder);
 
-        back.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        backBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 MainView.show();
+            }
+        });
+        playBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (selectedLevel != null) {
+                    LevelView.show(primaryStage, selectedLevel);
+                }
             }
         });
 
@@ -87,13 +95,14 @@ public class Selection {
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode() == KeyCode.ENTER) {
-                    LevelView.show(primaryStage, selectedLevel);
+                    if (selectedLevel != null) {
+                        LevelView.show(primaryStage, selectedLevel);
+                    }
                 }
             }
         });
 
         primaryStage.setScene(scene);
-
     }
 }
 

@@ -70,7 +70,6 @@ public class LevelCell extends ListCell<String> {
         if (!cond && item != null && !empty) {
             label.setText(item);
             setGraphic(hbox);
-            cond = false;
         }
     }
 }
