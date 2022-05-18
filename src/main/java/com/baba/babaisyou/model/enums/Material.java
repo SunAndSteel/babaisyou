@@ -1,6 +1,6 @@
 package com.baba.babaisyou.model.enums;
 
-import com.baba.babaisyou.view.Frames;
+import com.baba.babaisyou.model.Frames;
 import javafx.scene.image.WritableImage;
 
 /**

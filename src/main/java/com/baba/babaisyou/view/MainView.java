@@ -1,5 +1,6 @@
 package com.baba.babaisyou.view;
 
+import com.baba.babaisyou.presenter.Main;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -11,12 +12,10 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.util.Objects;
 
 public class MainView extends Application {
 
@@ -34,21 +33,15 @@ public class MainView extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         root = new StackPane();
-        Button resume = new Button("Reprendre");
-        Button play = new Button("Commencer");
-        Button builder = new Button("Constructeur de niveau");
+        Button resumeBtn = new Button("Reprendre");
+        Button playBtn = new Button("Commencer");
+        Button builderBtn = new Button("Constructeur de niveau");
         Button quitBtn = new Button("Quitter");
         Label title = new Label("Baba is you");
 
-        File currentLevel = new File("src/main/resources/com/baba/babaisyou/levels/currentLevel.txt");
-
         VBox vb;
-        if (currentLevel.exists()) {
-            vb = new VBox(title, resume, play, builder, quitBtn);
-            play.setText("Niveaux");
-        } else {
-            vb = new VBox(title, play, builder, quitBtn);
-        }
+        vb = new VBox(title, resumeBtn, playBtn, builderBtn, quitBtn);
+        playBtn.setText("Niveaux");
 
         vb.setAlignment(Pos.CENTER);
 
@@ -60,26 +53,19 @@ public class MainView extends Application {
 
         scene = new Scene(root, MainView.width, MainView.height);
         scene.getStylesheets().add((new File("src/menu.css")).toURI().toString());
-        scene.setFill(Color.rgb(21, 24, 31));
-
         primaryStage.setScene(scene);
 
-        play.setOnMouseClicked(event -> {
-            if(Objects.equals(play.getText(), "Niveaux")) {
-                LevelView.show(primaryStage, "level1");
-            } else if (Objects.equals(play.getText(), "Commencer")) {
-                LevelView.show(primaryStage, "level1");
-//                try {
-//                    currentLevel.createNewFile();
-//                } catch (IOException e) {
-//                    throw new RuntimeException(e);
-//                }
-            }
-        });
-        builder.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        //Handlers des buttons
+        playBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                LevelBuilderView.show(primaryStage);
+                Main.playBtnAction(primaryStage, playBtn);
+            }
+        });
+        builderBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                Main.builderBtnAction(primaryStage);
             }
         });
         quitBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -100,7 +86,6 @@ public class MainView extends Application {
     }
 
     public static void show() {
-
         scene.setRoot(root);
 
     }

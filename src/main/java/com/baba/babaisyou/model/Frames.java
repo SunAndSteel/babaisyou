@@ -1,4 +1,4 @@
-package com.baba.babaisyou.view;
+package com.baba.babaisyou.model;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;

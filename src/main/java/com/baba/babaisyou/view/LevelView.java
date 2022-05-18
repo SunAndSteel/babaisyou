@@ -1,10 +1,10 @@
 package com.baba.babaisyou.view;
 
-import com.baba.babaisyou.model.*;
+import com.baba.babaisyou.model.Level;
+import com.baba.babaisyou.model.LevelLoader;
+import com.baba.babaisyou.model.Mouvement;
+import com.baba.babaisyou.model.Rule;
 import com.baba.babaisyou.model.enums.Direction;
-//import com.baba.babaisyou.presenter.Game;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,11 +18,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.util.ArrayList;
 
 
 /**
