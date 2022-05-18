@@ -1,10 +1,12 @@
 package com.baba.babaisyou.view;
 
-import com.baba.babaisyou.model.*;
+import com.baba.babaisyou.model.FileNotInCorrectFormat;
+import com.baba.babaisyou.model.GameObject;
+import com.baba.babaisyou.model.Level;
+import com.baba.babaisyou.model.Mouvement;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Effect;
 import com.baba.babaisyou.model.enums.Material;
-//import com.baba.babaisyou.presenter.Game;
 import com.baba.babaisyou.presenter.LevelBuilder;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -33,44 +35,49 @@ import javafx.util.Callback;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Map;
 
 public class LevelBuilderView {
 
     static class LevelCell extends ListCell<String> {
         HBox hbox = new HBox();
+        HBox hbox2 = new HBox();
         Label label = new Label("");
+        Label label2 = new Label("");
         Pane pane = new Pane();
+        Pane pane2 = new Pane();
         Button button = new Button("X");
+        Button button2 = new Button("");
+
 
         public LevelCell() {
             super();
 
-            hbox.getChildren().addAll(label, pane, button);
-            HBox.setHgrow(pane, Priority.ALWAYS);
-            hbox.setAlignment(Pos.CENTER);
             button.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
-                    LevelCell.this.getListView().getItems().remove(LevelCell.this.getItem());
-
-                    File file = new File("src/main/resources/com/baba/babaisyou/levels/" + LevelCell.this.getText() + ".txt");
-                    System.out.println("src/main/resources/com/baba/babaisyou/levels/" + LevelCell.this.getText() + ".txt");
-                    RandomAccessFile raf = null;
+                    File file = new File("src/main/resources/com/baba/babaisyou/levels/" + getItem() + ".txt");
+                    RandomAccessFile raf;
                     try {
                         raf = new RandomAccessFile(file, "rw");
                         raf.close();
+                        if (file.delete()) {
+                            System.out.println("Deleted");
+                            LevelCell.this.getListView().getItems().remove(getItem());
+                        } else {
+                            System.out.println("Not deleted");
+                        }
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                    if (file.delete()) {
-                        System.out.println("Deleted");
-                    } else {
-                        System.out.println("Not deleted");
-                    }
                 }
             });
+            hbox.getChildren().addAll(label, pane, button);
+            hbox2.getChildren().addAll(label2, pane2, button2);
+            HBox.setHgrow(pane, Priority.ALWAYS);
+            hbox.setAlignment(Pos.CENTER);
+            hbox2.setAlignment(Pos.CENTER_LEFT);
         }
+
 
         @Override
         protected void updateItem(String item, boolean empty) {
@@ -78,9 +85,21 @@ public class LevelBuilderView {
             setText(null);
             setGraphic(null);
 
-            if (item != null && !empty) {
+            boolean cond = false;
+
+            try {
+                if(getItem().equals("level0") ||getItem().equals("level1") ||getItem().equals("level2") ||getItem().equals("level3")) {
+                    label2.setText(item);
+                    setGraphic(hbox2);
+                    cond = true;
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            if (!cond && item != null && !empty) {
                 label.setText(item);
                 setGraphic(hbox);
+                cond = false;
             }
         }
     }
@@ -136,6 +155,7 @@ public class LevelBuilderView {
             }
         });
         materials.getSelectionModel().select(0);
+        selectedMat = materialsNames.get(0).name();
 
         root.setLeft(materials);
 //        lists.getChildren().add(materials);
@@ -150,6 +170,8 @@ public class LevelBuilderView {
             }
         });
         levels.getSelectionModel().select(0);
+        selectedMat = levelsNames.get(0);
+
 
 
         root.setRight(levels);
