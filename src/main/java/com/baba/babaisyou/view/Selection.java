@@ -87,7 +87,7 @@ public class Selection {
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode() == KeyCode.ENTER) {
-                    LevelView.show(primaryStage, selectedLevel);
+                    LevelView.show(primaryStage, scene ,selectedLevel);
                 }
             }
         });
