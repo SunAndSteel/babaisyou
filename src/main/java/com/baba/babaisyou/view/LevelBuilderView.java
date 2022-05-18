@@ -1,9 +1,6 @@
 package com.baba.babaisyou.view;
 
-import com.baba.babaisyou.model.FileNotInCorrectFormat;
-import com.baba.babaisyou.model.GameObject;
-import com.baba.babaisyou.model.Level;
-import com.baba.babaisyou.model.Mouvement;
+import com.baba.babaisyou.model.*;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Effect;
 import com.baba.babaisyou.model.enums.Material;
@@ -98,7 +95,7 @@ public class LevelBuilderView {
             }
         });
         levels.getSelectionModel().select(0);
-        selectedMat = levelsNames.get(0);
+        selectedMat = levelNames.get(0);
 
 
 

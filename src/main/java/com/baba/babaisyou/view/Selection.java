@@ -26,6 +26,7 @@ import javafx.util.Callback;
 
 import java.io.File;
 
+import static com.baba.babaisyou.view.MainView.scene;
 import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
 public class Selection {
@@ -50,7 +51,8 @@ public class Selection {
         levels.getSelectionModel().select(0);
 
         root.getChildren().add(levels);
-        Scene scene = new Scene(root, MainView.width, MainView.height);
+        scene = MainView.getScene();
+        scene.setRoot(root);
         scene.getStylesheets().add((new File("src/selection.css")).toURI().toString());
         root.setAlignment(Pos.CENTER);
 
@@ -87,7 +89,7 @@ public class Selection {
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode() == KeyCode.ENTER) {
-                    LevelView.show(primaryStage, scene ,selectedLevel);
+                    LevelView.show(primaryStage,selectedLevel);
                 }
             }
         });
