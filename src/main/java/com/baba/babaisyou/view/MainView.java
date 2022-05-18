@@ -12,9 +12,11 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.File;
 
 public class MainView extends Application {
@@ -39,6 +41,7 @@ public class MainView extends Application {
         Button levelsBtn = new Button("Niveaux");
         Button quitBtn = new Button("Quitter");
         Label title = new Label("Baba is you");
+        title.getStyleClass().add("title");
 
         File currentLevel = new File("src/main/resources/com/baba/babaisyou/levels/currentLevel.txt");
 

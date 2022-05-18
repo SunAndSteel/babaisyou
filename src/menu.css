@@ -5,12 +5,10 @@
     -fx-background-color: rgb(21, 24, 31);
 }
 
-Label {
-    -fx-background-color: transparent;
-    -fx-font-size: 50;
+.title {
+    -fx-font-size: 60;
     -fx-font-family: "VCR OSD Mono";
     -fx-text-fill: white;
-    -fx-padding: 0 0 30 0;
 }
 
 Button {
