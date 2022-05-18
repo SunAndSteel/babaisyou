@@ -1,0 +1,9 @@
+10 10
+Baba 0 0
+TextFlag 2 0
+Is 3 0
+Win 4 0
+Flag 0 1
+TextBaba 2 1
+Is 3 1
+You 4 1
