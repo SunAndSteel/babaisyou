@@ -27,13 +27,18 @@ public class MainView extends Application {
     private static StackPane root;
     private static Button resumeBtn;
 
+    /**
+     * @see javafx.application.Application#launch(String...) 
+     */
     public static void show(String[] args) {
         launch(args);
     }
 
-
+    /**
+     * @see javafx.application.Application#start(Stage) 
+     */
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         root = new StackPane();
         resumeBtn = new Button("Reprendre");
         Button playBtn = new Button("Commencer");

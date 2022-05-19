@@ -35,7 +35,7 @@ public class LevelBuilder {
     }
 
     /**
-     * @return La liste des materiaux
+     * @return La liste des matériaux
      */
     public static ArrayList<Material> getMaterials() {
         Material[] materials = Material.values();

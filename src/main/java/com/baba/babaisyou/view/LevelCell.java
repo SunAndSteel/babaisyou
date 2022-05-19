@@ -41,7 +41,6 @@ public class LevelCell extends ListCell<String> {
             )
     );
 
-
     public LevelCell() {
         super();
 
@@ -69,13 +68,17 @@ public class LevelCell extends ListCell<String> {
         hbox2.setAlignment(Pos.CENTER_LEFT);
     }
 
-
+    /**
+     * Réécriture de la méthode updateItem pour placer le bouton dans la cellule
+     * @see javafx.scene.control.ListCell#updateItem(Object, boolean)
+     */
     @Override
     protected void updateItem(String item, boolean empty) {
         super.updateItem(item, empty);
         setText(null);
         setGraphic(null);
 
+        //Si un level est dans le set "defaultLevels", on n'ajoute pas le bouton supprimer
         boolean cond = false;
         try {
             if(defaultLevels.contains(getItem())) {

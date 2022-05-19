@@ -46,7 +46,7 @@ public class LevelBuilderView {
     private static final MapView map = new MapView();
 
     /**
-     * Vue du constructeur de niveau
+     * Afficher le constructeur de niveau
      * @param stage Le stage dans lequel afficher la scène
      */
     public static void show(Stage stage) {
