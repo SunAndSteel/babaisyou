@@ -7,6 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * Classe permettant de gérer un niveau.
+ */
 public class Level implements Iterable<ArrayList<GameObject>> {
 
     private final ArrayList<Rule> rules = new ArrayList<>();
@@ -15,13 +18,17 @@ public class Level implements Iterable<ArrayList<GameObject>> {
     private ArrayList<GameObject>[][] levelGrid;
     private final Map<Material, ArrayList<GameObject>> instances = createInstancesMap();
     private final Stack<Map<GameObject, Direction>> reverseStack = new Stack<>();
-    private boolean isNewLevel = true;
     private boolean win;
     private boolean loose;
 
+    /**
+     * Construction de level
+     * @param name Le nom du niveau à charger.
+     */
     public Level(String name) {
 
         try {
+            Mouvement.getMovedObjects().clear();
             LevelLoader.loadLevel("src/main/resources/com/baba/babaisyou/levels/" + name + ".txt", this);
             Rule.checkAllRules(this);
         } catch (IOException | FileNotInCorrectFormat e) {
@@ -30,9 +37,15 @@ public class Level implements Iterable<ArrayList<GameObject>> {
 
     }
 
+    /**
+     * Constructeur de level
+     * @param name Le nom du niveau à charger.
+     * @param path Le path du dossier où se trouve le niveau.
+     */
     public Level(String name, String path) {
 
         try {
+            Mouvement.getMovedObjects().clear();
             LevelLoader.loadLevel(path + name + ".txt", this);
             Rule.checkAllRules(this);
         } catch (IOException | FileNotInCorrectFormat e) {
@@ -41,45 +54,73 @@ public class Level implements Iterable<ArrayList<GameObject>> {
 
     }
 
-
-
-    public Level(int sizeX, int sizeY) {
-        this.sizeX = sizeX;
-        this.sizeY = sizeY;
-        LevelLoader.createEmptyGrid(sizeX, sizeY, this);
-    }
-
+    /**
+     * Setter de win
+     * @param win La nouvelle valeur de win.
+     */
     public void setWin(boolean win) {
         this.win = win;
     }
 
+    /**
+     * Getter de win
+     * @return La valeur de win.
+     */
     public boolean isWin() {
         return win;
     }
 
+    /**
+     * Setter de loose
+     * @param loose La nouvelle valeur de loose.
+     */
+    public void setLoose(boolean loose) {
+        this.loose = loose;
+    }
+
+    /**
+     * Getter de loose
+     * @return La valeur de loose.
+     */
     public boolean isLoose() {
         return loose;
     }
 
+    /**
+     * Permet de mettre le levelGrid.
+     * @param levelGrid La nouvelle valeur de levelGrid
+     */
     public void setLevelGrid(ArrayList<GameObject>[][] levelGrid) {
         this.levelGrid = levelGrid;
     }
 
+    /**
+     * Getter de levelGrid
+     * @return Le tableau à deux dimensions d'ArrayList.
+     */
     public ArrayList<GameObject>[][] getLevelGrid() {
         return levelGrid;
     }
 
+    /**
+     * Getter de instances.
+     * @return Les dictionnaires d'instances.
+     */
     public Map<Material, ArrayList<GameObject>> getInstances() {
         return instances;
     }
 
+    /**
+     * Getter de reverseStack
+     * @return La pile de dictionnaire permettant de revenir en arrière.
+     */
     public Stack<Map<GameObject, Direction>> getReverseStack() {
         return reverseStack;
     }
 
     /**
-     * Créé une instance de la map
-     * @return L'instance de la map
+     * Crée le dictionnaire instances.
+     * @return Le dictionnaire instances.
      */
     public static Map<Material, ArrayList<GameObject>> createInstancesMap() {
 
@@ -92,6 +133,7 @@ public class Level implements Iterable<ArrayList<GameObject>> {
     }
 
     /**
+     * Getter de la taille X
      * @return La taille X du level
      */
     public int getSizeX() {
@@ -99,28 +141,42 @@ public class Level implements Iterable<ArrayList<GameObject>> {
     }
 
     /**
+     * Getter de la taille Y
      * @return La taille Y du level
      */
     public int getSizeY() {
         return sizeY;
     }
 
+    /**
+     * Setter de la taille X.
+     * @param sizeX La nouvelle taille X.
+     */
     public void setSizeX(int sizeX) {
         this.sizeX = sizeX;
     }
 
+    /**
+     * Setter de la taille Y.
+     * @param sizeY La nouvelle taille Y.
+     */
     public void setSizeY(int sizeY) {
         this.sizeY = sizeY;
     }
 
+    /**
+     * Getter de rules
+     * @return La liste des règles du niveau.
+     */
     public ArrayList<Rule> getRules() {
         return rules;
     }
 
     /**
-     * @param x La position x de l'objet
-     * @param y La position y de l'objet
-     * @return Une arraylist d'objets à la position (x, y)
+     * Permet de récupérer la liste d'objet à l'endroit x, y.
+     * @param x La position x.
+     * @param y La position y.
+     * @return Une arraylist d'objets à la position (x, y).
      */
     public ArrayList<GameObject> get(int x, int y) {
         return levelGrid[y][x];
@@ -134,12 +190,17 @@ public class Level implements Iterable<ArrayList<GameObject>> {
         private int y = 0;
         private final Level levelInstance;
 
+        /**
+         * Constructeur de LevelIterator
+         * @param levelInstance Le niveau
+         */
         public LevelIterator(Level levelInstance) {
             this.levelInstance = levelInstance;
         }
 
         /**
-         * @return Retourne vrai si il y a encore au moins un objet dans le tableau en 2d
+         * Permet de vérifier s'il y a encore au moins un objet dans le tableau en 2d.
+         * @return Retourne vrai s'il y a encore au moins un objet dans le tableau en 2d.
          */
         @Override
         public boolean hasNext() {
@@ -147,6 +208,7 @@ public class Level implements Iterable<ArrayList<GameObject>> {
         }
 
         /**
+         * Permet de récupérer le prochain objet.
          * @return Le prochain objet dans le tableau en 2d
          */
         @Override
@@ -171,17 +233,24 @@ public class Level implements Iterable<ArrayList<GameObject>> {
         return new LevelIterator(this);
     }
 
-
-    public void setLoose(boolean loose) {
-        this.loose = loose;
-    }
-
+    /**
+     * Permet de retirer un objet du niveau.
+     * @param x la position x de l'objet
+     * @param y la position y de l'objet
+     * @param object L'objet à retirer.
+     */
     public void removeObject(int x, int y, GameObject object) {
         get(x, y).remove(object);
         instances.get(object.getMaterial()).remove(object);
         Mouvement.getMovedObjects().put(object, Direction.NONE);
     }
 
+    /**
+     * Permet d'ajouter un objet dans le niveau.
+     * @param x la position x de l'objet
+     * @param y la position y de l'objet
+     * @param object L'objet à ajouter.
+     */
     public void addObject(int x, int y, GameObject object) {
         get(x, y).add(object);
         instances.get(object.getMaterial()).add(object);

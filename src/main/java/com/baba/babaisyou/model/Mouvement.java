@@ -6,6 +6,9 @@ import com.baba.babaisyou.model.enums.Material;
 
 import java.util.*;
 
+/**
+ * Classe permettant le déplacement des objets.
+ */
 public class Mouvement {
 
     private static final Map<GameObject, Direction> movedObjects = new LinkedHashMap<>();
@@ -13,6 +16,8 @@ public class Mouvement {
     /**
      * Bouge l'objet si c'est possible
      * @param direction La direction vers laquelle on veut bouger
+     * @param level Le niveau
+     * @param object L'objet
      */
     public static void move(GameObject object, Direction direction, Level level) {
         if (!isMovable(object, direction, level))
@@ -21,12 +26,10 @@ public class Mouvement {
         int dX = direction.dX; int dY = direction.dY;
         int x = object.getX(); int y = object.getY();
         int newX = x + dX; int newY = y + dY;
-//        Game game = Game.getInstance();
-        Map<Material, ArrayList<GameObject>> instances = level.getInstances();
 
         ArrayList<Effect> tags1 = object.getTags();
-
         ArrayList<GameObject> levelNewXNewYCopy = new ArrayList<>(level.get(newX, newY));
+
         // Itérer dans ce sens permet de bouger par exemple : s'il y a plusieurs objets movable
         // aux mêmes endroits, alors on bouge d'abord l'objet qui est derrière l'autre dans la liste (et donc qui est affiché devant l'autre lors du print)
         for (int i = (levelNewXNewYCopy.size() - 1); i >= 0; i--) {
@@ -70,8 +73,8 @@ public class Mouvement {
         object.setX(newX);
         object.setY(newY);
 
+        // Si l'objet est associé a un objet best, on le bouge aussi.
         GameObject best = object.getBest();
-
         if (best != null) {
             Mouvement.moveWithoutChecking(best, direction, level);
         }
@@ -80,6 +83,8 @@ public class Mouvement {
     /**
      * Vérifie si on peut bouger l'objet dans une direction
      * @param direction La direction
+     * @param level Le niveau
+     * @param object L'objet
      * @return Vrai si on peut bouger dans la direction, sinon faux
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -111,12 +116,14 @@ public class Mouvement {
     /**
      * Permet de bouger tous les joueurs (si possible) dans une certaine direction.
      * @param direction Direction dans laquelle les joueurs vont bouger.
+     * @param level Le niveau.
      */
     public static void movePlayers(Direction direction, Level level) {
         ArrayList<GameObject> players = new ArrayList<>();
 
         Map<Material, ArrayList<GameObject>> instances = level.getInstances();
 
+        // Permet de récupérer la liste des joueurs.
         for (Rule rule : level.getRules()) {
             if (rule.getObj2().getMaterial() == Material.You) {
                 players.addAll(instances.get(rule.getMaterial1()));
@@ -143,6 +150,10 @@ public class Mouvement {
 
     }
 
+    /**
+     * Permet de revenir en arrière d'une étape.
+     * @param level Le niveau.
+     */
     public static void reverse(Level level) {
 
         Stack<Map<GameObject, Direction>> reverseStack = level.getReverseStack();
@@ -177,13 +188,12 @@ public class Mouvement {
                 instances.get(o.getMaterial()).add(o);
             }
 
-//            GameObject.addMovedObjects(o, direction.reverseDirection());
             movedObjects.put(o, direction.reverseDirection());
         }
     }
 
     /**
-     *
+     * Getter de movedObjects
      * @return La liste des objects qui ont bougé
      */
     public static Map<GameObject, Direction> getMovedObjects() {
@@ -191,8 +201,10 @@ public class Mouvement {
     }
 
     /**
-     * Bouge l'objet sans vérifier les tags des objets
-     * @param direction La direction vers laquelle on veut bouger
+     * Bouge l'objet sans vérifier les tags des objets.
+     * @param direction La direction vers laquelle on veut bouger.
+     * @param level Le niveau.
+     * @param object L'objet.
      */
     public static void moveWithoutChecking(GameObject object, Direction direction, Level level) {
 

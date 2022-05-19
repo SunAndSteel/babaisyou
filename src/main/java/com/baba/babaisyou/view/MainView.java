@@ -31,9 +31,8 @@ public class MainView extends Application {
         launch(args);
     }
 
-
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         root = new StackPane();
         resumeBtn = new Button("Reprendre");
         Button playBtn = new Button("Commencer");
@@ -45,8 +44,7 @@ public class MainView extends Application {
 
         //La première fois que le jeu est lancé, on veut ne veut pas afficher le bouton "reprendre"
         File currentLevel = new File("src/main/resources/com/baba/babaisyou/levels/currentLevel.txt");
-        VBox vb;
-        vb = new VBox(title, resumeBtn, playBtn, levelsBtn, builderBtn, quitBtn);
+        VBox vb = new VBox(title, resumeBtn, playBtn, levelsBtn, builderBtn, quitBtn);
         if (!currentLevel.exists()) {
             resumeBtn.setVisible(false);
         }
@@ -102,14 +100,14 @@ public class MainView extends Application {
     }
 
     /**
-     * Méthode qui affiche la scène
+     * Méthode qui permet de ré-afficher la scene.
      */
     public static void show() {
         scene.setRoot(root);
         scene.getStylesheets().add((new File("src/menu.css")).toURI().toString());
 
+        // Vérifie si currentLevel existe, pour afficher le bouton Reprendre
         File currentLevel = new File("src/main/resources/com/baba/babaisyou/levels/currentLevel.txt");
-
         resumeBtn.setVisible(currentLevel.exists());
     }
 

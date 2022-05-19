@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 /**
- * Classe représentant un objet sur la map
+ * Classe représentant un objet
  */
 public class GameObject implements Comparable<GameObject> {
     private int x, y;
@@ -28,10 +28,10 @@ public class GameObject implements Comparable<GameObject> {
     private static final Glow glowEffect = new Glow(0.2);
 
     /**
-     * Constructeur d'un objet de la map
-     * @param material La texture
-     * @param x La position x
-     * @param y La position y
+     * Constructeur d'un objet de la map.
+     * @param material Le matériel de l'objet.
+     * @param x La position x.
+     * @param y La position y.
      */
     public GameObject(Material material, int x, int y) {
         this.x = x; this.y = y;
@@ -41,6 +41,7 @@ public class GameObject implements Comparable<GameObject> {
         iv.setPreserveRatio(true);
         iv.setFitHeight(MapView.getTileSize());
 
+        // Si c'est un objet text ou effet, on lui donne automatiquement le tag pour pouvoir les bouger.
         if (material.hasEffect() || material.hasNameObject() || material == Material.Is) {
             tags.add(Effect.Movable);
             iv.setEffect(brightnessAdjust);
@@ -51,52 +52,79 @@ public class GameObject implements Comparable<GameObject> {
     }
 
     /**
-     * @return La position x de l'objet
+     * Getter de x.
+     * @return La position x de l'objet.
      */
     public int getX() { return x; }
 
     /**
-     * @param x La nouvelle position x de l'objet
+     * Setter de x.
+     * @param x La nouvelle position x de l'objet.
      */
     public void setX(int x) { this.x = x; }
 
     /**
-     * @return La position y de l'objet
+     * Getter de y.
+     * @return La position y de l'objet.
      */
     public int getY() { return y; }
 
     /**
-     * @param y La nouvelle position y de l'objet
+     * Setter de y.
+     * @param y La nouvelle position y de l'objet.
      */
     public void setY(int y) { this.y = y; }
 
+    /**
+     * Setter de reverse.
+     * @param reverse La nouvelle valeur de reverse.
+     */
     public void setReverse(boolean reverse) {
         this.reverse = reverse;
     }
 
+    /**
+     * Getter de reverse.
+     * @return La valeur de reverse.
+     */
     public boolean getReverse() {
         return reverse;
     }
 
     /**
-     * @return La texture de l'objet
+     * Getter de material.
+     * @return Le matériel de l'objet
      */
     public Material getMaterial() { return material; }
 
+    /**
+     * Getter des tags de l'objet.
+     * @return Les tags de l'objet.
+     */
     public ArrayList<Effect> getTags() {
         return tags;
     }
 
+    /**
+     * Getter de iv
+     * @return L'imageView de l'objet.
+     */
     public ImageView getIv() {
         return iv;
     }
 
+    /**
+     * Getter de associatedRules.
+     * @return La liste des règles associer à l'objet.
+     */
     public ArrayList<Rule> getAssociatedRules() {
         return associatedRules;
     }
 
     /**
-     * @param material Un objet material
+     * Permet à l'objet de changer de materiel
+     * @param material Un nouveau materiel.
+     * @param level Le niveau.
      */
     public void setMaterial(Material material, Level level) {
 
@@ -113,6 +141,7 @@ public class GameObject implements Comparable<GameObject> {
         }
         tags.clear();
 
+        // On vérifie les règles existantes pour voir s'il ne faut pas lui ajouter des tags.
         for (Rule rule : level.getRules()) {
             if (rule.getMaterial1() == material) {
 
@@ -125,6 +154,11 @@ public class GameObject implements Comparable<GameObject> {
         }
     }
 
+    /**
+     * Permet de comparer deux objets.
+     * @param object L'objet qu'on compare.
+     * @return Retourne 1 si this se trouve en premier dans le niveau ou au même endroit, -1 sinon.
+     */
     @Override
     public int compareTo(GameObject object) {
         if (this.y > object.y) {
@@ -140,14 +174,27 @@ public class GameObject implements Comparable<GameObject> {
         }
     }
 
+    /**
+     * Getter de brightnessAdjust.
+     * @return Le brightnessAdjust.
+     */
     public static ColorAdjust getBrightnessAdjust() {
         return brightnessAdjust;
     }
 
+    /**
+     * Getter de glowEffect.
+     * @return Le glowEffect.
+     */
     public static Glow getGlowEffect() {
         return glowEffect;
     }
 
+    /**
+     * Permet d'ajouter un tag à l'objet.
+     * @param effect Le tag.
+     * @param level Le niveau.
+     */
     public void addTag(Effect effect, Level level) {
         tags.add(effect);
 
@@ -157,6 +204,11 @@ public class GameObject implements Comparable<GameObject> {
         }
     }
 
+    /**
+     * Permet de retirer un tag de l'objet.
+     * @param effect Le tag à retirer.
+     * @param level Le niveau.
+     */
     public void removeTag(Effect effect, Level level) {
         tags.remove(effect);
 
@@ -166,6 +218,10 @@ public class GameObject implements Comparable<GameObject> {
         }
     }
 
+    /**
+     * Getter de best
+     * @return L'objet de best.
+     */
     public GameObject getBest() {
         return best;
     }

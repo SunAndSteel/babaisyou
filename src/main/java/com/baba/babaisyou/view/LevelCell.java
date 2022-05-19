@@ -41,7 +41,9 @@ public class LevelCell extends ListCell<String> {
             )
     );
 
-
+    /**
+     * Constructeur de LevelCell.
+     */
     public LevelCell() {
         super();
 

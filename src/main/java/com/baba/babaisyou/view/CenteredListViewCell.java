@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
  */
 public class CenteredListViewCell extends ListCell<String> {
     @Override
+
     //Afficher les cellules au centre de la vue
     public void updateItem(String item, boolean empty) {
         super.updateItem(item, empty);

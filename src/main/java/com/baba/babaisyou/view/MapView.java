@@ -19,12 +19,20 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Classe qui permet d'afficher un niveau.
+ */
 public class MapView extends GridPane {
 
     private final ArrayList<TranslateTransition> transitions = new ArrayList<>();
     private Level level;
     private static int tileSize, tileHeight, tileWidth;
 
+    /**
+     * Permet de changer de niveau, s'il existe, sinon ça reste l'ancien niveau.
+     * @param levelName Le nom du nouveau niveau
+     * @return True, si le niveau a bien changé, false sinon.
+     */
     public boolean setLevel(String levelName) {
 
         Level newLevel = new Level(levelName);
@@ -38,6 +46,11 @@ public class MapView extends GridPane {
         return false;
     }
 
+    /**
+     * Permet de changer de niveau via le path du niveau, s'il existe, sinon ça reste l'ancien niveau.
+     * @param levelName Le nom du nouveau niveau.
+     * @param path Le path du niveau.
+     */
     public void setLevel(String levelName, String path) {
 
         Level newLevel = new Level(levelName, path);
@@ -48,11 +61,18 @@ public class MapView extends GridPane {
         }
     }
 
-
+    /**
+     * Getter de level
+     * @return Le level
+     */
     public Level getLevel() {
         return level;
     }
 
+    /**
+     * Permet d'afficher les objets, qui viennent de bouger, dans la mapView.
+     * Et fait une animation de transition.
+     */
     public void drawMovedObjects() {
         Map<GameObject, Direction> movedObjects = Mouvement.getMovedObjects();
 
@@ -62,6 +82,8 @@ public class MapView extends GridPane {
 
             Direction direction = movedObjects.get(object);
 
+            // Si un objet à une direction None, alors ça signifie que l'objet vient d'être créer et donc qu'il ne faut
+            // pas faire d'animation de transition.
             if (direction == Direction.NONE) {
 
                 getChildren().remove(iv);
@@ -75,6 +97,7 @@ public class MapView extends GridPane {
 
             Material material = object.getMaterial();
 
+            // Permet de changer la direction d'un objet
             if (material.isDirectional()) {
 
                 Image image;
@@ -88,6 +111,7 @@ public class MapView extends GridPane {
                 iv.setImage(image);
 
             }
+
             // Cela permet de mettre l'ImageView à la fin de la liste children, pour éviter des bugs visuels avec TranslateTransition
             getChildren().remove(iv);
             getChildren().add(iv);
@@ -113,7 +137,7 @@ public class MapView extends GridPane {
                     transitions.remove(transition);
 
                     // Permet de vérifier si l'objet est toujours là (pour le changement de niveau)
-                    if (level.get(object.getX(), object.getY()).contains(object)) { // A changer
+                    if (level.get(object.getX(), object.getY()).contains(object)) {
                         MapView.this.add(iv, object.getX(), object.getY());
                     }
                 }
@@ -122,12 +146,25 @@ public class MapView extends GridPane {
         Mouvement.getMovedObjects().clear();
     }
 
+    /**
+     * Getter de transitions.
+     * @return Les transitions en cours.
+     */
     public ArrayList<TranslateTransition> getTransitions() {
         return transitions;
     }
 
+    /**
+     * Getter de tileSize
+     * @return La taille d'une tile.
+     */
     public static int getTileSize() { return tileSize; }
 
+    /**
+     * Permet de redimensionner la fenêtre sans avoir de bugs visuelle.
+     * @param stage Le stage.
+     * @param constructor Si c'est le LevelBuilderView qui appelle la méthode, c'est true.
+     */
     public void WidthHeightListener(Stage stage, boolean constructor) {
 
         calculateTileSize(stage, constructor);
@@ -158,6 +195,9 @@ public class MapView extends GridPane {
         });
     }
 
+    /**
+     * Permet de redimensionner les ImageViews.
+     */
     public void resizeIVs() {
         tileSize = Math.min(tileWidth, tileHeight);
 
@@ -168,6 +208,11 @@ public class MapView extends GridPane {
         }
     }
 
+    /**
+     * Permet de calculer la taille d'une tile.
+     * @param stage Le stage.
+     * @param constructor Si c'est le LevelBuilderView qui appelle la méthode, c'est true.
+     */
     public void calculateTileSize(Stage stage, boolean constructor) {
         tileHeight = ((int) stage.getHeight() - 50) / level.getSizeY();
 

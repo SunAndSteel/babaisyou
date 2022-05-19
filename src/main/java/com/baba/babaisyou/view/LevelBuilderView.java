@@ -63,7 +63,9 @@ public class LevelBuilderView {
         //Initialiser la liste des matériaux avec l'image du matériel à côté du nom
         ObservableList<Material> materialsNames = FXCollections.observableArrayList(LevelBuilder.getMaterials());
         ListView<Material> materials  = new ListView<>(materialsNames);
-        materials.setCellFactory(new Callback<ListView<Material>, ListCell<Material>>() { //Permet de customiser les cellules de la liste
+
+        //Permet de customiser les cellules de la liste
+        materials.setCellFactory(new Callback<ListView<Material>, ListCell<Material>>() {
             @Override
             public ListCell<Material> call(ListView<Material> l) {
                 return new ListCell<>() {
@@ -116,10 +118,12 @@ public class LevelBuilderView {
 
         } while (!isCorrect && index < levelNames.size());
 
+        // Charge le niveau.
         map.setLevel(selectedLevel);
         level = map.getLevel();
         root.setCenter(map);
 
+        // Ajoute le curseur dans le niveau.
         cursor = new GameObject(Material.Cursor, 0, 0);
         cursor.getTags().add(Effect.Player);
         addCursor();
@@ -127,15 +131,19 @@ public class LevelBuilderView {
         map.setAlignment(Pos.CENTER);
         root.setBackground(new Background(new BackgroundFill(Color.rgb(21, 24, 31), CornerRadii.EMPTY, Insets.EMPTY)));
 
+        // Initialise-les listeners.
         listListeners(materials, levels);
         buttonListeners(editBtn, newLevelBtn, backBtn, levels, levelNames, popup);
 
+        // Initialise-les controls
         loadControls();
 
+        // Calcule la taille correcte des ImageViews et change leur taille.
         map.WidthHeightListener(stage, true);
         map.resizeIVs();
-        map.drawMovedObjects();
 
+
+        map.drawMovedObjects();
         stage.show();
     }
 
@@ -161,6 +169,7 @@ public class LevelBuilderView {
     }
 
     /**
+     * Getter de cursor.
      * @return Le curseur
      */
     public static GameObject getCursor() {
@@ -168,8 +177,7 @@ public class LevelBuilderView {
     }
 
     /**
-     * Méthode qui permet de se déplacer dans le niveau,
-     * ignore toutes les règles
+     * Méthode qui initialise les controls.
      */
     private static void loadControls() {
 
@@ -207,7 +215,7 @@ public class LevelBuilderView {
                             break;
 
                         case ENTER:
-                            LevelBuilder.PlaceObjects(level, selectedMat, cursor.getX(), cursor.getY());
+                            LevelBuilder.PlaceObjectsAtCursor(level, selectedMat, cursor);
                             break;
 
                         case F11:
@@ -296,7 +304,7 @@ public class LevelBuilderView {
             }
         });
 
-        //Les events Enter et Escape ne s'affichent pas à cause des listes donc j'ajoute un eventfilter pour éviter le bug
+        //Les events Enter et Escape ne s'affichent pas à cause des listes donc on ajoute un EventFilter pour éviter le bug
         materials.addEventFilter( KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {

@@ -24,7 +24,6 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Objects;
 
 
@@ -65,6 +64,7 @@ public class LevelView {
         center.getChildren().add(map);
         root.setCenter(center);
 
+        // Charge le niveau
         map.setLevel(levelName);
         level = map.getLevel();
 
@@ -111,7 +111,6 @@ public class LevelView {
             }
         }));
 
-//      root.getChildren().add(menuBtn);
         menuBtn.setAlignment(Pos.TOP_RIGHT);
         root.setRight(menuBtn);
 
@@ -126,13 +125,14 @@ public class LevelView {
 
         loadControls(menu, menuBtn);
 
+        // Calcule la taille des ImageViews et change leur taille.
         map.WidthHeightListener(stage, false);
         map.resizeIVs();
+
         map.drawMovedObjects();
     }
 
-
-
+    // Permet de rendre visible/invisible le menu.
     private static void toggleMenu(VBox menu, Button menuBtn)  {
 
         boolean state = false;
@@ -157,6 +157,7 @@ public class LevelView {
         menuBtn.setVisible(state);
     }
 
+    // Permet d'initialiser les controls.
     private static void loadControls(VBox menu, Button menuBtn) {
 
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -221,22 +222,23 @@ public class LevelView {
 
     }
 
+    // Permet de sauvegarder le niveau actuel.
     private static void saveCurrentLevel() {
 
         try {
             LevelLoader.save(level, "currentLevel");
 
+            // Permet de sauvegarder le nom du niveau actuel.
             File file = new File("src/main/resources/com/baba/babaisyou/currentLevelName.txt");
             BufferedWriter bw = new BufferedWriter(new FileWriter(file));
 
             bw.write(levelName);
             bw.close();
 
-        } catch (IOException e) {
-
-        }
+        } catch (IOException e) {}
     }
 
+    // Permet de récupérer le nom du niveau qu'on a sauvegardé en dernier.
     private static void getCurrentLevelName() {
 
         try {

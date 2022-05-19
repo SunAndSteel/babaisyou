@@ -35,7 +35,8 @@ public class LevelBuilder {
     }
 
     /**
-     * @return La liste des materiaux
+     * Récupère la liste des matériaux sans le Floor, BestObject, et Cursor
+     * @return La liste des matériaux
      */
     public static ArrayList<Material> getMaterials() {
         Material[] materials = Material.values();
@@ -52,7 +53,8 @@ public class LevelBuilder {
     }
 
     /**
-     * Fonction appelée quand le bouton éditer est cliqué
+     * Fonction appelée quand le bouton éditer est cliqué.
+     * Permet de changer le mode d'édition.
      * @param levels Liste des niveaux
      * @param newLevelBtn Bouton "ajouter un niveau"
      * @param editBtn bouton "éditer un niveau"
@@ -88,23 +90,27 @@ public class LevelBuilder {
     }
 
     /**
-     * Fonction appelée quand l'utilisateur appuie sur entrée
+     * Fonction appelée quand l'utilisateur appuie sur entrée.
+     * Permet d'ajouter un objet dans
      * @param level le niveau sur lequel placer l'objet
      * @param material le material de l'objet a placer
-     * @param x la position x où placer l'objet
-     * @param y la position y où placer l'objet
+     * @param cursor Le curseur
      */
-    public static void PlaceObjects(Level level, Material material, int x, int y) {
-        ArrayList<GameObject> objects = level.get(x, y);
+    public static void PlaceObjectsAtCursor(Level level, Material material, GameObject cursor) {
+        ArrayList<GameObject> objects = level.get(cursor.getX(), cursor.getY());
 
+        // On ne peut pas ajouter un objet s'il y en a déjà un.
         if(editing && objects.size() == 2) {
-            objects.add(new GameObject(material, x, y));
+            objects.add(new GameObject(material, cursor.getX(), cursor.getY()));
+
+            // Permet de ré-afficher le curseur par-dessus le nouvel objet.
             Mouvement.getMovedObjects().put(LevelBuilderView.getCursor(), Direction.NONE);
         }
     }
 
     /**
      * Fonction appelée quand l'utilisateur appuie sur effacer
+     * Permet de retirer un objet.
      * @param level le niveau où enlever l'objet
      * @param x la position x de l'objet à enlever
      * @param y la position y de l'objet à enlever
@@ -128,6 +134,7 @@ public class LevelBuilder {
 
     /**
      * Fonction appelée quand l'utilisateur clique sur le bouton "ajouter un niveau
+     * Permet de créer un nouveau niveau.
      * @param updatedList La liste des niveaux qu'il faut actualiser
      */
     public static void NewLevelButtonAction(ObservableList<String> updatedList) {
@@ -149,17 +156,20 @@ public class LevelBuilder {
                 try {
                     int x = Integer.parseInt(nlX.getText());
                     int y = Integer.parseInt(nlY.getText());
+
                     String name = nlName.getText();
                     File newLevel = new File("src/main/resources/com/baba/babaisyou/levels/" + name + ".txt");
+
                     BufferedWriter nl = new BufferedWriter(new FileWriter(newLevel));
+
                     nl.write(x + " " + y);
                     nl.close();
+
                     newLevel.createNewFile();
+
                     updatedList.add(name);
                     stage.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                } catch (IOException e) {}
             }
         });
     }

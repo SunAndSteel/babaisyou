@@ -11,17 +11,17 @@ public class Images {
     private static final int ImageSize = 24;
 
     /**
-     * Créer une frame à partir d'une spritesheet
-     * @param row position début frame
-     * @param col position début frame
-     * @param nbrFrames Nombre de frames
-     * @return La frame complète
+     * Créer la liste d'images à partir d'une SpriteSheet
+     * @param row position y de la première image
+     * @param col position x de la première image
+     * @param nbrImages Nombre d'images.
+     * @return La liste d'images.
      */
-    public static WritableImage[] getImages(int row, int col, int nbrFrames) {
-        WritableImage[] images = new WritableImage[nbrFrames];
+    public static WritableImage[] getImages(int row, int col, int nbrImages) {
+        WritableImage[] images = new WritableImage[nbrImages];
         PixelReader pixelReader = spriteSheetImage.getPixelReader();
 
-        for (int i = 0; i < nbrFrames; i++) {
+        for (int i = 0; i < nbrImages; i++) {
             images[i] = new WritableImage(pixelReader, col* ImageSize, row* ImageSize + i* ImageSize, ImageSize, ImageSize);
         }
 
@@ -29,12 +29,12 @@ public class Images {
     }
 
     /**
-     * Créer une frame à partir d'une image
-     * @param url L'url de l'image
-     * @return La frame
+     * Créer une liste d'images d'une seule image à partir d'un path.
+     * @param imagePath Le path de l'image
+     * @return La liste d'images contentment une image.
      */
-    public static WritableImage[] getImages(String url) {
-        Image test = new Image(url, 24, 24, false, false);
+    public static WritableImage[] getImages(String imagePath) {
+        Image test = new Image(imagePath, 24, 24, false, false);
 
         WritableImage[] images = new WritableImage[1];
         PixelReader pixelReader = test.getPixelReader();

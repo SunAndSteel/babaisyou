@@ -42,7 +42,7 @@ public class SelectionView {
         buttonHolder.getChildren().addAll(backBtn, playBtn);
         buttonHolder.setAlignment(Pos.CENTER);
 
-
+        // Récupère les noms des niveaux à afficher dans la liste.
         ObservableList<String> levelsNames = FXCollections.observableArrayList(LevelLoader.getLevelNames());
         ListView<String> levels  = new ListView<>(levelsNames);
         levels.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
@@ -102,8 +102,6 @@ public class SelectionView {
                 }
             }
         });
-
-        primaryStage.setScene(scene);
     }
 }
 

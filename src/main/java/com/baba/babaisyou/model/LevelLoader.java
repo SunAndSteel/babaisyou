@@ -7,13 +7,17 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Classe permettant de charger/sauvegarder un niveau.
+ */
 public class LevelLoader {
 
     private static final ArrayList<String> levelNameList = getLevelNames();
 
     /**
      * Créer une liste en 2 dimensions d'objets représentant la map à partir d'un fichier texte
-     * @param filePath Le numéro du level à charger
+     * @param filePath Le path du level
+     * @param level Le niveau dans lequel on va mettre le levelGrid.
      */
     public static void loadLevel(String filePath, Level level) throws IOException, FileNotInCorrectFormat {
 
@@ -83,6 +87,12 @@ public class LevelLoader {
         br.close();
     }
 
+    /**
+     * Perimeter de créer une grille vide et de la placer dans le niveau.
+     * @param sizeX Le nombre de colones.
+     * @param sizeY Le nombre de lignes.
+     * @param level Le niveau dans lequel on va placer le levelGrid.
+     */
     @SuppressWarnings("unchecked")
     public static void createEmptyGrid(int sizeX, int sizeY, Level level) {
 
@@ -109,6 +119,11 @@ public class LevelLoader {
         level.setLevelGrid(levelGrid);
     }
 
+    /**
+     * Permet de sauvegarder un niveau dans un fichier.
+     * @param level Le niveau
+     * @param fileName Le nom du fichier.
+     */
     public static void save(Level level, String fileName) throws IOException {
 
         File file = new File("src/main/resources/com/baba/babaisyou/levels/" + fileName + ".txt");
@@ -133,7 +148,8 @@ public class LevelLoader {
 
 
     /**
-     * @return La liste des niveaux
+     * Permet de la liste des noms de niveau sauf s'il se nomme "currentLevel".
+     * @return La liste des noms de niveaux.
      */
     public static ArrayList<String> getLevelNames() {
         ArrayList<String> levelsNames = new ArrayList<>();
@@ -149,6 +165,11 @@ public class LevelLoader {
         return levelsNames;
     }
 
+    /**
+     * Permet de récupérer le nom du prochain niveau grâce à la liste de noms de niveau.
+     * @param levelName Le nom du niveau actuel.
+     * @return Le nom du prochain niveau.
+     */
     public static String nextLevelName(String levelName) {
 
         int index = levelNameList.indexOf(levelName);
@@ -157,6 +178,10 @@ public class LevelLoader {
 
     }
 
+    /**
+     * Getter de levelNameList
+     * @return La liste des noms de niveau.
+     */
     public static ArrayList<String> getLevelNameList() {
         return levelNameList;
     }
