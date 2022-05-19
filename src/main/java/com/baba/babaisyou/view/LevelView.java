@@ -128,7 +128,7 @@ public class LevelView {
 
         loadControls(menu, menuBtn);
 
-        map.WidthHeightListener(stage);
+        map.WidthHeightListener(stage, false);
         map.resizeIVs();
         map.drawMovedObjects();
     }
@@ -203,7 +203,7 @@ public class LevelView {
                         if (map.setLevel(nextLevelName)) {
                             level = map.getLevel();
                             levelName = nextLevelName;
-                            map.calculateTileSize(stage);
+                            map.calculateTileSize(stage, false);
                             map.resizeIVs();
                         } else {
                             LevelLoader.getLevelNameList().remove(nextLevelName);
@@ -212,7 +212,7 @@ public class LevelView {
 
                     Rule.checkRules(level);
 
-                    if (level.checkLoose()) {
+                    if (level.isLoose()) {
                         map.setLevel(levelName);
                         level = map.getLevel();
                     }

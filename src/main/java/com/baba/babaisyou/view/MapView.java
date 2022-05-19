@@ -128,9 +128,9 @@ public class MapView extends GridPane {
 
     public static int getTileSize() { return tileSize; }
 
-    public void WidthHeightListener(Stage stage) {
+    public void WidthHeightListener(Stage stage, boolean constructor) {
 
-        calculateTileSize(stage);
+        calculateTileSize(stage, constructor);
 
         tileSize = Math.min(tileWidth, tileHeight);
 
@@ -145,7 +145,14 @@ public class MapView extends GridPane {
         stage.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldVal, Number newVal) {
-                tileWidth = (newVal.intValue() - 50) / level.getSizeX();
+
+                if (!constructor) {
+                    tileWidth = (newVal.intValue() - 50) / level.getSizeX();
+
+                } else {
+                    tileWidth = (newVal.intValue() - 500) / level.getSizeX();
+                }
+
                 resizeIVs();
             }
         });
@@ -161,8 +168,15 @@ public class MapView extends GridPane {
         }
     }
 
-    public void calculateTileSize(Stage stage) {
+    public void calculateTileSize(Stage stage, boolean constructor) {
         tileHeight = ((int) stage.getHeight() - 50) / level.getSizeY();
-        tileWidth = ((int) stage.getWidth()- 50) / level.getSizeX();
+
+        if (!constructor) {
+            tileWidth = ((int) stage.getWidth() - 50) / level.getSizeX();
+
+        } else {
+            tileWidth = ((int) stage.getWidth() - 500) / level.getSizeX();
+
+        }
     }
 }

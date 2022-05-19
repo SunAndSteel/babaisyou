@@ -102,21 +102,19 @@ public class BabaTests {
 
         Mouvement.getMovedObjects().clear();
 
-        // On lance le niveau "ruleTest"
-        level = new Level("ruleTest", path);
+        // On lance le niveau "LooseTest"
+        level = new Level("looseTest", path);
 
         // Dans le niveau, il y a Baba en x = 0 et y = 0
-        // TextBaba en x = 0 et y = 1
-        // Is en x = 1 et y = 1
-        // You en x = 2 et y = 1
+        // Skull en x = 0 et y = 1
+        // et une règle Baba Is You
+        // et une règle Skull Is Loose
 
         // On bouge l'objet "Baba" vers le bas.
         Mouvement.movePlayers(Direction.DOWN, level);
 
-        Rule.checkRules(level);
-
-        // La règle Baba Is You n'est plus formé, donc on s'attend à ce que c'est loose.
-        Assertions.assertTrue(level.checkLoose());
+        // Baba va sur le Skull, donc on s'attend à ce que c'est loose.
+        Assertions.assertTrue(level.isLoose());
     }
 
     @Test

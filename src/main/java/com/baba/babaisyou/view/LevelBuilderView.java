@@ -133,7 +133,7 @@ public class LevelBuilderView {
 
         loadControls();
 
-        map.WidthHeightListener(stage);
+        map.WidthHeightListener(stage, true);
         map.resizeIVs();
         map.drawMovedObjects();
 
@@ -263,7 +263,7 @@ public class LevelBuilderView {
                     level = map.getLevel();
                     addCursor();
                     map.drawMovedObjects();
-                    map.calculateTileSize(stage);
+                    map.calculateTileSize(stage, true);
                     map.resizeIVs();
                 } else {
 

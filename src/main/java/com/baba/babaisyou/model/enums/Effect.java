@@ -6,8 +6,14 @@ package com.baba.babaisyou.model.enums;
 public enum Effect {
     Movable,
     Player,
-    Killer,
     Hittable,
     Winner,
+    Float,
+    Hot,
+    Melt,
+    Loose,
+    Open,
+    Shut,
+    Defeat,
     Sink;
 }

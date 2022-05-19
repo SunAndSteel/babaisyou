@@ -24,31 +24,40 @@ public class Mouvement {
 //        Game game = Game.getInstance();
         Map<Material, ArrayList<GameObject>> instances = level.getInstances();
 
+        ArrayList<Effect> tags1 = object.getTags();
+
 
         // Itérer dans ce sens permet de bouger par exemple : s'il y a plusieurs objets movable
         // aux mêmes endroits, alors on bouge d'abord l'objet qui est derrière l'autre dans la liste (et donc qui est affiché devant l'autre lors du print)
         for (int i = (level.get(newX, newY).size() - 1); i >= 0; i--) {
             GameObject object2 = level.get(newX, newY).get(i);
 
-            ArrayList<Effect> tags = object2.getTags();
+            ArrayList<Effect> tags2 = object2.getTags();
 
-            if (tags.contains(Effect.Movable)) {
+            if (tags2.contains(Effect.Movable)) {
                 move(object2, direction, level);
 
-            } else if (tags.contains(Effect.Killer) || tags.contains(Effect.Sink)) {
+            } else if ((tags2.contains(Effect.Hot) && tags1.contains(Effect.Melt)) || tags2.contains(Effect.Defeat)) {
+
                 level.removeObject(x, y, object);
-
-                if (tags.contains(Effect.Sink)) {
-                    level.removeObject(newX, newY, object2);
-                }
-
-
                 return;
 
+            } else if (tags2.contains(Effect.Sink)) {
+                level.removeObject(x, y, object);
+                level.removeObject(newX, newY, object2);
+                return;
 
-            } else if (tags.contains(Effect.Winner) &&
-                    object.getTags().contains(Effect.Player)) {
+            } else if ((tags2.contains(Effect.Shut))) {
+                if (tags1.contains(Effect.Open)) {
+                    level.removeObject(x, y, object);
+                    level.removeObject(newX, newY, object2);
+                }
+                return;
 
+            } else if (tags2.contains(Effect.Loose) && tags1.contains(Effect.Player)) {
+                level.setLoose(true);
+
+            } else if (tags2.contains(Effect.Winner) && tags1.contains(Effect.Player)) {
                 level.setWin(true);
             }
         }
