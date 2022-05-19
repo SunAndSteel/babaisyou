@@ -13,7 +13,13 @@ import javafx.scene.layout.Priority;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
+/**
+ * Classe qui représente les cellules de la liste des niveaux dans "LevelBuilderView.java"
+ */
 public class LevelCell extends ListCell<String> {
     HBox hbox = new HBox();
     HBox hbox2 = new HBox();
@@ -23,11 +29,23 @@ public class LevelCell extends ListCell<String> {
     Pane pane2 = new Pane();
     Button button = new Button("X");
     Button button2 = new Button("");
+    Set<String> defaultLevels = new HashSet<String>(
+            Arrays.asList(
+                    "level1",
+                    "level2",
+                    "level3",
+                    "level4",
+                    "level5",
+                    "level6",
+                    "level7"
+            )
+    );
 
 
     public LevelCell() {
         super();
 
+        //Bouton supprimer
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -59,14 +77,13 @@ public class LevelCell extends ListCell<String> {
         setGraphic(null);
 
         boolean cond = false;
-
         try {
-            if(getItem().equals("level0") ||getItem().equals("level1") ||getItem().equals("level2") ||getItem().equals("level3")) {
+            if(defaultLevels.contains(getItem())) {
                 label2.setText(item);
                 setGraphic(hbox2);
                 cond = true;
             }
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
         if (!cond && item != null && !empty) {
             label.setText(item);
             setGraphic(hbox);

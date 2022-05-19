@@ -32,6 +32,9 @@ import javafx.util.Callback;
 
 import java.io.File;
 
+/**
+ * Class qui représente la vue du constructeur de niveau
+ */
 public class LevelBuilderView {
 
     private static Level level;
@@ -57,9 +60,10 @@ public class LevelBuilderView {
         Button newLevelBtn = new Button("Ajouter un niveau");
         Button editBtn = new Button("Editer le niveau");
 
+        //Initialiser la liste des matériaux avec l'image du matériel à côté du nom
         ObservableList<Material> materialsNames = FXCollections.observableArrayList(LevelBuilder.getMaterials());
         ListView<Material> materials  = new ListView<>(materialsNames);
-        materials.setCellFactory(new Callback<ListView<Material>, ListCell<Material>>() {
+        materials.setCellFactory(new Callback<ListView<Material>, ListCell<Material>>() { //Permet de customiser les cellules de la liste
             @Override
             public ListCell<Material> call(ListView<Material> l) {
                 return new ListCell<>() {
@@ -78,6 +82,7 @@ public class LevelBuilderView {
             }
         });
 
+        //Initialiser la liste des niveaux avec des cellules customs définies dans le fichier "LevelCell.java"
         ObservableList<String> levelNames = FXCollections.observableArrayList(LevelLoader.getLevelNames());
         ListView<String> levels  = new ListView<>(levelNames);
         levels.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
@@ -87,29 +92,22 @@ public class LevelBuilderView {
             }
         });
 
-
+        //Définir l'interface
         root.setLeft(materials);
         root.setRight(levels);
         root.setBottom(btnHolder);
-
         btnHolder.getChildren().add(backBtn);
         btnHolder.getChildren().add(newLevelBtn);
         btnHolder.getChildren().add(editBtn);
-
         btnHolder.setAlignment(Pos.CENTER);
-
         scene = MainView.getScene();
         scene.setRoot(root);
         scene.getStylesheets().add((new File("src/levelBuilder.css")).toURI().toString());
-
-
-
 
         // Permet que si le niveau choisi est mauvais, alors ça choisi un autre niveau tant qu'il en troue un de correct.
         // Il en trouvera toujours un car il y a les niveaux de base du jeu qui sont corrects.
         boolean isCorrect;
         int index = 0;
-
         do {
             levels.getSelectionModel().select(index);
             selectedLevel = levels.getSelectionModel().getSelectedItem();
@@ -141,6 +139,9 @@ public class LevelBuilderView {
         stage.show();
     }
 
+    /**
+     * Méthode qui permet d'ajouter un curseur dans le niveau
+     */
     private static void addCursor() {
 
         int x = cursor.getX();
@@ -159,10 +160,17 @@ public class LevelBuilderView {
         Mouvement.getMovedObjects().put(cursor, Direction.NONE);
     }
 
+    /**
+     * @return Le curseur
+     */
     public static GameObject getCursor() {
         return cursor;
     }
 
+    /**
+     * Méthode qui permet de se déplacer dans le niveau,
+     * ignore toutes les règles
+     */
     private static void loadControls() {
 
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -217,6 +225,15 @@ public class LevelBuilderView {
         });
     }
 
+    /**
+     * Gestionnaire d'événements sur les boutons
+     * @param editBtn Bouton "éditer"
+     * @param newLevelBtn Bouton "ajouter un niveau"
+     * @param backBtn Bouton "retour"
+     * @param levels Liste des niveaux
+     * @param levelNames Liste du nom des niveaux
+     * @param popup Popup ajouter un niveau
+     */
     private static void buttonListeners(Button editBtn,
                                         Button newLevelBtn,
                                         Button backBtn,
@@ -247,6 +264,11 @@ public class LevelBuilderView {
         });
     }
 
+    /**
+     * Gestionnaires des événements sur les listes
+     * @param materials Liste des matériaux
+     * @param levels Liste des niveaux
+     */
     private static void listListeners(ListView<Material> materials, ListView<String> levels) {
 
         materials.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Material>() {

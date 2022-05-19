@@ -1,6 +1,5 @@
 package com.baba.babaisyou.view;
 
-import com.baba.babaisyou.presenter.Main;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -12,13 +11,14 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.io.File;
 
+/**
+ * Classe qui représente le menu principal du jeu
+ */
 public class MainView extends Application {
 
     public static int width;
@@ -33,8 +33,7 @@ public class MainView extends Application {
 
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-
+    public void start(Stage stage) throws Exception {
         root = new StackPane();
         resumeBtn = new Button("Reprendre");
         Button playBtn = new Button("Commencer");
@@ -44,8 +43,8 @@ public class MainView extends Application {
         Label title = new Label("Baba is you");
         title.getStyleClass().add("title");
 
+        //La première fois que le jeu est lancé, on veut ne veut pas afficher le bouton "reprendre"
         File currentLevel = new File("src/main/resources/com/baba/babaisyou/levels/currentLevel.txt");
-
         VBox vb;
         vb = new VBox(title, resumeBtn, playBtn, levelsBtn, builderBtn, quitBtn);
         if (!currentLevel.exists()) {
@@ -53,59 +52,59 @@ public class MainView extends Application {
         }
 
         vb.setAlignment(Pos.CENTER);
-
         root.getChildren().add(vb);
 
         //Fenêtre deux fois moins grande que l'écran
         width = (int) Screen.getPrimary().getBounds().getWidth()/2;
         height = (int) Screen.getPrimary().getBounds().getHeight()/2;
 
+        //Initialisation de la scène au départ de l'application
         scene = new Scene(root, MainView.width, MainView.height);
         scene.getStylesheets().add((new File("src/menu.css")).toURI().toString());
 
-        primaryStage.setScene(scene);
-
+        //Gestion des évènements sur les boutons
         resumeBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                LevelView.show(primaryStage, "currentLevel");
+                LevelView.show(stage, "currentLevel");
             }
         });
         playBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                LevelView.show(primaryStage, "level1");
+                LevelView.show(stage, "level1");
             }
         });
         builderBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                LevelBuilderView.show(primaryStage);
+                LevelBuilderView.show(stage);
             }
         });
         levelsBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
-            public void handle(MouseEvent event) { Selection.show(primaryStage); }
+            public void handle(MouseEvent event) { SelectionView.show(stage); }
         });
         quitBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                primaryStage.close();
+                stage.close();
             }
         });
 
-        primaryStage.setTitle("BabaIsYou");
-
-        primaryStage.getIcons().add(new Image("file:src/main/resources/com/baba/babaisyou/views/Baba.png"));
-
-        primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-        primaryStage.setFullScreen(true);
-
-        primaryStage.show();
+        //Initialisation du Stage
+        stage.setScene(scene);
+        stage.setTitle("BabaIsYou");
+        stage.getIcons().add(new Image("file:src/main/resources/com/baba/babaisyou/views/Baba.png"));
+        stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+        stage.setFullScreen(true);
+        stage.show();
     }
 
+    /**
+     * Méthode qui affiche la scène
+     */
     public static void show() {
-
         scene.setRoot(root);
         scene.getStylesheets().add((new File("src/menu.css")).toURI().toString());
 
@@ -114,6 +113,10 @@ public class MainView extends Application {
         resumeBtn.setVisible(currentLevel.exists());
     }
 
+    /**
+     * Getter scene
+     * @return La scène
+     */
     public static Scene getScene() {
         return scene;
     }

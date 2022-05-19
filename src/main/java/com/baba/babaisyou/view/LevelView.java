@@ -29,7 +29,7 @@ import java.util.Objects;
 
 
 /**
- * Classe qui gère l'interface graphique du jeu
+ * Classe qui représente la vue d'un niveau
  */
 public class LevelView {
 
@@ -111,7 +111,7 @@ public class LevelView {
             }
         }));
 
-//        root.getChildren().add(menuBtn);
+//      root.getChildren().add(menuBtn);
         menuBtn.setAlignment(Pos.TOP_RIGHT);
         root.setRight(menuBtn);
 
@@ -122,9 +122,7 @@ public class LevelView {
 
 
         menu.setAlignment(Pos.CENTER);
-        center.getChildren().add(menu);
-
-//        HBox.setMargin(menu, new Insets(0, - 120, 0, 0));
+        center.getChildren().add(menu);;
 
         loadControls(menu, menuBtn);
 

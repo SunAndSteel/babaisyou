@@ -5,8 +5,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
 
-public final class CenteredListViewCell extends ListCell<String> {
+
+/**
+ * Class qui représente les cellules de la liste dans "SelectionView.java"
+ */
+public class CenteredListViewCell extends ListCell<String> {
     @Override
+    //Afficher les cellules au centre de la vue
     public void updateItem(String item, boolean empty) {
         super.updateItem(item, empty);
         if (empty) {

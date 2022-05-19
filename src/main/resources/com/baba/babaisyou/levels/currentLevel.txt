@@ -1,9 +1,0 @@
-10 10
-Baba 0 0
-TextBaba 3 0
-Is 4 0
-You 5 0
-Skull 0 1
-TextSkull 3 1
-Is 4 1
-Loose 5 1

@@ -25,7 +25,10 @@ import java.io.File;
 import static com.baba.babaisyou.view.MainView.scene;
 import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 
-public class Selection {
+/**
+ * Classe qui représente la vue de la selection de niveaux (Menu principal -> le bouton "Niveaux" appelle cette classe)
+ */
+public class SelectionView {
     static String selectedLevel;
     public static void show(Stage primaryStage) {
 
@@ -77,7 +80,6 @@ public class Selection {
                 }
             }
         });
-
         levels.addEventFilter( KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
@@ -90,7 +92,6 @@ public class Selection {
                 }
             }
         });
-
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
