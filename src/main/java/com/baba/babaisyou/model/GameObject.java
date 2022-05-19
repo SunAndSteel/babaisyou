@@ -18,9 +18,12 @@ public class GameObject implements Comparable<GameObject> {
     private int x, y;
     private Material material;
     private boolean reverse;
+    private GameObject best;
+
     private final ArrayList<Effect> tags = new ArrayList<>();
     private final ImageView iv;
     private final ArrayList<Rule> associatedRules = new ArrayList<>();
+
     private static final ColorAdjust brightnessAdjust = new ColorAdjust(0, 0, -0.6, 0);
     private static final Glow glowEffect = new Glow(0.2);
 
@@ -34,7 +37,7 @@ public class GameObject implements Comparable<GameObject> {
         this.x = x; this.y = y;
         this.material = material;
 
-        iv = new ImageView(material.getFrames()[0]);
+        iv = new ImageView(material.getImages()[0]);
         iv.setPreserveRatio(true);
         iv.setFitHeight(MapView.getTileSize());
 
@@ -102,7 +105,13 @@ public class GameObject implements Comparable<GameObject> {
         instances.get(this.material).remove(this);
         instances.get(material).add(this);
         this.material = material;
-        iv.setImage(material.getFrames()[0]);
+        iv.setImage(material.getImages()[0]);
+
+        // On clear les effets
+        if (tags.contains(Effect.Best)) {
+            removeTag(Effect.Best, level);
+        }
+        tags.clear();
 
         for (Rule rule : level.getRules()) {
             if (rule.getMaterial1() == material) {
@@ -110,7 +119,7 @@ public class GameObject implements Comparable<GameObject> {
                 if (rule.hasMaterial2()) {
                     setMaterial(rule.getMaterial2(), level);
                 } else {
-                    tags.add(rule.getEffect());
+                    addTag(rule.getEffect(), level);
                 }
             }
         }
@@ -137,5 +146,27 @@ public class GameObject implements Comparable<GameObject> {
 
     public static Glow getGlowEffect() {
         return glowEffect;
+    }
+
+    public void addTag(Effect effect, Level level) {
+        tags.add(effect);
+
+        if (effect == Effect.Best) {
+            best = new GameObject(Material.BestObject, x, y);
+            level.addObject(x, y, best);
+        }
+    }
+
+    public void removeTag(Effect effect, Level level) {
+        tags.remove(effect);
+
+        if (effect == Effect.Best && best != null) {
+            level.removeObject(x, y, best);
+            best = null;
+        }
+    }
+
+    public GameObject getBest() {
+        return best;
     }
 }

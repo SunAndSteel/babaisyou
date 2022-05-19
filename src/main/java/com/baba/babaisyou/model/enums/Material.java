@@ -4,7 +4,7 @@ import com.baba.babaisyou.model.Images;
 import javafx.scene.image.WritableImage;
 
 /**
- * Textures qui peuvent être attribuées aux objets
+ * Materiel qui peuvent être attribuées aux objets
  */
 public enum Material {
     //Objets
@@ -22,6 +22,7 @@ public enum Material {
     Door(null, null, Images.getImages(2, 7, 1), false),
     Key(null, null, Images.getImages(2, 8, 1), false),
     Skull(null, null, Images.getImages(2, 9, 1), false),
+    BestObject(null, null, Images.getImages(2, 10, 1), false),
 
     //Effets
     Push(Effect.Movable, null, Images.getImages(1, 3, 1), false),
@@ -36,6 +37,7 @@ public enum Material {
     Open(Effect.Open, null, Images.getImages(1, 8, 1), false),
     Loose(Effect.Loose, null, Images.getImages(1, 9, 1), false),
     Defeat(Effect.Defeat, null, Images.getImages(3, 9, 1), false),
+    Best(Effect.Best, null, Images.getImages(1, 10, 1), false),
 
     //Textes
     TextWall(null, "Wall", Images.getImages(0, 1, 1), false),
@@ -51,31 +53,61 @@ public enum Material {
 
     private final Effect effect;
     private final String nameObject;
-    private final WritableImage[] frames;
+    private final WritableImage[] images;
     private final Boolean isDirectional;
 
+    /**
+     * Constructeur de materiel
+     * @param effect Si le materiel représente un effet, alors on met un Effect dedans.
+     * @param nameObject Si le materiel est un text, alors on met le nom du materiel qu'il représente.
+     * @param frames Les images de materiel, souvent 1.
+     * @param isDirectional Permet de savoir si le materiel a une image pour chaque côté.
+     */
     Material(Effect effect, String nameObject, WritableImage[] frames, boolean isDirectional) {
         this.effect = effect;
         this.nameObject = nameObject;
-        this.frames = frames;
+        this.images = frames;
         this.isDirectional = isDirectional;
     }
 
-
+    /**
+     * Getter de effect
+     * @return L'effet. Peut-être null.
+     */
     public Effect getEffect() { return effect; }
 
+    /**
+     * Getter de nameObject
+     * @return Le nom de l'objet qu'il représente. Peut-être null.
+     */
     public String getNameObject() { return nameObject; }
 
-    public WritableImage[] getFrames() { return frames; }
+    /**
+     * Getter de images
+     * @return Les images de l'objet.
+     */
+    public WritableImage[] getImages() { return images; }
 
+    /**
+     * Vérifie si le materiel a un effet.
+     * @return True, si l'objet a un effet, false, sinon.
+     */
     public Boolean hasEffect() {
         return effect != null;
     }
 
+    /**
+     * Vérifie si le materiel a un nom d'objet qu'il représente.
+     * @return True, si l'objet a un nom d'objet, false, sinon.
+     */
     public Boolean hasNameObject() {
         return nameObject != null;
     }
 
+    /**
+     * Getter de isDirectional.
+     * @return La valeur de isDirectional.
+     */
     public Boolean isDirectional() {
         return isDirectional;
     }

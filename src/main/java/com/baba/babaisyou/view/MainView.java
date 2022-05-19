@@ -25,6 +25,7 @@ public class MainView extends Application {
     public static int height;
     public static Scene scene;
     private static StackPane root;
+    private static Button resumeBtn;
 
     public static void show(String[] args) {
         launch(args);
@@ -35,9 +36,9 @@ public class MainView extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         root = new StackPane();
-        Button resume = new Button("Reprendre");
-        Button play = new Button("Commencer");
-        Button builder = new Button("Constructeur de niveau");
+        resumeBtn = new Button("Reprendre");
+        Button playBtn = new Button("Commencer");
+        Button builderBtn = new Button("Constructeur de niveau");
         Button levelsBtn = new Button("Niveaux");
         Button quitBtn = new Button("Quitter");
         Label title = new Label("Baba is you");
@@ -46,10 +47,9 @@ public class MainView extends Application {
         File currentLevel = new File("src/main/resources/com/baba/babaisyou/levels/currentLevel.txt");
 
         VBox vb;
-        if (currentLevel.exists()) {
-            vb = new VBox(title, resume, play, levelsBtn, builder, quitBtn);
-        } else {
-            vb = new VBox(title, play, levelsBtn, builder, quitBtn);
+        vb = new VBox(title, resumeBtn, playBtn, levelsBtn, builderBtn, quitBtn);
+        if (!currentLevel.exists()) {
+            resumeBtn.setVisible(false);
         }
 
         vb.setAlignment(Pos.CENTER);
@@ -65,19 +65,19 @@ public class MainView extends Application {
 
         primaryStage.setScene(scene);
 
-        resume.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        resumeBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 LevelView.show(primaryStage, "currentLevel");
             }
         });
-        play.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        playBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 LevelView.show(primaryStage, "level1");
             }
         });
-        builder.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        builderBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 LevelBuilderView.show(primaryStage);
@@ -108,6 +108,10 @@ public class MainView extends Application {
 
         scene.setRoot(root);
         scene.getStylesheets().add((new File("src/menu.css")).toURI().toString());
+
+        File currentLevel = new File("src/main/resources/com/baba/babaisyou/levels/currentLevel.txt");
+
+        resumeBtn.setVisible(currentLevel.exists());
     }
 
     public static Scene getScene() {

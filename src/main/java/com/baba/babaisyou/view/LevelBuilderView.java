@@ -7,6 +7,7 @@ import com.baba.babaisyou.model.Mouvement;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Effect;
 import com.baba.babaisyou.model.enums.Material;
+import com.baba.babaisyou.presenter.LevelBuilder;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -70,7 +71,7 @@ public class LevelBuilderView {
                             setGraphic(null);
                         } else {
                             setText(mat.name());
-                            setGraphic(new ImageView(mat.getFrames()[0]));
+                            setGraphic(new ImageView(mat.getImages()[0]));
                         }
                     }
                 };

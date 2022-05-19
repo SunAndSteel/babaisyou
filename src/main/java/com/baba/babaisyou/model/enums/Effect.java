@@ -15,5 +15,6 @@ public enum Effect {
     Open,
     Shut,
     Defeat,
+    Best,
     Sink;
 }

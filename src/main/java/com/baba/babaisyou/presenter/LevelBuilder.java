@@ -1,4 +1,4 @@
-package com.baba.babaisyou.view;
+package com.baba.babaisyou.presenter;
 
 import com.baba.babaisyou.model.GameObject;
 import com.baba.babaisyou.model.Level;
@@ -43,7 +43,7 @@ public class LevelBuilder {
         ArrayList<Material> materialsNames = new ArrayList<>();
 
         for(Material mat : materials) {
-            if (mat != Material.Cursor && mat != Material.Floor) {
+            if (mat != Material.Cursor && mat != Material.Floor && mat != Material.BestObject) {
                 materialsNames.add(mat);
             }
 

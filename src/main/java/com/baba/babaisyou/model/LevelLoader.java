@@ -121,7 +121,7 @@ public class LevelLoader {
 
                 Material material = object.getMaterial();
 
-                if (material != Material.Cursor && material != Material.Floor) {
+                if (material != Material.Cursor && material != Material.Floor && material != Material.BestObject) {
 
                     bw.write(material.name() + " " + object.getX() + " " + object.getY() + "\n");
 

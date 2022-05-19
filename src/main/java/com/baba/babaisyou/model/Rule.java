@@ -56,7 +56,7 @@ public class Rule {
         if (materialObj2.hasEffect()) {
 
             for (GameObject object : instances) {
-                object.getTags().add(materialObj2.getEffect());
+                object.addTag(materialObj2.getEffect(), level);
             }
 
         } else {
@@ -111,7 +111,9 @@ public class Rule {
     public static void checkRules(Level level) {
         Map<GameObject, Direction> movedObjects = Mouvement.getMovedObjects();
 
-        for (GameObject object : movedObjects.keySet()) {
+        ArrayList<GameObject> copyMovedObjectKeySet = new ArrayList<>(movedObjects.keySet());
+
+        for (GameObject object : copyMovedObjectKeySet) {
 
             ArrayList<Rule> associatedRules = new ArrayList<>(object.getAssociatedRules());
 
@@ -271,7 +273,7 @@ public class Rule {
             Effect effect = obj2.getMaterial().getEffect();
 
             for (GameObject object : objects) {
-                object.getTags().remove(effect);
+                object.removeTag(effect, level);
             }
         }
     }

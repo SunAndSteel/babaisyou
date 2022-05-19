@@ -171,20 +171,6 @@ public class Level implements Iterable<ArrayList<GameObject>> {
         return new LevelIterator(this);
     }
 
-//    public boolean checkLoose() {
-//
-//        loose = true;
-//
-//        for (Rule rule : rules) {
-//            if (rule.getObj2().getMaterial() == Material.You && !instances.get(rule.getMaterial1()).isEmpty()) {
-//                loose = false;
-//                break;
-//            }
-//        }
-//
-//        return loose;
-//    }
-
 
     public void setLoose(boolean loose) {
         this.loose = loose;
@@ -193,6 +179,12 @@ public class Level implements Iterable<ArrayList<GameObject>> {
     public void removeObject(int x, int y, GameObject object) {
         get(x, y).remove(object);
         instances.get(object.getMaterial()).remove(object);
+        Mouvement.getMovedObjects().put(object, Direction.NONE);
+    }
+
+    public void addObject(int x, int y, GameObject object) {
+        get(x, y).add(object);
+        instances.get(object.getMaterial()).add(object);
         Mouvement.getMovedObjects().put(object, Direction.NONE);
     }
 }

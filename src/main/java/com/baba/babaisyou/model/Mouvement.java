@@ -26,11 +26,11 @@ public class Mouvement {
 
         ArrayList<Effect> tags1 = object.getTags();
 
-
+        ArrayList<GameObject> levelNewXNewYCopy = new ArrayList<>(level.get(newX, newY));
         // Itérer dans ce sens permet de bouger par exemple : s'il y a plusieurs objets movable
         // aux mêmes endroits, alors on bouge d'abord l'objet qui est derrière l'autre dans la liste (et donc qui est affiché devant l'autre lors du print)
-        for (int i = (level.get(newX, newY).size() - 1); i >= 0; i--) {
-            GameObject object2 = level.get(newX, newY).get(i);
+        for (int i = (levelNewXNewYCopy.size() - 1); i >= 0; i--) {
+            GameObject object2 = levelNewXNewYCopy.get(i);
 
             ArrayList<Effect> tags2 = object2.getTags();
 
@@ -69,6 +69,12 @@ public class Mouvement {
 
         object.setX(newX);
         object.setY(newY);
+
+        GameObject best = object.getBest();
+
+        if (best != null) {
+            Mouvement.moveWithoutChecking(best, direction, level);
+        }
     }
 
     /**

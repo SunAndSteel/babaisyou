@@ -80,10 +80,10 @@ public class MapView extends GridPane {
                 Image image;
 
                 if (object.getReverse()) {
-                    image = material.getFrames()[direction.reverseDirection().index];
+                    image = material.getImages()[direction.reverseDirection().index];
                     object.setReverse(false);
                 } else {
-                    image = material.getFrames()[direction.index];
+                    image = material.getImages()[direction.index];
                 }
                 iv.setImage(image);
 

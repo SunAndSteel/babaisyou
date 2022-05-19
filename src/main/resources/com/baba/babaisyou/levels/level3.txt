@@ -1,6 +1,7 @@
 18 18
 Grass 1 1
 Grass 8 1
+Best 3 2
 TextFlag 11 2
 Is 12 2
 Win 13 2
