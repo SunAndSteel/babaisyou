@@ -10,19 +10,20 @@ import javafx.scene.layout.HBox;
  * Class qui représente les cellules de la liste dans "SelectionView.java"
  */
 public class CenteredListViewCell extends ListCell<String> {
-    @Override
 
-    //Afficher les cellules au centre de la vue
+    /**
+     * Réécriture de la méthode updateItem pour centrer les cellules de la liste
+     * @see javafx.scene.control.ListCell#updateItem(Object, boolean)
+     */
+    @Override
     public void updateItem(String item, boolean empty) {
         super.updateItem(item, empty);
         if (empty) {
             setGraphic(null);
         } else {
-            // Create the HBox
             HBox hBox = new HBox();
             hBox.setAlignment(Pos.CENTER);
 
-            // Create centered Label
             Label label = new Label(item);
             label.setAlignment(Pos.CENTER);
 

@@ -39,6 +39,7 @@ public class SelectionView {
         Button backBtn = new Button("Retour");
         Button playBtn = new Button("Commencer");
 
+        //Ajouter des boutons dans des layers
         buttonHolder.getChildren().addAll(backBtn, playBtn);
         buttonHolder.setAlignment(Pos.CENTER);
 
@@ -52,11 +53,16 @@ public class SelectionView {
             }
         });
 
+        //Initialisation de la scène
         scene = MainView.getScene();
         scene.setRoot(root);
         scene.getStylesheets().add((new File("src/selection.css")).toURI().toString());
-        root.setAlignment(Pos.CENTER);
 
+        //Définition de l'interface
+        root.setAlignment(Pos.CENTER);
+        root.getChildren().addAll(text, levels, buttonHolder);
+
+        //Récupérer la valeur l'item sélectionné
         levels.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -64,8 +70,7 @@ public class SelectionView {
             }
         });
 
-        root.getChildren().addAll(text, levels, buttonHolder);
-
+        //Gestionnaire des événements sur les boutons
         backBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
