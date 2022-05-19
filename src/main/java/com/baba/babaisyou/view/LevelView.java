@@ -5,9 +5,7 @@ import com.baba.babaisyou.model.LevelLoader;
 import com.baba.babaisyou.model.Mouvement;
 import com.baba.babaisyou.model.Rule;
 import com.baba.babaisyou.model.enums.Direction;
-import com.baba.babaisyou.model.enums.Material;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -20,11 +18,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Objects;
 
 
@@ -81,20 +81,19 @@ public class LevelView {
 
         menu.setVisible(false);
 
+        //Gestionnaire des événements sur les boutons
         menuBtn.setOnMouseClicked((new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 toggleMenu(menu, menuBtn);
             }
         }));
-
         resumeBtn.setOnMouseClicked((new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 toggleMenu(menu, menuBtn);
             }
         }));
-
         quitBtn.setOnMouseClicked((new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -102,7 +101,6 @@ public class LevelView {
                 stage.close();
             }
         }));
-
         homeBtn.setOnMouseClicked((new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -111,7 +109,6 @@ public class LevelView {
             }
         }));
 
-//      root.getChildren().add(menuBtn);
         menuBtn.setAlignment(Pos.TOP_RIGHT);
         root.setRight(menuBtn);
 
@@ -221,8 +218,10 @@ public class LevelView {
 
     }
 
+    /**
+     * Sauvegarde le nom du niveau courant dans le fichier
+     */
     private static void saveCurrentLevel() {
-
         try {
             LevelLoader.save(level, "currentLevel");
 
@@ -232,19 +231,21 @@ public class LevelView {
             bw.write(levelName);
             bw.close();
 
-        } catch (IOException e) {
+        } catch (IOException ignored) {
 
         }
     }
 
+    /**
+     * Sauvegarde le nom du level courant dans la variable d'instance "levelName"
+     */
     private static void getCurrentLevelName() {
-
         try {
             File file = new File("src/main/resources/com/baba/babaisyou/currentLevelName.txt");
             BufferedReader br = new BufferedReader(new FileReader(file));
 
             levelName = br.readLine();
             br.close();
-        } catch (IOException e) {}
+        } catch (IOException ignored) {}
     }
 }

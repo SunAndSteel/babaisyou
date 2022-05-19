@@ -1,6 +1,9 @@
 package com.baba.testing;
 
-import com.baba.babaisyou.model.*;
+import com.baba.babaisyou.model.GameObject;
+import com.baba.babaisyou.model.Level;
+import com.baba.babaisyou.model.Mouvement;
+import com.baba.babaisyou.model.Rule;
 import com.baba.babaisyou.model.enums.Direction;
 import com.baba.babaisyou.model.enums.Material;
 import com.baba.babaisyou.view.MapView;

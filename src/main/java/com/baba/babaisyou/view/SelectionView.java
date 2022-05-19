@@ -31,18 +31,17 @@ import static javafx.scene.input.KeyEvent.KEY_PRESSED;
 public class SelectionView {
     static String selectedLevel;
     public static void show(Stage primaryStage) {
-
         VBox root = new VBox(30);
         HBox buttonHolder = new HBox();
-
         Text text = new Text("Niveaux");
         Button backBtn = new Button("Retour");
         Button playBtn = new Button("Commencer");
 
+        //Ajouter des boutons dans des layers
         buttonHolder.getChildren().addAll(backBtn, playBtn);
         buttonHolder.setAlignment(Pos.CENTER);
 
-
+        //Initialisation de la liste des niveaux
         ObservableList<String> levelsNames = FXCollections.observableArrayList(LevelLoader.getLevelNames());
         ListView<String> levels  = new ListView<>(levelsNames);
         levels.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
@@ -52,11 +51,16 @@ public class SelectionView {
             }
         });
 
+        //Initialisation de la scène
         scene = MainView.getScene();
         scene.setRoot(root);
         scene.getStylesheets().add((new File("src/selection.css")).toURI().toString());
-        root.setAlignment(Pos.CENTER);
 
+        //Définition de l'interface
+        root.setAlignment(Pos.CENTER);
+        root.getChildren().addAll(text, levels, buttonHolder);
+
+        //Récupérer la valeur l'item sélectionné
         levels.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -64,8 +68,7 @@ public class SelectionView {
             }
         });
 
-        root.getChildren().addAll(text, levels, buttonHolder);
-
+        //Gestionnaire des événements sur les boutons
         backBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
